@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://saha.org/schemas/samples.json",
+  "title": "Sample",
+  "description": "One row per tissue sample in the SAHA spatial omics consortium.",
+  "type": "object",
+  "required": ["sample_id", "run_id", "platform", "organ", "condition", "generation_institution"],
+  "additionalProperties": false,
+  "properties": {
+    "sample_id": {
+      "type": "string",
+      "pattern": "^SAHA_[A-Z]{2}_[A-Z0-9]+_.+$",
+      "description": "Unique sample identifier derived from folder name (e.g. SAHA_CR_COL_A1_TAP01)."
+    },
+    "run_id": {
+      "type": "string",
+      "description": "Run/batch identifier linking to runs.parquet (e.g. TAP01, EC02, SJJP01)."
+    },
+    "platform": {
+      "type": "string",
+      "enum": ["cosmx", "xenium", "g4x", "geomx", "rnascope"],
+      "description": "Spatial omics instrument platform."
+    },
+    "assay_type": {
+      "type": ["string", "null"],
+      "enum": ["rna", "protein", "multiome", null],
+      "description": "Molecular modality measured (rna or protein)."
+    },
+    "generation_institution": {
+      "type": "string",
+      "enum": ["cornell", "wcm", "st_jude", "msk", "broad", "other"],
+      "description": "Institution that performed the data acquisition run."
+    },
+    "tissue_source_institution": {
+      "type": ["string", "null"],
+      "description": "Institution that sourced the tissue (ISO 3166-1 alpha-2 country appended if needed)."
+    },
+    "organ": {
+      "type": "string",
+      "enum": [
+        "appendix", "bone_marrow", "colon", "ileum", "kidney", "liver",
+        "lung", "lymph_node", "pancreas", "prostate", "spleen",
+        "stomach", "thymus", "other"
+      ],
+      "description": "Organ of tissue origin."
+    },
+    "condition": {
+      "type": "string",
+      "enum": ["normal", "cancer", "disease", "other"],
+      "description": "Gross tissue condition."
+    },
+    "anatomical_region": {
+      "type": ["string", "null"],
+      "description": "Short tissue-type code from the source manifest (e.g. COL, LIV, APE)."
+    },
+    "donor_id": {
+      "type": ["string", "null"],
+      "description": "Donor identifier linking to donors.parquet."
+    },
+    "slide_id": {
+      "type": ["string", "null"],
+      "description": "Instrument slide or section identifier."
+    },
+    "panel_name": {
+      "type": ["string", "null"],
+      "description": "Panel name linking to panels.parquet."
+    },
+    "panel_plex": {
+      "type": ["integer", "null"],
+      "minimum": 1,
+      "description": "Number of targets (genes or proteins) in the panel."
+    },
+    "n_cells": {
+      "type": ["integer", "null"],
+      "minimum": 0,
+      "description": "Number of cells detected after segmentation."
+    },
+    "n_fovs": {
+      "type": ["integer", "null"],
+      "minimum": 0,
+      "description": "Number of fields of view (CosMx) or sections (Xenium) in this sample."
+    },
+    "qc_pass": {
+      "type": ["boolean", "null"],
+      "description": "Whether the sample passed QC review."
+    },
+    "processing_date": {
+      "type": ["string", "null"],
+      "format": "date",
+      "description": "Instrument run start date (ISO 8601 YYYY-MM-DD)."
+    },
+    "slide_prepared_date": {
+      "type": ["string", "null"],
+      "format": "date",
+      "description": "Slide preparation date (ISO 8601 YYYY-MM-DD)."
+    },
+    "s3_raw_prefix": {
+      "type": ["string", "null"],
+      "description": "S3 URI prefix for raw instrument output (e.g. s3://saha-open-data/cosmx/wcm/TAP01/SAHA_CR_COL_A1_TAP01/)."
+    },
+    "s3_processed_path": {
+      "type": ["string", "null"],
+      "description": "S3 URI for the processed AnnData/Seurat object."
+    },
+    "on_wasabi": {
+      "type": ["boolean", "null"],
+      "description": "Whether raw data is currently mirrored on Wasabi object storage."
+    }
+  }
+}
