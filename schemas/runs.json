@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://saha.org/schemas/runs.json",
+  "title": "Run",
+  "description": "One row per instrument acquisition run (batch) in the SAHA consortium.",
+  "type": "object",
+  "required": ["run_id", "platform", "generation_institution"],
+  "additionalProperties": false,
+  "properties": {
+    "run_id": {
+      "type": "string",
+      "description": "Unique run/batch identifier (e.g. TAP01, EC02, SJJP01, MS01)."
+    },
+    "platform": {
+      "type": "string",
+      "enum": ["cosmx", "xenium", "g4x", "geomx", "rnascope"],
+      "description": "Spatial omics instrument platform used for this run."
+    },
+    "instrument_id": {
+      "type": ["string", "null"],
+      "description": "Specific instrument serial number or lab-assigned ID."
+    },
+    "generation_institution": {
+      "type": "string",
+      "enum": ["cornell", "wcm", "st_jude", "msk", "broad", "other"],
+      "description": "Institution that performed the run."
+    },
+    "run_date": {
+      "type": ["string", "null"],
+      "format": "date",
+      "description": "Date the instrument run started (ISO 8601 YYYY-MM-DD)."
+    },
+    "panel_name": {
+      "type": ["string", "null"],
+      "description": "Primary panel used in this run (links to panels.parquet)."
+    },
+    "panel_version": {
+      "type": ["string", "null"],
+      "description": "Panel lot or version number."
+    },
+    "n_samples": {
+      "type": ["integer", "null"],
+      "minimum": 1,
+      "description": "Number of tissue samples processed in this run."
+    },
+    "instrument_software_version": {
+      "type": ["string", "null"],
+      "description": "Instrument acquisition software version."
+    },
+    "slide_prep_manual": {
+      "type": ["string", "null"],
+      "description": "NanoString/10x slide preparation manual part number."
+    },
+    "instrument_manual": {
+      "type": ["string", "null"],
+      "description": "Instrument user manual part number."
+    },
+    "qc_summary": {
+      "type": ["string", "null"],
+      "description": "Free-text QC summary or flag for the run."
+    },
+    "s3_raw_prefix": {
+      "type": ["string", "null"],
+      "description": "S3 URI prefix for all raw data from this run."
+    }
+  }
+}

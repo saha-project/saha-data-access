@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://saha.org/schemas/donors.json",
+  "title": "Donor",
+  "description": "One row per tissue donor in the SAHA consortium.",
+  "type": "object",
+  "required": ["donor_id"],
+  "additionalProperties": false,
+  "properties": {
+    "donor_id": {
+      "type": "string",
+      "description": "Unique donor identifier (de-identified, e.g. SAHA_D001)."
+    },
+    "age": {
+      "type": ["integer", "null"],
+      "minimum": 0,
+      "maximum": 120,
+      "description": "Donor age in years at time of tissue collection."
+    },
+    "age_group": {
+      "type": ["string", "null"],
+      "enum": ["pediatric", "adult", "elderly", null],
+      "description": "Broad age category for access-tier reporting."
+    },
+    "sex": {
+      "type": ["string", "null"],
+      "enum": ["M", "F", "unknown", null],
+      "description": "Biological sex (M/F/unknown)."
+    },
+    "ethnicity": {
+      "type": ["string", "null"],
+      "description": "Self-reported ethnicity using NIH standard categories."
+    },
+    "comorbidities": {
+      "type": ["array", "null"],
+      "items": {"type": "string"},
+      "description": "List of relevant comorbidities or diagnoses."
+    },
+    "tissue_source_institution": {
+      "type": ["string", "null"],
+      "description": "Institution that collected or provided the tissue."
+    },
+    "tissue_source_country": {
+      "type": ["string", "null"],
+      "pattern": "^[A-Z]{2}$",
+      "description": "Country of tissue collection (ISO 3166-1 alpha-2, e.g. US, DE)."
+    },
+    "consent_level": {
+      "type": ["string", "null"],
+      "enum": ["open", "registered", "controlled", null],
+      "description": "Maximum data access tier permitted by donor consent."
+    }
+  }
+}

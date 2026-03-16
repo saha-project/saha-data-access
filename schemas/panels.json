@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://saha.org/schemas/panels.json",
+  "title": "Panel",
+  "description": "One row per panel configuration used in SAHA spatial omics runs.",
+  "type": "object",
+  "required": ["panel_name", "platform", "plex"],
+  "additionalProperties": false,
+  "properties": {
+    "panel_name": {
+      "type": "string",
+      "description": "Canonical panel name as used in samples/runs tables (e.g. UCC 1K, 6K Discovery)."
+    },
+    "platform": {
+      "type": "string",
+      "enum": ["cosmx", "xenium", "g4x", "geomx", "rnascope"],
+      "description": "Platform for which this panel was designed."
+    },
+    "assay_type": {
+      "type": "string",
+      "enum": ["rna", "protein", "multiome"],
+      "description": "Whether the panel measures RNA or protein targets."
+    },
+    "plex": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Total number of targeted analytes (genes + proteins)."
+    },
+    "version": {
+      "type": ["string", "null"],
+      "description": "Panel design version or catalog revision."
+    },
+    "gene_list": {
+      "type": ["array", "null"],
+      "items": {"type": "string"},
+      "description": "List of targeted gene symbols (HGNC)."
+    },
+    "protein_list": {
+      "type": ["array", "null"],
+      "items": {"type": "string"},
+      "description": "List of targeted protein names or antibody clones."
+    },
+    "catalog_number": {
+      "type": ["string", "null"],
+      "description": "Vendor catalog number for this panel."
+    },
+    "notes": {
+      "type": ["string", "null"],
+      "description": "Free-text notes about panel design or modifications."
+    }
+  }
+}
