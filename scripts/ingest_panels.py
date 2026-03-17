@@ -70,7 +70,7 @@ SEED_PANELS = [
         "notes":          "CosMx whole-transcriptome 19000-plex RNA panel",
     },
     {
-        "panel_name":     "Xenium Human Multi-Tissue",
+        "panel_name":     "Multi-tissue (377-plex)",
         "platform":       "xenium",
         "assay_type":     "rna",
         "plex":           377,
