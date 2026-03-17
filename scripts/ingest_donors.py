@@ -42,6 +42,7 @@ AGE_GROUP_MAP = [
     (18,  64,  "adult"),
     (65,  120, "elderly"),
 ]
+AGE_GROUP_LABELS = {"pediatric", "adult", "elderly"}
 
 CONSENT_LEVELS = {"open", "registered", "controlled"}
 
@@ -128,10 +129,17 @@ def transform(df: pd.DataFrame) -> list[dict]:
 
         age = safe_int(row.get("age"))
 
+        # Compute age_group from age; fall back to CSV column if age is absent
+        age_group = parse_age_group(age)
+        if age_group is None:
+            ag_raw = str(row.get("age_group", "")).strip().lower()
+            if ag_raw in AGE_GROUP_LABELS:
+                age_group = ag_raw
+
         record = {
             "donor_id":                  donor_id,
             "age":                       age,
-            "age_group":                 parse_age_group(age),
+            "age_group":                 age_group,
             "sex":                       SEX_MAP.get(
                                              str(row.get("sex", "")).strip().lower(),
                                              "unknown"
