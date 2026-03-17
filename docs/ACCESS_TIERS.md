@@ -2,6 +2,7 @@
 
 SAHA data are organized into three access tiers based on donor consent and data sensitivity.
 
+
 ## Tier Summary
 
 | Tier | Who can access | What's available | License |
@@ -21,6 +22,9 @@ No registration required. All data are hosted on the AWS Open Data Program (S3) 
 - Processed AnnData/Seurat objects with gene expression
 - Cell segmentation masks and spatial coordinates
 - Metadata: `sample_id`, `organ`, `platform`, `condition`, `panel_name`, `n_cells`, `qc_pass`
+- Normal tissue samples **and** disease/cancer samples (CRC, PDAC, IBD) where donor consent permits open release
+
+> **Note:** Some future disease/cancer samples may be restricted to the registered or controlled tier based on consent level.
 
 **Access:**
 ```bash
@@ -98,4 +102,4 @@ Metadata tables automatically include only the columns permissible at each tier.
 
 ## Questions
 
-Contact [data@saha-project.org](mailto:data@saha-project.org) or open an issue in this repository.
+Contact Jiwoon Park at [data@saha-project.org](mailto:data@saha-project.org) or open an issue in this repository.

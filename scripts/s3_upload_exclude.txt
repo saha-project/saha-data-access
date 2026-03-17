@@ -1,0 +1,46 @@
+# S3 upload exclusion list
+# Used with: aws s3 sync ... --exclude patterns below
+# One pattern per line; lines starting with # are comments.
+
+# macOS artifacts
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+
+# Temporary processing files (GI_analysis/temp_*)
+temp_*.csv
+temp_*.mtx
+temp_*.txt
+
+# Internal intermediate R objects (not for public release)
+# elif_objects/ versioned RDS files — supplementary GI subset only,
+# upload separately after confirming canonical versions with PI
+elif_objects/*.rds
+
+# Large internal aggregate h5ads (superseded by organ-level files)
+SAHA_All_RNA_share.h5ad
+SAHA_All_PRT_share2.h5ad
+SAHA_GI_RNA_subsetted.h5ad
+SAHA_GI_RNA_updated.h5ad
+
+# Xenium integrated h5ads (superseded by sample-level + sample zarrs)
+SAHA_Xenium_*_integrated.h5ad
+
+# GI_analysis intermediate objects
+GI_analysis/temp_*
+GI_analysis/SAHA_GI_integrated_harmony.h5ad
+GI_analysis/*.png
+GI_analysis/*.R
+GI_analysis/*.ipynb
+GI_analysis/*.csv
+GI_analysis/*.mtx
+
+# snPATHO (not part of public release scope)
+snPATHO/
+
+# Internal metadata CSVs (replaced by Parquet tables)
+All_PRT_cell_metadata.csv
+All_PRT_gene_metadata.csv
+All_PRT_normalized_expression_matrix.csv
+All_PRT_raw_expression_matrix.csv

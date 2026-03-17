@@ -1,0 +1,6 @@
+donor_id,internal_code,age,age_group,sex,ethnicity,comorbidities,tissue_source_institution,tissue_source_country,consent_level,notes
+SAHA_D001,A1,,adult,,,,cornell,US,open,"Primary multi-organ normal donor. Organs: colon, ileum, pancreas, stomach, lymph node, liver, prostate."
+SAHA_D002,A9,,adult,,,,cornell,US,open,"Normal donor, appendix only."
+SAHA_D003,RC,,adult,,,pancreatic ductal adenocarcinoma,wcm,US,open,PDAC patient (pancreatic ductal adenocarcinoma).
+SAHA_D004,IBD_A1,,adult,,,inflammatory bowel disease,wcm,US,open,IBD patient 1.
+SAHA_D005,IBD_A2,,adult,,,inflammatory bowel disease,wcm,US,open,IBD patient 2.

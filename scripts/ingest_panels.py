@@ -81,6 +81,17 @@ SEED_PANELS = [
         "notes":          "10x Genomics Xenium Human Multi-Tissue and Cancer Panel",
     },
     {
+        "panel_name":     "IO Protein (64-plex)",
+        "platform":       "cosmx",
+        "assay_type":     "protein",
+        "plex":           64,
+        "version":        None,
+        "gene_list":      None,
+        "protein_list":   None,   # populate with actual 64-marker list when available
+        "catalog_number": None,
+        "notes":          "CosMx IO Protein 64-plex panel",
+    },
+    {
         "panel_name":     "G4X",
         "platform":       "g4x",
         "assay_type":     "rna",
