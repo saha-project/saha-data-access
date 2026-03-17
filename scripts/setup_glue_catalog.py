@@ -96,6 +96,12 @@ TABLES = {
             {"Name": "instrument_manual",           "Type": "string"},
             {"Name": "qc_summary",                  "Type": "string"},
             {"Name": "s3_raw_prefix",               "Type": "string"},
+            {"Name": "fiducial_concentration_pct",  "Type": "float"},
+            {"Name": "prehyb_storage_time",         "Type": "string"},
+            {"Name": "hybridization_duration_h",    "Type": "float"},
+            {"Name": "prerun_overnight_4c",         "Type": "boolean"},
+            {"Name": "prebleach_profile",           "Type": "string"},
+            {"Name": "cell_segmentation_profile",   "Type": "string"},
         ],
     },
     "panels": {

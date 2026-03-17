@@ -238,7 +238,7 @@ def transform(df: pd.DataFrame) -> list[dict]:
             "slide_id":                str(row.get("Slide ID", "")).strip() or None,
             "panel_name":              panel_name,
             "panel_plex":              panel_plex,
-            "n_cells":                 None,            # not in source CSV
+            "n_cells":                 safe_int(row.get("n_cells")),
             "n_fovs":                  safe_int(row.get("#")),
             "qc_pass":                 safe_bool(row.get("Wasabi")),
             "processing_date":         parse_date(row.get("Run start date")),
