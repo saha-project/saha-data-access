@@ -1,2 +1,23 @@
+# Internal AI assistant config
 CLAUDE.md
+.claude/
+
+# Internal manifests (source CSVs — parquet files are the public output)
 sample_metadata.csv
+donor_metadata.csv
+
+# Internal ops scripts (upload pipeline, AWS infra setup, Wasabi migration)
+scripts/upload_to_s3.py
+scripts/wasabi_to_s3.py
+scripts/set_bucket_policy.py
+scripts/setup_glue_catalog.py
+scripts/backfill_s3_paths.py
+
+# Python
+scripts/__pycache__/
+__pycache__/
+*.pyc
+*.pyo
+
+# macOS
+.DS_Store

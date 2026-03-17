@@ -10,6 +10,7 @@ Operations performed:
       Insitutype_Labelled → cell_type_detailed
       c_final_cell_type  → cell_type  (CosMx Protein)
   - Add sample_id column (= SAHA_name for CosMx; already present for Xenium)
+  - Add donor_id column per cell (joined from data/samples.parquet)
   - Strip obsm keys that are not spatial / X_umap (e.g. X_pca, X_harmony variants)
 
 Usage — single file:
@@ -74,6 +75,7 @@ RNA_KEEP = {
     "assay_type", "Panel", "version", "slide_ID",
     # SAHA metadata
     "sample_id",           # added by this script
+    "donor_id",            # added by this script (from samples.parquet)
     "SAHA_name",           # kept as original identifier
     "SAHA_Sample", "SAHA_organcode", "SAHA_batchcode",
     "section_ID", "SAHA_FOV", "SAHA_Slide", "TissueCode",
@@ -117,6 +119,7 @@ PRT_KEEP = {
     "assay_type", "Panel", "version", "slide_ID",
     # SAHA metadata
     "sample_id",
+    "donor_id",            # added by this script (from samples.parquet)
     "SAHA_name",
     "SAHA_organcode", "SAHA_batchcode",
     # Cell type
@@ -130,7 +133,7 @@ XENIUM_KEEP = {
     "cell_area", "nucleus_area",
     "n_counts", "n_genes",
     "leiden_res0.1", "leiden_res0.3", "leiden_res0.5", "leiden_res1.0",
-    "sample_id", "platform", "modality",
+    "sample_id", "donor_id", "platform", "modality",
     "cell_type", "cell_type_detailed",  # for when annotations are added
 }
 
@@ -169,13 +172,19 @@ def detect_assay(adata: ad.AnnData, path: Path) -> str:
     return "rna"
 
 
-def standardize(adata: ad.AnnData, assay: str) -> ad.AnnData:
+def standardize(adata: ad.AnnData, assay: str,
+                donor_map: "dict[str, str] | None" = None) -> ad.AnnData:
     """
     Return a new (in-memory) AnnData with:
       - obs columns filtered to whitelist
       - cell-type columns renamed
-      - sample_id column added
+      - sample_id and donor_id columns added
       - obsm trimmed to spatial + X_umap
+
+    donor_map: {sample_id → donor_id} from samples.parquet. When provided,
+               donor_id is added to every cell so cross-organ comparisons can
+               correctly identify that e.g. appendix (SAHA_D002) differs from
+               colon/ileum/pancreas/stomach (SAHA_D001).
     """
     if assay == "rna":
         rename_map = RNA_RENAME
@@ -200,6 +209,10 @@ def standardize(adata: ad.AnnData, assay: str) -> ad.AnnData:
         if "SAHA_name" in obs.columns:
             obs["sample_id"] = obs["SAHA_name"]
         # Xenium already has sample_id
+
+    # 2b. Add donor_id from lookup (so cross-organ users see donor identity per cell)
+    if donor_map and "sample_id" in obs.columns:
+        obs["donor_id"] = obs["sample_id"].map(donor_map)
 
     # 3. Filter to whitelist (retain only cols in keep_set that are present)
     keep_cols = [c for c in obs.columns if c in keep_set]
@@ -234,7 +247,8 @@ def standardize(adata: ad.AnnData, assay: str) -> ad.AnnData:
 # Single-file entry point
 # ---------------------------------------------------------------------------
 
-def process_file(input_path: Path, output_path: Path, dry_run: bool = False) -> None:
+def process_file(input_path: Path, output_path: Path, dry_run: bool = False,
+                 donor_map: "dict[str, str] | None" = None) -> None:
     print(f"Reading  {input_path.name} …")
     adata = ad.read_h5ad(input_path, backed="r")
     assay = detect_assay(adata, input_path)
@@ -257,6 +271,8 @@ def process_file(input_path: Path, output_path: Path, dry_run: bool = False) -> 
         # add sample_id (will be added if SAHA_name present)
         if "SAHA_name" in obs_cols or "sample_id" in obs_cols:
             after_rename.add("sample_id")
+        if donor_map:
+            after_rename.add("donor_id")
         kept = sorted(after_rename & keep_set)
         dropped = sorted(obs_cols - set(rename_map.keys()) - keep_set)
 
@@ -269,7 +285,7 @@ def process_file(input_path: Path, output_path: Path, dry_run: bool = False) -> 
         adata.file.close()
         return
 
-    new_adata = standardize(adata, assay)
+    new_adata = standardize(adata, assay, donor_map=donor_map)
     adata.file.close()
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -280,6 +296,17 @@ def process_file(input_path: Path, output_path: Path, dry_run: bool = False) -> 
 # ---------------------------------------------------------------------------
 # Batch entry point
 # ---------------------------------------------------------------------------
+
+def load_donor_map() -> "dict[str, str]":
+    """Load {sample_id → donor_id} from data/samples.parquet."""
+    import pyarrow.parquet as pq
+    parquet = Path(__file__).parent.parent / "data" / "samples.parquet"
+    if not parquet.exists():
+        print(f"  WARNING: {parquet} not found — donor_id will not be added to obs")
+        return {}
+    df = pq.read_table(parquet, columns=["sample_id", "donor_id"]).to_pandas()
+    return dict(zip(df["sample_id"], df["donor_id"]))
+
 
 def batch_process(src_rna: Path, src_prt: Path, src_xenium: Path,
                   out_dir: Path, dry_run: bool) -> None:
@@ -297,9 +324,10 @@ def batch_process(src_rna: Path, src_prt: Path, src_xenium: Path,
         for p in sorted(src_xenium.glob("SAHA_XR_*.h5ad")):
             tasks.append((p, out_dir / "xenium" / p.name))
 
-    print(f"Found {len(tasks)} h5ad files to process.\n")
+    donor_map = load_donor_map()
+    print(f"Found {len(tasks)} h5ad files to process. Donor map: {len(donor_map)} entries.\n")
     for inp, out in tasks:
-        process_file(inp, out, dry_run=dry_run)
+        process_file(inp, out, dry_run=dry_run, donor_map=donor_map)
         print()
 
 
@@ -315,12 +343,12 @@ def parse_args():
     mode.add_argument("--batch", action="store_true", help="Process all SAHA h5ads")
 
     p.add_argument("--output",      type=Path, help="Output path (single-file mode)")
-    p.add_argument("--src-rna",     type=Path,
-                   default=Path("/Users/jiwoonpark/Dropbox (Personal)/2025- MasonLab/2025_SAHA/Data/preprocessed/h5ad/RNA"))
-    p.add_argument("--src-prt",     type=Path,
-                   default=Path("/Users/jiwoonpark/Dropbox (Personal)/2025- MasonLab/2025_SAHA/Data/preprocessed/h5ad/PRT"))
-    p.add_argument("--src-xenium",  type=Path,
-                   default=Path("/Users/jiwoonpark/Dropbox (Personal)/2025- MasonLab/2025_SAHA/Data/preprocessed/h5ad_sample/RNA"))
+    p.add_argument("--src-rna",     type=Path, default=None,
+                   help="Directory of internal CosMx RNA organ-level h5ads")
+    p.add_argument("--src-prt",     type=Path, default=None,
+                   help="Directory of internal CosMx Protein organ-level h5ads")
+    p.add_argument("--src-xenium",  type=Path, default=None,
+                   help="Directory of internal Xenium sample-level h5ads")
     p.add_argument("--out-dir",     type=Path, default=Path("data/h5ad_public"),
                    help="Output directory (batch mode)")
     p.add_argument("--dry-run",     action="store_true",
@@ -343,7 +371,8 @@ def main():
         if not args.input.exists():
             sys.exit(f"ERROR: {args.input} not found")
         output = args.output or args.out_dir / args.input.name
-        process_file(args.input, output, dry_run=args.dry_run)
+        donor_map = load_donor_map()
+        process_file(args.input, output, dry_run=args.dry_run, donor_map=donor_map)
 
 
 if __name__ == "__main__":
