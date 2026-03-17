@@ -35,9 +35,12 @@ from jsonschema import Draft202012Validator
 # Same lookup tables as ingest_samples.py
 # ---------------------------------------------------------------------------
 
+# Keys are lowercase — the callers do .strip().lower() before lookup.
+# "cosmx protein" and "cosmx rna" both map to "cosmx" (platform-level, not assay-level).
 PLATFORM_MAP = {
     "cosmx rna":     "cosmx",
     "cosmx protein": "cosmx",
+    "cosmx":         "cosmx",
     "xenium":        "xenium",
     "g4x":           "g4x",
     "geomx":         "geomx",
@@ -80,6 +83,36 @@ def safe_int(value: object) -> "int | None":
         return None
 
 
+def safe_float(value: object) -> "float | None":
+    if value is None:
+        return None
+    s = str(value).strip()
+    if s in ("", "N/A", "nan", "NaN"):
+        return None
+    try:
+        return float(s)
+    except (ValueError, TypeError):
+        return None
+
+
+def safe_bool_yesno(value: object) -> "bool | None":
+    """Parse YES/NO strings to bool."""
+    if value is None:
+        return None
+    s = str(value).strip().upper()
+    if s in ("", "N/A", "NAN"):
+        return None
+    return s == "YES"
+
+
+def first_non_null(series: "pd.Series") -> "str | None":
+    """Return first non-null, non-blank value in a pandas Series."""
+    for v in series:
+        if v and str(v).strip() not in ("", "N/A", "nan", "NaN", "None"):
+            return str(v).strip()
+    return None
+
+
 # ---------------------------------------------------------------------------
 # Derive mode: collapse sample manifest → one row per Batch/run
 # ---------------------------------------------------------------------------
@@ -118,6 +151,17 @@ def transform_derived(df: pd.DataFrame) -> list[dict]:
         if "Panel" in group.columns:
             panel_name = str(group["Panel"].mode()[0]).strip() or None
 
+        # Protocol fields — consistent within a run; take first non-null value
+        sw_ver    = first_non_null(group.get("Instrument software", pd.Series(dtype=str)))
+        slide_man = first_non_null(group.get("Slide preparation manual", pd.Series(dtype=str)))
+        inst_man  = first_non_null(group.get("Instrument user manual", pd.Series(dtype=str)))
+        fid_conc  = safe_float(first_non_null(group.get("Fiducial Concentration (%)", pd.Series(dtype=str))))
+        prehyb    = first_non_null(group.get("Pre-hybridization storage time", pd.Series(dtype=str)))
+        hyb_dur   = safe_float(first_non_null(group.get("Hybridization Duration (h.min)", pd.Series(dtype=str))))
+        prerun    = safe_bool_yesno(first_non_null(group.get("Optional pre-run ON at 4°C", pd.Series(dtype=str))))
+        prebleach = first_non_null(group.get("Pre-bleaching profile", pd.Series(dtype=str)))
+        cell_seg  = first_non_null(group.get("Cell segmentation profile", pd.Series(dtype=str)))
+
         record = {
             "run_id":                      run_id,
             "platform":                    platform,
@@ -127,9 +171,15 @@ def transform_derived(df: pd.DataFrame) -> list[dict]:
             "panel_name":                  panel_name,
             "panel_version":               None,
             "n_samples":                   len(group),
-            "instrument_software_version": None,
-            "slide_prep_manual":           None,
-            "instrument_manual":           None,
+            "instrument_software_version": sw_ver,
+            "slide_prep_manual":           slide_man,
+            "instrument_manual":           inst_man,
+            "fiducial_concentration_pct":  fid_conc,
+            "prehyb_storage_time":         prehyb,
+            "hybridization_duration_h":    hyb_dur,
+            "prerun_overnight_4c":         prerun,
+            "prebleach_profile":           prebleach,
+            "cell_segmentation_profile":   cell_seg,
             "qc_summary":                  None,
             "s3_raw_prefix":               None,
         }
@@ -207,6 +257,12 @@ PARQUET_SCHEMA = pa.schema([
     ("instrument_software_version", pa.string()),
     ("slide_prep_manual",           pa.string()),
     ("instrument_manual",           pa.string()),
+    ("fiducial_concentration_pct",  pa.float32()),
+    ("prehyb_storage_time",         pa.string()),
+    ("hybridization_duration_h",    pa.float32()),
+    ("prerun_overnight_4c",         pa.bool_()),
+    ("prebleach_profile",           pa.string()),
+    ("cell_segmentation_profile",   pa.string()),
     ("qc_summary",                  pa.string()),
     ("s3_raw_prefix",               pa.string()),
 ])

@@ -55,6 +55,30 @@
       "type": ["string", "null"],
       "description": "Instrument user manual part number."
     },
+    "fiducial_concentration_pct": {
+      "type": ["number", "null"],
+      "description": "Fiducial concentration used during the run (%, CosMx only)."
+    },
+    "prehyb_storage_time": {
+      "type": ["string", "null"],
+      "description": "Pre-hybridization storage time (e.g. '130 min at 4°C', CosMx only)."
+    },
+    "hybridization_duration_h": {
+      "type": ["number", "null"],
+      "description": "Hybridization duration in hours (CosMx only)."
+    },
+    "prerun_overnight_4c": {
+      "type": ["boolean", "null"],
+      "description": "Whether an optional pre-run overnight at 4°C step was performed (CosMx only)."
+    },
+    "prebleach_profile": {
+      "type": ["string", "null"],
+      "description": "Pre-bleaching profile identifier (CosMx only)."
+    },
+    "cell_segmentation_profile": {
+      "type": ["string", "null"],
+      "description": "Cell segmentation profile identifier (CosMx only)."
+    },
     "qc_summary": {
       "type": ["string", "null"],
       "description": "Free-text QC summary or flag for the run."

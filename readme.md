@@ -66,4 +66,4 @@ Metadata and code in this repository: MIT. SAHA datasets are licensed under CC-B
 
 ## Contact
 
-SAHA Consortium — [saha-project.org](https://www.saha-project.org/)
+Jiwoon Park — [saha-project.org](https://www.saha-project.org/)

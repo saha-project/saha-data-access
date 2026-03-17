@@ -205,4 +205,4 @@ Format: `SAHA_D{zero-padded number}` — assigned centrally by Mason Lab to pres
 
 ## Questions
 
-Open a GitHub issue or email [data@saha-project.org](mailto:data@saha-project.org).
+Open a GitHub issue or contact Jiwoon Park at [data@saha-project.org](mailto:data@saha-project.org).
