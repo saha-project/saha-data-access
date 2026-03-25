@@ -1,0 +1,59 @@
+Name: Spatial Atlas of Human Anatomy (SAHA)
+Description: |
+  The Spatial Atlas of Human Anatomy (SAHA) is a multimodal, subcellular-resolution
+  spatial reference atlas of human tissues profiling 15M+ cells from 100+ donors
+  across 16 tissue types. SAHA captures matched RNA (up to 19,000 genes), protein
+  (67 markers), and histological data at ~50 nm resolution using CosMx, Xenium,
+  GeoMx, and RNAscope spatial omics platforms. Tissues include colon, small
+  intestine, stomach, pancreas, liver, appendix, lymph node, bone marrow, prostate,
+  and others, as well as disease samples (colorectal cancer, pancreatic ductal
+  adenocarcinoma, and inflammatory bowel disease).
+  Data formats include AnnData h5ad objects (organ-level for CosMx, sample-level
+  for Xenium), SpatialData zarr objects, raw CosMx flat files, and Parquet metadata
+  tables queryable via Amazon Athena.
+Documentation: https://github.com/masonlab/saha-data-access
+Contact: https://www.saha-project.org/
+ManagedBy: "[Mason Lab, Weill Cornell Medicine](https://masonlab.org/)"
+UpdateFrequency: As data from new donors and tissue types are processed and validated.
+Tags:
+  - aws-pds
+  - biology
+  - bioinformatics
+  - genomics
+  - transcriptomics
+  - spatial transcriptomics
+  - proteomics
+  - imaging
+  - single-cell
+  - life sciences
+  - Homo sapiens
+  - parquet
+  - zarr
+License: "CC-BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)"
+Citation: "Park J et al. Spatial Atlas of Human Anatomy (SAHA). bioRxiv 2025.06.16.658716. https://doi.org/10.1101/2025.06.16.658716"
+Resources:
+  - Description: Processed AnnData h5ad objects (organ-level CosMx RNA/Protein, sample-level Xenium) and SpatialData zarr objects
+    ARN: arn:aws:s3:::saha-open-data
+    Region: us-east-1
+    Type: S3 Bucket
+  - Description: Notifications for new SAHA data
+    ARN: # Available after AWS ODP approval
+    Region: us-east-1
+    Type: SNS Topic
+DataAtWork:
+  Tutorials:
+    - Title: Query SAHA metadata with Athena and load h5ad objects
+      URL: https://github.com/masonlab/saha-data-access/blob/main/tutorials/01_query_metadata.ipynb
+      AuthorName: Jiwoon Park
+    - Title: Load and visualize CosMx spatial data
+      URL: https://github.com/masonlab/saha-data-access/blob/main/tutorials/02_load_cosmx_sample.ipynb
+      AuthorName: Jiwoon Park
+    - Title: Cross-platform cell type analysis with SAHA
+      URL: https://github.com/masonlab/saha-data-access/blob/main/tutorials/03_cross_platform_comparison.ipynb
+      AuthorName: Jiwoon Park
+  Publications:
+    - Title: Spatial Atlas of Human Anatomy (SAHA)
+      URL: https://doi.org/10.1101/2025.06.16.658716
+      AuthorName: Park J et al.
+ADXCategories:
+  - Healthcare & Life Sciences Data
