@@ -21,6 +21,11 @@ tutorials/        # Jupyter notebooks for querying and analyzing SAHA data
 dataset.yaml      # AWS Open Data Registry submission file
 ```
 
+## Dataset Tally
+
+Current sample and cell counts, with breakdowns by platform, organ, and institution:
+**[docs/stats.html](docs/stats.html)** — regenerate with `python scripts/generate_stats.py` after updating metadata.
+
 ## Metadata Tables
 
 Four Parquet tables are provided in `data/` and mirrored at `s3://saha-open-data/metadata/`.
@@ -112,6 +117,7 @@ See [tutorials/](tutorials/) for full worked examples.
 | `validate_release.py` | Cross-check parquet referential integrity and S3 object existence |
 | `test_athena.py` | Run validation queries against the Glue/Athena catalog |
 | `generate_data_dictionary.py` | Auto-generate `docs/DATA_DICTIONARY.md` from schemas |
+| `generate_stats.py` | Auto-generate `docs/stats.html` dataset tally from the Parquet tables |
 
 ## Contributing Data
 
