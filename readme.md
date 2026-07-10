@@ -24,7 +24,7 @@ dataset.yaml      # AWS Open Data Registry submission file
 ## Dataset Tally
 
 Current sample and cell counts, with breakdowns by platform, organ, and institution:
-**[docs/stats.html](docs/stats.html)** — regenerate with `python scripts/generate_stats.py` after updating metadata.
+**[View the live tally →](https://saha-project.github.io/saha-data-access/stats.html)** — regenerate with `python scripts/generate_stats.py` after updating metadata.
 
 ## Metadata Tables
 
