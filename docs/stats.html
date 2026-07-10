@@ -40,7 +40,10 @@
   .hero .big { display:block; margin:0; color:var(--eosin);
     font-size:clamp(3rem,13vw,6.5rem); line-height:.92; font-weight:600; }
   .hero .cap { display:block; margin-top:.9rem; color:var(--muted);
-    font-size:clamp(.95rem,2.5vw,1.15rem); max-width:34ch; }
+    font-size:clamp(.95rem,2.5vw,1.15rem); max-width:40ch; }
+  .hero .cap sup { color:var(--eosin); font-weight:600; }
+  .note { margin:1.75rem 0 0; color:var(--muted); font-size:.8rem; }
+  .note sup { color:var(--eosin); font-weight:600; }
 
   /* Stat strip */
   .strip { display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
@@ -87,32 +90,47 @@
   <p class="eyebrow">SAHA · Spatial Atlas of Human Anatomy</p>
 
   <div class="hero">
-    <span class="big mono">8,483,915</span>
-    <span class="cap">cells profiled across 47 samples · 5 donors · 6 organs · 2 platforms</span>
+    <span class="big mono">12,408,556</span>
+    <span class="cap">cells segmented across CosMx runs<sup>*</sup> · 150 samples · 10 organs · 3 assays · 5 sites</span>
   </div>
 
-  <div class="strip"><div class="stat"><span class="v">47</span><span class="l">samples</span></div><div class="stat"><span class="v">5</span><span class="l">donors</span></div><div class="stat"><span class="v">11</span><span class="l">runs</span></div><div class="stat"><span class="v">6</span><span class="l">panels</span></div><div class="stat"><span class="v">29</span><span class="l">QC&#8209;passed</span></div></div>
+  <div class="strip"><div class="stat"><span class="v">150</span><span class="l">samples</span></div><div class="stat"><span class="v">120</span><span class="l">runs</span></div><div class="stat"><span class="v">10</span><span class="l">organs</span></div><div class="stat"><span class="v">3</span><span class="l">assays</span></div><div class="stat"><span class="v">5</span><span class="l">sites</span></div></div>
 
-  <div class="grid"><section class="block"><h3>By platform</h3><div class="bars"><div class="row"><span class="k">xenium</span><span class="track"><span class="fill" style="width:100.0%"></span></span><span class="n">25</span></div>
-<div class="row"><span class="k">cosmx</span><span class="track"><span class="fill" style="width:88.0%"></span></span><span class="n">22</span></div></div></section><section class="block"><h3>By organ</h3><div class="bars"><div class="row"><span class="k">pancreas</span><span class="track"><span class="fill" style="width:100.0%"></span></span><span class="n">15</span></div>
-<div class="row"><span class="k">ileum</span><span class="track"><span class="fill" style="width:86.7%"></span></span><span class="n">13</span></div>
-<div class="row"><span class="k">appendix</span><span class="track"><span class="fill" style="width:73.3%"></span></span><span class="n">11</span></div>
-<div class="row"><span class="k">colon</span><span class="track"><span class="fill" style="width:26.7%"></span></span><span class="n">4</span></div>
-<div class="row"><span class="k">stomach</span><span class="track"><span class="fill" style="width:13.3%"></span></span><span class="n">2</span></div>
-<div class="row"><span class="k">lymph_node</span><span class="track"><span class="fill" style="width:13.3%"></span></span><span class="n">2</span></div></div></section><section class="block"><h3>By generating institution</h3><div class="bars"><div class="row"><span class="k">st_jude</span><span class="track"><span class="fill" style="width:100.0%"></span></span><span class="n">24</span></div>
-<div class="row"><span class="k">wcm</span><span class="track"><span class="fill" style="width:58.3%"></span></span><span class="n">14</span></div>
-<div class="row"><span class="k">msk</span><span class="track"><span class="fill" style="width:37.5%"></span></span><span class="n">9</span></div></div></section><section class="block"><h3>By condition</h3><div class="bars"><div class="row"><span class="k">normal</span><span class="track"><span class="fill" style="width:100.0%"></span></span><span class="n">43</span></div>
-<div class="row"><span class="k">cancer</span><span class="track"><span class="fill" style="width:4.7%"></span></span><span class="n">2</span></div>
-<div class="row"><span class="k">disease</span><span class="track"><span class="fill" style="width:4.7%"></span></span><span class="n">2</span></div></div></section><section class="block"><h3>By panel</h3><div class="bars"><div class="row"><span class="k">Multi-tissue (377-plex)</span><span class="track"><span class="fill" style="width:100.0%"></span></span><span class="n">25</span></div>
-<div class="row"><span class="k">UCC 1K</span><span class="track"><span class="fill" style="width:44.0%"></span></span><span class="n">11</span></div>
-<div class="row"><span class="k">IO Protein (64-plex)</span><span class="track"><span class="fill" style="width:36.0%"></span></span><span class="n">9</span></div>
-<div class="row"><span class="k">6K Discovery</span><span class="track"><span class="fill" style="width:8.0%"></span></span><span class="n">2</span></div></div></section></div>
+  <div class="grid"><section class="block"><h3>Samples by organ</h3><div class="bars"><div class="row"><span class="k" title="Pancreas">Pancreas</span><span class="track"><span class="fill" style="width:100.0%"></span></span><span class="n">40</span></div>
+<div class="row"><span class="k" title="Rectum">Rectum</span><span class="track"><span class="fill" style="width:100.0%"></span></span><span class="n">40</span></div>
+<div class="row"><span class="k" title="Ileum">Ileum</span><span class="track"><span class="fill" style="width:60.0%"></span></span><span class="n">24</span></div>
+<div class="row"><span class="k" title="Lymph Node">Lymph Node</span><span class="track"><span class="fill" style="width:25.0%"></span></span><span class="n">10</span></div>
+<div class="row"><span class="k" title="Colon">Colon</span><span class="track"><span class="fill" style="width:20.0%"></span></span><span class="n">8</span></div>
+<div class="row"><span class="k" title="Bone Marrow">Bone Marrow</span><span class="track"><span class="fill" style="width:17.5%"></span></span><span class="n">7</span></div>
+<div class="row"><span class="k" title="Liver">Liver</span><span class="track"><span class="fill" style="width:15.0%"></span></span><span class="n">6</span></div>
+<div class="row"><span class="k" title="Stomach">Stomach</span><span class="track"><span class="fill" style="width:15.0%"></span></span><span class="n">6</span></div>
+<div class="row"><span class="k" title="Prostate">Prostate</span><span class="track"><span class="fill" style="width:12.5%"></span></span><span class="n">5</span></div>
+<div class="row"><span class="k" title="Appendix">Appendix</span><span class="track"><span class="fill" style="width:10.0%"></span></span><span class="n">4</span></div></div></section><section class="block"><h3>Samples by status</h3><div class="bars"><div class="row"><span class="k" title="Healthy">Healthy</span><span class="track"><span class="fill" style="width:100.0%"></span></span><span class="n">66</span></div>
+<div class="row"><span class="k" title="Disease">Disease</span><span class="track"><span class="fill" style="width:83.3%"></span></span><span class="n">55</span></div>
+<div class="row"><span class="k" title="Cancer">Cancer</span><span class="track"><span class="fill" style="width:43.9%"></span></span><span class="n">29</span></div></div></section><section class="block"><h3>Runs by assay</h3><div class="bars"><div class="row"><span class="k" title="Xenium">Xenium</span><span class="track"><span class="fill" style="width:100.0%"></span></span><span class="n">57</span></div>
+<div class="row"><span class="k" title="CosMx RNA">CosMx RNA</span><span class="track"><span class="fill" style="width:80.7%"></span></span><span class="n">46</span></div>
+<div class="row"><span class="k" title="CosMx Protein">CosMx Protein</span><span class="track"><span class="fill" style="width:29.8%"></span></span><span class="n">17</span></div></div></section><section class="block"><h3>Runs by panel</h3><div class="bars"><div class="row"><span class="k" title="Multi-tissue (377-plex)">Multi-tissue (377-plex)</span><span class="track"><span class="fill" style="width:100.0%"></span></span><span class="n">41</span></div>
+<div class="row"><span class="k" title="UCC 1K">UCC 1K</span><span class="track"><span class="fill" style="width:97.6%"></span></span><span class="n">40</span></div>
+<div class="row"><span class="k" title="IO Protein (64-plex)">IO Protein (64-plex)</span><span class="track"><span class="fill" style="width:41.5%"></span></span><span class="n">17</span></div>
+<div class="row"><span class="k" title="Multi-tissue (377-plex, with segmentation markers)">Multi-tissue (377-plex, with segmentation markers)</span><span class="track"><span class="fill" style="width:19.5%"></span></span><span class="n">8</span></div>
+<div class="row"><span class="k" title="6K Discovery">6K Discovery</span><span class="track"><span class="fill" style="width:14.6%"></span></span><span class="n">6</span></div>
+<div class="row"><span class="k" title="Prime 5K">Prime 5K</span><span class="track"><span class="fill" style="width:9.8%"></span></span><span class="n">4</span></div>
+<div class="row"><span class="k" title="Xenium colon panel">Xenium colon panel</span><span class="track"><span class="fill" style="width:9.8%"></span></span><span class="n">4</span></div></div></section><section class="block"><h3>Runs by site</h3><div class="bars"><div class="row"><span class="k" title="Northwestern">Northwestern</span><span class="track"><span class="fill" style="width:100.0%"></span></span><span class="n">52</span></div>
+<div class="row"><span class="k" title="St.Jude">St.Jude</span><span class="track"><span class="fill" style="width:46.2%"></span></span><span class="n">24</span></div>
+<div class="row"><span class="k" title="TAP">TAP</span><span class="track"><span class="fill" style="width:40.4%"></span></span><span class="n">21</span></div>
+<div class="row"><span class="k" title="WCM">WCM</span><span class="track"><span class="fill" style="width:26.9%"></span></span><span class="n">14</span></div>
+<div class="row"><span class="k" title="MSK-SAIL">MSK-SAIL</span><span class="track"><span class="fill" style="width:17.3%"></span></span><span class="n">9</span></div></div></section><section class="block"><h3>Samples by sex</h3><div class="bars"><div class="row"><span class="k" title="Unknown">Unknown</span><span class="track"><span class="fill" style="width:100.0%"></span></span><span class="n">57</span></div>
+<div class="row"><span class="k" title="Male">Male</span><span class="track"><span class="fill" style="width:96.5%"></span></span><span class="n">55</span></div>
+<div class="row"><span class="k" title="Female">Female</span><span class="track"><span class="fill" style="width:66.7%"></span></span><span class="n">38</span></div></div></section></div>
+
+  <p class="note"><sup>*</sup> Cell count reflects CosMx segmentation only
+    (RNA&nbsp;+&nbsp;protein runs). Xenium and other assays are not yet
+    tallied and will be added.</p>
 
   <footer>
-    Current release contents · updated 2026-07-09. Auto-generated from
-    <code>data/*.parquet</code> by <code>scripts/generate_stats.py</code> —
-    re-run after updating metadata. ·
-    <a href="https://www.saha-project.org/">saha-project.org</a>
+    Cohort as of 2026-07-10. Auto-generated from publication Tables 1 &amp; 2
+    by <code>scripts/generate_stats.py</code> — re-run after updating the
+    tables. · <a href="https://www.saha-project.org/">saha-project.org</a>
   </footer>
 </div>
 </body>

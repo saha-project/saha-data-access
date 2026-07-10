@@ -23,8 +23,8 @@ dataset.yaml      # AWS Open Data Registry submission file
 
 ## Dataset Tally
 
-Current sample and cell counts, with breakdowns by platform, organ, and institution:
-**[View the live tally →](https://saha-project.github.io/saha-data-access/stats.html)** — regenerate with `python scripts/generate_stats.py` after updating metadata.
+Current cohort and run counts, with breakdowns by organ, status, assay, panel, and site:
+**[View the live tally →](https://saha-project.github.io/saha-data-access/stats.html)** — built from publication Tables 1 & 2; regenerate with `python scripts/generate_stats.py`.
 
 ## Metadata Tables
 
@@ -117,7 +117,7 @@ See [tutorials/](tutorials/) for full worked examples.
 | `validate_release.py` | Cross-check parquet referential integrity and S3 object existence |
 | `test_athena.py` | Run validation queries against the Glue/Athena catalog |
 | `generate_data_dictionary.py` | Auto-generate `docs/DATA_DICTIONARY.md` from schemas |
-| `generate_stats.py` | Auto-generate `docs/stats.html` dataset tally from the Parquet tables |
+| `generate_stats.py` | Auto-generate `docs/stats.html` dataset tally from publication Tables 1 & 2 |
 
 ## Contributing Data
 
