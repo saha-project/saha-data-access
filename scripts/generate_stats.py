@@ -2,11 +2,18 @@
 """
 generate_stats.py
 Generate docs/stats.html — a self-contained tally of current SAHA numbers
-(sample counts, cell counts, breakdowns by platform / organ / institution)
-read live from the four Parquet metadata tables.
+(cohort samples, acquisition runs, breakdowns by organ / status / assay /
+panel / site) read live from the two publication supplementary tables:
 
-Re-run whenever the metadata changes to refresh the page:
+    Table_1.xlsx  sheet "Cohort"  — one row per tissue sample + demographics
+    Table_2.xlsx  sheet "Sheet1"  — one row per acquisition run + protocol
+
+Only aggregate counts are written to the page; the raw per-sample tables
+(which contain age/sex/ethnicity) are never copied into this repo.
+
+Re-run whenever the tables change to refresh the page:
     python scripts/generate_stats.py
+    python scripts/generate_stats.py --tables-dir /path/to/Tables
 """
 
 import argparse
@@ -15,10 +22,25 @@ from pathlib import Path
 
 import pandas as pd
 
+# Default location of the publication supplementary tables (outside the repo).
+DEFAULT_TABLES_DIR = Path(
+    "/Users/jiwoonpark/Dropbox (Personal)/2025- MasonLab/2025_SAHA/"
+    "Publication/Revision/Submission/Upload/Tables"
+)
 
-def counts(series):
-    """Ordered {value: count} dict, most common first."""
-    return series.value_counts().to_dict()
+# Cell counts live in the run tracker (in-repo). CosMx only for now —
+# Xenium and other assays are not yet tallied here.
+DEFAULT_RUNS_CSV = Path("raw_from_tracker/runs.csv")
+CELL_COLS = ["CR_Cells", "CP_Cells", "Other_Cells"]
+
+
+def counts(series, normalize=None):
+    """Ordered {value: count} dict, most common first, dropping blanks."""
+    s = series.dropna().astype(str).str.strip()
+    if normalize:
+        s = s.map(normalize)
+    s = s[s != ""]
+    return s.value_counts().to_dict()
 
 
 def stat(label, value):
@@ -30,7 +52,7 @@ def bars(d):
     out = []
     for k, v in d.items():
         out.append(
-            f'<div class="row"><span class="k">{k}</span>'
+            f'<div class="row"><span class="k" title="{k}">{k}</span>'
             f'<span class="track"><span class="fill" style="width:{100*v/mx:.1f}%"></span></span>'
             f'<span class="n">{v}</span></div>'
         )
@@ -41,38 +63,50 @@ def block(title, d):
     return f'<section class="block"><h3>{title}</h3><div class="bars">{bars(d)}</div></section>'
 
 
-def build(data_dir: Path) -> str:
-    s = pd.read_parquet(data_dir / "samples.parquet")
-    d = pd.read_parquet(data_dir / "donors.parquet")
-    r = pd.read_parquet(data_dir / "runs.parquet")
-    p = pd.read_parquet(data_dir / "panels.parquet")
+def title_case(x):
+    """Normalize organ labels: merges e.g. 'ileum' and 'Ileum'."""
+    return x.title()
 
-    n_cells = int(s["n_cells"].sum())
-    n_qc = int((s["qc_pass"] == True).sum())  # noqa: E712
+
+def build(tables_dir: Path, runs_csv: Path) -> str:
+    cohort = pd.read_excel(tables_dir / "Table_1.xlsx", sheet_name="Cohort")
+    runs = pd.read_excel(tables_dir / "Table_2.xlsx", sheet_name="Sheet1")
+    tracker = pd.read_csv(runs_csv)
+
+    n_samples = len(cohort)
+    n_runs = len(runs)
+    organ_counts = counts(cohort["Organ"], normalize=title_case)
+    n_organs = len(organ_counts)
+    n_assays = runs["Assay"].nunique()
+    n_sites = runs["Run location"].nunique()
+    n_cells = int(
+        tracker[CELL_COLS].apply(pd.to_numeric, errors="coerce").sum().sum()
+    )
 
     caption = (
-        f"cells profiled across {len(s)} samples · {len(d)} donors · "
-        f"{s['organ'].nunique()} organs · {s['platform'].nunique()} platforms"
+        f"cells segmented across CosMx runs<sup>*</sup> · {n_samples} samples · "
+        f"{n_organs} organs · {n_assays} assays · {n_sites} sites"
     )
 
     strip = "".join([
-        stat("samples", len(s)),
-        stat("donors", len(d)),
-        stat("runs", len(r)),
-        stat("panels", len(p)),
-        stat("QC&#8209;passed", n_qc),
+        stat("samples", n_samples),
+        stat("runs", n_runs),
+        stat("organs", n_organs),
+        stat("assays", n_assays),
+        stat("sites", n_sites),
     ])
 
     grid = "".join([
-        block("By platform", counts(s["platform"])),
-        block("By organ", counts(s["organ"])),
-        block("By generating institution", counts(s["generation_institution"])),
-        block("By condition", counts(s["condition"])),
-        block("By panel", counts(s["panel_name"])),
+        block("Samples by organ", organ_counts),
+        block("Samples by status", counts(cohort["Status"])),
+        block("Runs by assay", counts(runs["Assay"])),
+        block("Runs by panel", counts(runs["Panel"])),
+        block("Runs by site", counts(runs["Run location"])),
+        block("Samples by sex", counts(cohort["Sex"].replace({"U": "Unknown", "M": "Male", "F": "Female"}))),
     ])
 
     html = TEMPLATE
-    html = html.replace("%%CELLS%%", f"{n_cells:,}")
+    html = html.replace("%%HERO%%", f"{n_cells:,}")
     html = html.replace("%%CAPTION%%", caption)
     html = html.replace("%%STRIP%%", strip)
     html = html.replace("%%GRID%%", grid)
@@ -123,7 +157,10 @@ TEMPLATE = """\
   .hero .big { display:block; margin:0; color:var(--eosin);
     font-size:clamp(3rem,13vw,6.5rem); line-height:.92; font-weight:600; }
   .hero .cap { display:block; margin-top:.9rem; color:var(--muted);
-    font-size:clamp(.95rem,2.5vw,1.15rem); max-width:34ch; }
+    font-size:clamp(.95rem,2.5vw,1.15rem); max-width:40ch; }
+  .hero .cap sup { color:var(--eosin); font-weight:600; }
+  .note { margin:1.75rem 0 0; color:var(--muted); font-size:.8rem; }
+  .note sup { color:var(--eosin); font-weight:600; }
 
   /* Stat strip */
   .strip { display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
@@ -170,7 +207,7 @@ TEMPLATE = """\
   <p class="eyebrow">SAHA · Spatial Atlas of Human Anatomy</p>
 
   <div class="hero">
-    <span class="big mono">%%CELLS%%</span>
+    <span class="big mono">%%HERO%%</span>
     <span class="cap">%%CAPTION%%</span>
   </div>
 
@@ -178,11 +215,14 @@ TEMPLATE = """\
 
   <div class="grid">%%GRID%%</div>
 
+  <p class="note"><sup>*</sup> Cell count reflects CosMx segmentation only
+    (RNA&nbsp;+&nbsp;protein runs). Xenium and other assays are not yet
+    tallied and will be added.</p>
+
   <footer>
-    Current release contents · updated %%DATE%%. Auto-generated from
-    <code>data/*.parquet</code> by <code>scripts/generate_stats.py</code> —
-    re-run after updating metadata. ·
-    <a href="https://www.saha-project.org/">saha-project.org</a>
+    Cohort as of %%DATE%%. Auto-generated from publication Tables 1 &amp; 2
+    by <code>scripts/generate_stats.py</code> — re-run after updating the
+    tables. · <a href="https://www.saha-project.org/">saha-project.org</a>
   </footer>
 </div>
 </body>
@@ -192,11 +232,14 @@ TEMPLATE = """\
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--data-dir", type=Path, default=Path("data"))
+    ap.add_argument("--tables-dir", type=Path, default=DEFAULT_TABLES_DIR,
+                    help="Directory holding Table_1.xlsx and Table_2.xlsx")
+    ap.add_argument("--runs-csv", type=Path, default=DEFAULT_RUNS_CSV,
+                    help="Run tracker CSV with CosMx cell counts")
     ap.add_argument("--output", type=Path, default=Path("docs/stats.html"))
     args = ap.parse_args()
 
-    html = build(args.data_dir)
+    html = build(args.tables_dir, args.runs_csv)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(html)
     print(f"Wrote {args.output}")
