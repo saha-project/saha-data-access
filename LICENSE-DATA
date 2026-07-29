@@ -1,0 +1,35 @@
+# SAHA Data License
+
+The `LICENSE` file in this repository (MIT) covers **code and schemas only**.
+
+## Open and registered tiers
+
+SAHA datasets in the open and registered access tiers are licensed under the
+Creative Commons Attribution 4.0 International License (CC-BY 4.0).
+
+Full license text: https://creativecommons.org/licenses/by/4.0/legalcode
+Summary: https://creativecommons.org/licenses/by/4.0/
+
+You are free to share and adapt the data for any purpose, including
+commercially, provided you give appropriate credit, link to the license, and
+indicate whether changes were made.
+
+**Attribution:**
+
+> Spatial Atlas of Human Anatomy (SAHA), Mason Lab, Weill Cornell Medicine.
+> Licensed under CC-BY 4.0. Park J et al., bioRxiv 2025.06.16.658716.
+> https://doi.org/10.1101/2025.06.16.658716
+
+## Controlled tier
+
+Controlled-tier data are **not** publicly licensed. Access is granted only
+under a signed Data Use Agreement with the SAHA Consortium. See
+[docs/ACCESS_TIERS.md](docs/ACCESS_TIERS.md).
+
+## Data Use Statement
+
+All users are asked to observe the SAHA Data Use Statement (no re-identification
+attempts, citation of the marker paper, research use only) in
+[docs/ACCESS_TIERS.md](docs/ACCESS_TIERS.md#saha-data-use-statement). These are
+community expectations, not additional license conditions — CC-BY 4.0 permits no
+restrictions beyond attribution.
