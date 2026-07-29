@@ -29,7 +29,7 @@ Tags:
   - Homo sapiens
   - parquet
   - zarr
-License: "CC-BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)"
+License: "CC-BY 4.0 (https://creativecommons.org/licenses/by/4.0/)"
 Citation: "Park J et al. Spatial Atlas of Human Anatomy (SAHA). bioRxiv 2025.06.16.658716. https://doi.org/10.1101/2025.06.16.658716"
 Resources:
   - Description: Processed AnnData h5ad objects (organ-level CosMx RNA/Protein, sample-level Xenium) and SpatialData zarr objects

@@ -7,9 +7,13 @@ SAHA data are organized into three access tiers based on donor consent and data 
 
 | Tier | Who can access | What's available | License |
 |------|---------------|------------------|---------|
-| **Open** | Anyone, no account | Expression matrices, cell coordinates, metadata (organ, platform, QC) | CC-BY-NC-ND 4.0 |
-| **Registered** | Researchers who accept DUA | Open tier + donor demographics (age group, sex) | CC-BY-NC-ND 4.0 |
+| **Open** | Anyone, no account | Expression matrices, cell coordinates, metadata (organ, platform, QC) | CC-BY 4.0 |
+| **Registered** | Researchers who accept DUA | Open tier + donor demographics (age group, sex) | CC-BY 4.0 |
 | **Controlled** | Approved projects with IRB | Registered tier + exact age, ethnicity, comorbidities, clinical data | Full DUA required |
+
+Open- and registered-tier data are released under [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/) — free to use, modify, and redistribute, including commercially, provided you give attribution. Controlled-tier data are not publicly licensed; access is granted under a signed Data Use Agreement.
+
+All users of SAHA data are asked to observe the [SAHA Data Use Statement](#saha-data-use-statement) below.
 
 ---
 
@@ -97,6 +101,19 @@ The `donors.consent_level` field records the maximum tier permitted by each dono
 | `controlled` | Requires full IRB and DUA review |
 
 Metadata tables automatically include only the columns permissible at each tier. The `open` version of `donors.parquet` omits `age`, `ethnicity`, and `comorbidities`.
+
+---
+
+## SAHA Data Use Statement
+
+Open- and registered-tier data are licensed CC-BY 4.0, which imposes no conditions beyond attribution. The following are **community expectations, not license terms** — we ask that all users observe them:
+
+1. **Do not attempt re-identification.** Do not attempt to identify individual donors, contact them, or link SAHA data to other datasets for the purpose of re-identification.
+2. **Please cite the SAHA marker paper.** CC-BY requires attribution; we additionally ask that you cite Park J et al., *Spatial Atlas of Human Anatomy (SAHA)* (see [readme.md](../readme.md#citation)) so that data contributions remain traceable.
+3. **Not for clinical or diagnostic use.** SAHA data are provided for research purposes only. They are not validated for clinical decision-making, diagnosis, or treatment.
+4. **No warranty.** Data are provided "as is," without warranty of any kind, as set out in Section 5 of the CC-BY 4.0 license.
+
+Legally binding restrictions apply only to the **controlled tier**, where they are set out in the signed Data Use Agreement.
 
 ---
 

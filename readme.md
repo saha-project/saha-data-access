@@ -126,7 +126,7 @@ Institutions contributing spatial omics data to SAHA should see [docs/CONTRIBUTI
 ## License
 
 Code and schemas in this repository: MIT.
-SAHA datasets: CC-BY-NC-ND 4.0. See [docs/ACCESS_TIERS.md](docs/ACCESS_TIERS.md) for details on open, registered, and controlled access tiers.
+SAHA datasets (open and registered tiers): [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/). Controlled-tier data are released under a signed DUA, not a public license. See [docs/ACCESS_TIERS.md](docs/ACCESS_TIERS.md) for details on the three access tiers and the SAHA Data Use Statement.
 
 ## Citation
 
