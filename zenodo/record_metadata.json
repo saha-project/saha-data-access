@@ -1,0 +1,428 @@
+{
+  "_comment": [
+    "Zenodo (InvenioRDM) record metadata for the SAHA v1.0 SpatialData release.",
+    "POST the 'parent' object to https://zenodo.org/api/records to create a draft.",
+    "Child records are built from 'child_template' by substituting {PLACEHOLDERS}.",
+    "Every TODO must be resolved before deposit. Dry-run on sandbox.zenodo.org first.",
+    "Description fields are HTML rendered from zenodo/DESCRIPTION.md \u2014 edit that file, not these strings."
+  ],
+  "_todo": [
+    "Fill in the two ORCIDs in creators[] (Park, Mason)",
+    "Replace 10.5281/zenodo.TODO-CHILD once each child DOI is reserved",
+    "Add funder / award numbers to funding[]"
+  ],
+  "_resolved": [
+    "Governance: institutional and consent approvals complete (2026-07-31)",
+    "Disease samples (IBD x2, PDAC x2) are IN scope for v1, released unfiltered without qc_pass",
+    "Writer versions pinned: spatialdata 0.8.0, spatialdata-io 0.7.1, zarr 3.3.0 (Zarr v3 stores)",
+    "CosMx images ADDED (2026-08-30): 5-channel morphology + cell/compartment label masks, stitched from the AtoMx per-FOV exports on Cayuga. Alignment verified per sample at 99.7-100%.",
+    "Zenodo carries CosMx morphology at 4x (0.48 um/px); labels at full resolution. Full-resolution copies (623 GB) go to AWS Open Data, not Zenodo.",
+    "cosmx-rna split into two records (GI vs pancreas/lymphoid): all 13 in one record measured 48.4 GB against the 50 GB cap. Release now has 6 child records.",
+    "Records restructured to per-organ (2026-09-07), replacing the assay-type split. 7 child records; pancreas split by platform on size grounds."
+  ],
+  "_release_gate": {
+    "state": "hold as unpublished drafts with reserved DOIs",
+    "reason": [
+      "Release is gated on manuscript acceptance, with no known date.",
+      "Zenodo allows file edits only within 45 days of publication, and an embargo",
+      "opens automatically at midnight UTC on its end date. Publishing now would",
+      "start the file-edit clock during review and risk premature opening if",
+      "acceptance slips past the date. A reserved DOI is citable in the manuscript",
+      "without publishing."
+    ],
+    "on_acceptance": "publish open, or set embargo.until to the publication date if the journal requires one"
+  },
+  "parent": {
+    "access": {
+      "record": "public",
+      "files": "restricted",
+      "embargo": {
+        "active": true,
+        "until": "TODO-YYYY-MM-DD",
+        "reason": "Pending publication of the associated manuscript."
+      }
+    },
+    "metadata": {
+      "resource_type": {
+        "id": "dataset"
+      },
+      "title": "Spatial Atlas of Human Anatomy (SAHA): SpatialData objects, v1.0",
+      "publisher": "Zenodo",
+      "version": "v1.0",
+      "languages": [
+        {
+          "id": "eng"
+        }
+      ],
+      "_creators_note": [
+        "Named leads followed by the consortium as an organizational creator.",
+        "Cites as: Park J, Mason CE, SAHA Consortium (2026).",
+        "Add further named leads before the organizational entry if wanted.",
+        "Only the two ORCIDs below still need filling in."
+      ],
+      "creators": [
+        {
+          "person_or_org": {
+            "type": "personal",
+            "family_name": "Park",
+            "given_name": "Jiwoon",
+            "identifiers": [
+              {
+                "scheme": "orcid",
+                "identifier": "TODO-0000-0000-0000-0000"
+              }
+            ]
+          },
+          "affiliations": [
+            {
+              "name": "Weill Cornell Medicine"
+            }
+          ]
+        },
+        {
+          "person_or_org": {
+            "type": "personal",
+            "family_name": "Mason",
+            "given_name": "Christopher E.",
+            "identifiers": [
+              {
+                "scheme": "orcid",
+                "identifier": "TODO-0000-0000-0000-0000"
+              }
+            ]
+          },
+          "affiliations": [
+            {
+              "name": "Weill Cornell Medicine"
+            }
+          ]
+        },
+        {
+          "person_or_org": {
+            "type": "organizational",
+            "name": "SAHA Consortium"
+          }
+        }
+      ],
+      "contributors": [
+        {
+          "person_or_org": {
+            "type": "personal",
+            "family_name": "Park",
+            "given_name": "Jiwoon"
+          },
+          "role": {
+            "id": "contactperson"
+          },
+          "affiliations": [
+            {
+              "name": "Weill Cornell Medicine"
+            }
+          ]
+        }
+      ],
+      "description": "TODO: render from zenodo/DESCRIPTION.md (PARENT section) to HTML",
+      "rights": [
+        {
+          "id": "cc-by-4.0",
+          "title": {
+            "en": "Creative Commons Attribution 4.0 International"
+          },
+          "link": "https://creativecommons.org/licenses/by/4.0/legalcode"
+        }
+      ],
+      "subjects": [
+        {
+          "subject": "spatial transcriptomics"
+        },
+        {
+          "subject": "spatial proteomics"
+        },
+        {
+          "subject": "single-cell"
+        },
+        {
+          "subject": "human tissue atlas"
+        },
+        {
+          "subject": "CosMx"
+        },
+        {
+          "subject": "Xenium"
+        },
+        {
+          "subject": "SpatialData"
+        },
+        {
+          "subject": "OME-NGFF"
+        },
+        {
+          "subject": "gastrointestinal tract"
+        },
+        {
+          "subject": "Homo sapiens"
+        }
+      ],
+      "related_identifiers": [
+        {
+          "identifier": "10.1101/2025.06.16.658716",
+          "scheme": "doi",
+          "relation_type": {
+            "id": "issupplementto"
+          },
+          "resource_type": {
+            "id": "publication-preprint"
+          }
+        },
+        {
+          "identifier": "https://github.com/masonlab/saha-data-access",
+          "scheme": "url",
+          "relation_type": {
+            "id": "issupplementedby"
+          },
+          "resource_type": {
+            "id": "software"
+          }
+        },
+        {
+          "identifier": "https://www.saha-project.org/",
+          "scheme": "url",
+          "relation_type": {
+            "id": "isdescribedby"
+          }
+        },
+        {
+          "_comment": "One entry per child record; fill in after each child DOI is reserved",
+          "identifier": "10.5281/zenodo.TODO-CHILD",
+          "scheme": "doi",
+          "relation_type": {
+            "id": "haspart"
+          },
+          "resource_type": {
+            "id": "dataset"
+          }
+        }
+      ],
+      "funding": [
+        {
+          "_comment": "TODO: add grant IDs \u2014 Zenodo auto-resolves NIH/NSF/ERC award numbers",
+          "funder": {
+            "name": "TODO"
+          },
+          "award": {
+            "number": "TODO"
+          }
+        }
+      ],
+      "dates": [
+        {
+          "date": "TODO-YYYY-MM-DD",
+          "type": {
+            "id": "available"
+          },
+          "description": "Embargo lift date"
+        }
+      ]
+    },
+    "custom_fields": {},
+    "_communities": [
+      "saha"
+    ],
+    "_files_to_upload": [
+      "README.md",
+      "samples.parquet",
+      "donors.parquet",
+      "runs.parquet",
+      "panels.parquet",
+      "file_manifest.csv",
+      "MD5SUMS.txt",
+      "LICENSE-DATA"
+    ]
+  },
+  "child_template": {
+    "_comment": [
+      "One child record per platform x organ group, each sized to stay under 50 GB",
+      "where possible. Request the 200 GB quota increase only for children that",
+      "exceed it. Placeholders: {PLATFORM} {PLATFORM_SLUG} {ORGAN_GROUP}",
+      "{N_SAMPLES} {N_CELLS} {PARENT_DOI}"
+    ],
+    "access": {
+      "record": "public",
+      "files": "restricted",
+      "embargo": {
+        "active": true,
+        "until": "TODO-YYYY-MM-DD",
+        "reason": "Pending publication of the associated manuscript."
+      }
+    },
+    "metadata": {
+      "resource_type": {
+        "id": "dataset"
+      },
+      "title": "Spatial Atlas of Human Anatomy (SAHA): {PLATFORM} SpatialData objects \u2014 {ORGAN_GROUP}, v1.0",
+      "publisher": "Zenodo",
+      "version": "v1.0",
+      "languages": [
+        {
+          "id": "eng"
+        }
+      ],
+      "creators": "SAME AS PARENT",
+      "description": "TODO: render from zenodo/DESCRIPTION.md (CHILD section) to HTML",
+      "rights": [
+        {
+          "id": "cc-by-4.0"
+        }
+      ],
+      "subjects": "SAME AS PARENT, plus {PLATFORM} and {ORGAN_GROUP} terms",
+      "related_identifiers": [
+        {
+          "identifier": "{PARENT_DOI}",
+          "scheme": "doi",
+          "relation_type": {
+            "id": "ispartof"
+          },
+          "resource_type": {
+            "id": "dataset"
+          }
+        },
+        {
+          "identifier": "10.1101/2025.06.16.658716",
+          "scheme": "doi",
+          "relation_type": {
+            "id": "issupplementto"
+          },
+          "resource_type": {
+            "id": "publication-preprint"
+          }
+        }
+      ]
+    },
+    "_communities": [
+      "saha"
+    ],
+    "_files_to_upload": "one uncompressed ZIP per sample: {SAMPLE_ID}.zarr.zip"
+  },
+  "_proposed_split": {
+    "_comment": [
+      "Restructured 2026-09-07: one record per organ, spanning both platforms and",
+      "both assays, so matched RNA and protein for a tissue arrive together.",
+      "Pancreas is the sole exception -- both platforms together are 64.2 GB, over",
+      "the 50 GB cap, and a normal/PDAC split does not rescue it (normal alone is",
+      "58.5 GB), so pancreas is split by platform.",
+      "Archives are split across two machines: CosMx on Cayuga, Xenium locally.",
+      "Both halves upload to the same draft from where they already sit."
+    ],
+    "children": [
+      {
+        "slug": "saha-v1-appendix",
+        "platform": "cosmx+xenium",
+        "organ_group": "appendix",
+        "n_samples": 11,
+        "measured_gb": 29.0,
+        "n_cells": 1527610,
+        "has_images": true,
+        "files_on": {
+          "cluster": 3,
+          "local": 8
+        },
+        "title": "Spatial Atlas of Human Anatomy (SAHA): appendix, v1.0"
+      },
+      {
+        "slug": "saha-v1-colon",
+        "platform": "cosmx",
+        "organ_group": "colon",
+        "n_samples": 4,
+        "measured_gb": 7.5,
+        "n_cells": 679317,
+        "has_images": true,
+        "files_on": {
+          "cluster": 4
+        },
+        "title": "Spatial Atlas of Human Anatomy (SAHA): colon, v1.0"
+      },
+      {
+        "slug": "saha-v1-ileum",
+        "platform": "cosmx+xenium",
+        "organ_group": "ileum",
+        "n_samples": 13,
+        "measured_gb": 36.7,
+        "n_cells": 1679278,
+        "has_images": true,
+        "files_on": {
+          "cluster": 5,
+          "local": 8
+        },
+        "title": "Spatial Atlas of Human Anatomy (SAHA): ileum, v1.0"
+      },
+      {
+        "slug": "saha-v1-lymph-node",
+        "platform": "cosmx",
+        "organ_group": "lymph_node",
+        "n_samples": 2,
+        "measured_gb": 6.3,
+        "n_cells": 1062737,
+        "has_images": true,
+        "files_on": {
+          "cluster": 2
+        },
+        "title": "Spatial Atlas of Human Anatomy (SAHA): lymph node, v1.0"
+      },
+      {
+        "slug": "saha-v1-pancreas-cosmx",
+        "platform": "cosmx",
+        "organ_group": "pancreas",
+        "n_samples": 6,
+        "measured_gb": 37.3,
+        "n_cells": 2619816,
+        "has_images": true,
+        "files_on": {
+          "cluster": 6
+        },
+        "title": "Spatial Atlas of Human Anatomy (SAHA): pancreas (CosMx), v1.0"
+      },
+      {
+        "slug": "saha-v1-pancreas-xenium",
+        "platform": "xenium",
+        "organ_group": "pancreas",
+        "n_samples": 9,
+        "measured_gb": 26.9,
+        "n_cells": 1242392,
+        "has_images": true,
+        "files_on": {
+          "local": 9
+        },
+        "title": "Spatial Atlas of Human Anatomy (SAHA): pancreas (Xenium), v1.0"
+      },
+      {
+        "slug": "saha-v1-stomach",
+        "platform": "cosmx",
+        "organ_group": "stomach",
+        "n_samples": 2,
+        "measured_gb": 8.1,
+        "n_cells": 513747,
+        "has_images": true,
+        "files_on": {
+          "cluster": 2
+        },
+        "title": "Spatial Atlas of Human Anatomy (SAHA): stomach, v1.0"
+      }
+    ],
+    "totals": {
+      "n_records": 7,
+      "n_samples": 47,
+      "measured_gb": 151.8,
+      "n_cells": 9324897,
+      "cosmx_images_zenodo_gb": 52.0,
+      "cosmx_images_awsfull_gb": 623.0
+    },
+    "_naming": [
+      "Directory slugs carry v1 so a v2 tree can be built alongside without collisions.",
+      "Zenodo never sees the slug -- record identity is the title plus the DOI.",
+      "Versioning is Zenodo-native: v2 is published as a new version of the same",
+      "record, sharing one concept DOI that always resolves to the latest. The",
+      "version lives in the `version` field and the title suffix, not in the record",
+      "name, so the concept DOI stays citable across versions."
+    ]
+  }
+}
