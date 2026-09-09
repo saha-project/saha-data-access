@@ -17,3 +17,16 @@ __pycache__/
 
 # macOS
 .DS_Store
+
+# Internal tracker exports (staging, unreconciled). patient_blocks.csv carries
+# Case/Ref #, IRB #, IRB contact and pathologist names — same reason
+# donor_metadata.csv is excluded above. Regenerate with 02_Code/tally/sync.py.
+raw_from_tracker/
+
+# Per-cell donor assignments — 169 MB of derived output, already written into
+# the zarr objects. Regenerate with scripts/resolve_donor_cores.py; the inputs
+# that are NOT regenerable (manual_assignments.csv, fov_overrides.csv, the QC
+# figures) are tracked.
+zenodo/donor_qc/*.donor_core.csv
+zenodo/donor_qc/_stale_from_buggy_run/
+zenodo/donor_qc/previous/
