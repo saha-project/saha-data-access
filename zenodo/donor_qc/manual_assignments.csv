@@ -1,0 +1,24 @@
+sample_id,cluster,core,source
+SAHA_CP_ILE_A1_SJ01,?1,ILE_A1_3,jiwoon red-marked cores_ILE_A1.png 2026-09-08
+SAHA_CP_ILE_A1_SJ01,?2,ILE_A1_1,jiwoon red-marked cores_ILE_A1.png 2026-09-08
+SAHA_CP_ILE_A1_SJ01,?3,ILE_A1_1,jiwoon red-marked cores_ILE_A1.png 2026-09-08
+SAHA_CP_ILE_A1_SJ01,?4,ILE_A1_2,jiwoon red-marked cores_ILE_A1.png 2026-09-08
+SAHA_CP_ILE_A1_SJ01,?5,ILE_A1_4,jiwoon red-marked cores_ILE_A1.png 2026-09-08
+SAHA_CP_ILE_A1_SJ01,?6,ILE_A1_4,jiwoon red-marked cores_ILE_A1.png 2026-09-08
+SAHA_CP_PANC_A1_SJ01,?5,PANC_A1_9,jiwoon cores_PANC_A1_label.jpg - grid orientation confirmed direct
+SAHA_CP_PANC_A1_SJ01,?3,PANC_A1_5,jiwoon cores_PANC_A1_label.jpg
+SAHA_CP_PANC_A1_SJ01,?2,PANC_A1_1,jiwoon cores_PANC_A1_label.jpg
+SAHA_CP_PANC_A1_SJ01,?10,PANC_A1_10,jiwoon cores_PANC_A1_label.jpg
+SAHA_CP_PANC_A1_SJ01,?11,PANC_A1_6,jiwoon cores_PANC_A1_label.jpg
+SAHA_CP_PANC_A1_SJ01,?6,PANC_A1_2,jiwoon cores_PANC_A1_label.jpg
+SAHA_CP_PANC_A1_SJ01,?12,PANC_A1_11,jiwoon cores_PANC_A1_label.jpg
+SAHA_CP_PANC_A1_SJ01,?7,PANC_A1_7,jiwoon cores_PANC_A1_label.jpg
+SAHA_CP_PANC_A1_SJ01,?8,PANC_A1_3,jiwoon cores_PANC_A1_label.jpg
+SAHA_CP_PANC_A1_SJ01,?4,PANC_A1_12,jiwoon cores_PANC_A1_label.jpg
+SAHA_CP_PANC_A1_SJ01,?9,PANC_A1_8,jiwoon cores_PANC_A1_label.jpg
+SAHA_CP_PANC_A1_SJ01,?1,PANC_A1_4,jiwoon cores_PANC_A1_label.jpg
+SAHA_CP_COL_A1_EC02,?1,COL_A1_2,jiwoon blue-boxed upper region cores_COL_A1.png
+SAHA_CP_COL_A1_EC02,?2,COL_A1_2,jiwoon blue-boxed upper region cores_COL_A1.png
+SAHA_CP_COL_A1_EC02,?3,COL_A1_6,jiwoon blue-boxed lower region cores_COL_A1.png
+SAHA_CP_COL_A1_EC02,?4,COL_A1_6,jiwoon blue-boxed lower region cores_COL_A1.png
+SAHA_XR_PANC_A1_MS01_RNA,grid,PANC_A1_1..12,jiwoon boxed+labelled cores_PANC_A1_xenium_MS01.png; Xenium grid is 180deg rotated vs CosMx (4/8/12 3/7/11 2/6/10 1/5/9)

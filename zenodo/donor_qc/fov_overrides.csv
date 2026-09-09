@@ -1,0 +1,8 @@
+sample_id,fov,core,source
+SAHA_CR_ILE_A1_EC01,40,ILE_A1_4,jiwoon boxed this FOV; 47365 px from core 3 but 2533 px from core 4
+SAHA_CP_COL_A1_SJ01,39,COL_A1_5,jiwoon upper box; labelled 1 but sits on core 5 body
+SAHA_CP_COL_A1_SJ01,40,COL_A1_5,jiwoon upper box; labelled 1 but sits on core 5 body
+SAHA_CP_COL_A1_SJ01,41,COL_A1_5,jiwoon upper box; labelled 1 but sits on core 5 body
+SAHA_CP_COL_A1_SJ01,22,COL_A1_7,jiwoon lower box; labelled 5 but sits on core 7 body
+SAHA_CP_COL_A1_SJ01,23,COL_A1_7,jiwoon lower box; labelled 5 but sits on core 7 body
+SAHA_CP_COL_A1_SJ01,24,COL_A1_7,jiwoon lower box; all 6 neighbouring FOVs are core 7
