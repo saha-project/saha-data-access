@@ -2,6 +2,9 @@
 
 Data schemas, metadata infrastructure, and access documentation for the **Spatial Atlas of Human Anatomy (SAHA)** — hosted on the [AWS Open Data Program](https://registry.opendata.aws/).
 
+> **Status (October 2026):** the AWS bucket `s3://saha-open-data` is not live yet. S3 paths in these
+> docs show the planned layout. Until it opens, use the metadata tables in [`data/`](data/).
+
 ## About SAHA
 
 SAHA is a multimodal, subcellular-resolution spatial reference atlas of human tissues, profiling 15M+ cells from 100+ donors across 16 tissue types. It captures matched RNA (up to 19,000 genes), protein (67 markers), and histological data at ~50 nm resolution using CosMx, Xenium, GeoMx, and RNAscope spatial omics platforms. The atlas includes both healthy and disease tissues (colorectal cancer, pancreatic ductal adenocarcinoma, inflammatory bowel disease).
@@ -92,15 +95,17 @@ adata = sc.read_h5ad(
 )
 ```
 
-**Query metadata with Athena:**
+**Query the metadata tables** (works today on the copies in `data/`):
 
-```sql
-SELECT s.sample_id, s.organ, s.n_cells, d.consent_level
-FROM saha.samples s
-JOIN saha.donors d ON s.donor_id = d.donor_id
-WHERE s.qc_pass = true
-ORDER BY s.organ;
+```python
+import pandas as pd
+samples = pd.read_parquet("data/samples.parquet")
+samples[samples.qc_pass.eq(True)].groupby(["organ", "platform"]).n_cells.agg(["count", "sum"])
 ```
+
+Amazon Athena (SQL over S3) will work once the AWS bucket is live, and only after you register the
+tables in your own AWS account (setup steps will be published with the bucket); there is no
+shared `saha` database to connect to.
 
 See [tutorials/](tutorials/) for full worked examples.
 

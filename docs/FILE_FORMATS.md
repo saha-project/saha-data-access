@@ -13,7 +13,7 @@ This document describes the file formats used for raw, processed, and metadata f
 | `metadata/runs/`    | Parquet (flat) | Acquisition run metadata |
 | `metadata/panels/`  | Parquet (flat) | Panel gene/protein lists |
 
-All Parquet files use Snappy compression and are queryable via Amazon Athena or any Parquet reader (pandas, R arrow, DuckDB).
+All Parquet files use Snappy compression and are readable with any Parquet reader (pandas, R arrow, DuckDB), and queryable with Amazon Athena once the bucket is live and the tables are registered in your own AWS account.
 
 ```python
 import pandas as pd
