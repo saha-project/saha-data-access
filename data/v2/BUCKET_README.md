@@ -5,7 +5,7 @@ Phase 2 is new data alongside phase 1 (`phase1/`, the Zenodo v1.0 records `saha-
 This is a packaging release for access and validation, not a finished analysis — see "Known gaps".
 
 ```
-s3://saha-data-access/phase2/
+s3://<SAHA AWS bucket>/phase2/          bucket location to be announced
 ├── README.md                          this file
 ├── metadata/
 │   ├── samples.parquet                6 acquisitions (one row per platform x assay x slide)
@@ -46,9 +46,11 @@ zarr v3 SpatialData.
 
 ## Reading
 
+The AWS bucket name and access instructions will be added here once the bucket is set up.
+
 ```bash
-aws s3 sync --endpoint-url https://s3.us-east-1.wasabisys.com \
-    s3://saha-data-access/phase2/processed/saha-phase2-prostate/SAHA_CosMx_PROS_A2.zarr ./SAHA_CosMx_PROS_A2.zarr
+aws s3 sync s3://<SAHA AWS bucket>/phase2/processed/saha-phase2-prostate/SAHA_CosMx_PROS_A2.zarr \
+    ./SAHA_CosMx_PROS_A2.zarr
 ```
 
 ```python
@@ -83,7 +85,7 @@ each object"): cell-to-cell on CosMx, tissue-level on Xenium. With `spatialdata-
 installed, `crop.pl.render_images("he_same_section").pl.render_shapes("rna_cell_boundaries").pl.show()`
 draws the H&E with the cell outlines on top.
 
-Use the credentials you were given; the bucket is not public.
+Access is by invitation; phase 2 is not public.
 
 ## Known gaps
 
