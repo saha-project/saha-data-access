@@ -324,7 +324,9 @@ def qc_one(path, tier, outdir):
             inside = (c >= 0) & (c < m.shape[1]) & (rr >= 0) & (rr < m.shape[0])
             h["cells_on_he_tissue"] = on = round(float(m[rr[inside], c[inside]].mean() * inside.mean()), 3) if inside.any() else 0.0
             h["he_tissue_random"] = bg = round(float(m.mean()), 3)
-            if on < 2 * bg:
+            # lift over random on tissue, OR off tissue: where tissue fills most of the frame
+            # (resections, bg > 50%) "2x random" is unreachable even for a perfect fit
+            if on < 2 * bg and (1 - on) > 0.5 * (1 - bg):
                 P.append(f"{hn}: cells land on H&E tissue {on:.0%} vs {bg:.0%} at random -- transform wrong?")
         he_panel = (hn, np.moveaxis(np.asarray(lo.values), 0, -1).astype(np.uint8), Mh)
 

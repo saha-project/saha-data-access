@@ -7,13 +7,16 @@ Zenodo stores files, not directories, so each .zarr becomes one .zip. Archives
 use ZIP_STORED (no compression): zarr chunks are already compressed, so deflate
 costs hours of CPU for ~1% gain.
 
-Record split, derived from samples.parquet:
-    xenium  -> one record per organ      (appendix / ileum / pancreas)
-    cosmx   -> one record per assay type (rna / protein)
-    plus a parent collection record holding metadata tables and documentation.
+Record split, derived from samples.parquet -- see record_slug() and the
+"Release Layout" section of docs/FILE_FORMATS.md:
+    one record per organ, spanning both platforms and both assays
+    pancreas split by platform  (both together are 64 GB, over the cap)
+    colorectal cancer its own record rather than inside normal colon
+    plus a parent collection record holding the metadata tables and docs.
 
 Every child stays under Zenodo's 50 GB default quota, so no quota-increase
-request is needed.
+request is needed. Re-check that after any change to what the release contains:
+the record sizes are a property of the data, not a standing guarantee.
 
 Usage:
     # see the plan without writing anything
@@ -45,12 +48,19 @@ REPO = Path(__file__).resolve().parent.parent
 JUNK_NAMES = {".DS_Store", "Icon\r"}
 JUNK_PREFIX = "._"
 
-# Copied into the parent collection record.
+# Copied into the parent collection record. Flat single files, not the
+# Hive-partitioned directories AWS carries: a Zenodo record is a flat list of
+# files and someone downloading one wants one file.
 PARENT_FILES = [
     "data/samples.parquet",
     "data/donors.parquet",
     "data/runs.parquet",
     "data/panels.parquet",
+    # The two tables that answer "which cells came from whom". Without these the
+    # parent record describes samples and donors but not the crossing between
+    # them, which is the unit the objects are actually organised by.
+    "zenodo/measurements.csv",
+    "zenodo/cohort_coverage.csv",
     "LICENSE-DATA",
 ]
 
@@ -82,11 +92,29 @@ def record_slug(row) -> str:
     platforms together come to 64.2 GB, over Zenodo's 50 GB per-record cap.
     Splitting it by condition does not help (normal alone is 58.5 GB), so
     pancreas alone is split by platform.
+
+    Colorectal cancer gets its own record rather than sitting inside colon:
+    it is a distinct cohort on a pre-commercial instrument, and burying three
+    cancer slides in the normal-colon record would misrepresent both.
+
+    Prostate cancer does NOT get the same treatment, and the asymmetry is
+    deliberate. CRC is three slides against a large, heavily-used normal-colon
+    record, so a reader looking for cancer would otherwise have to find it
+    inside a record named for healthy tissue. Prostate is two normal
+    acquisitions totalling 1.1 GB; splitting it would leave two records too
+    small to be useful, and PRCA is a single specimen (PCa_9224) that is not in
+    Table 1, so it ships with null demographics and reads as an appendix to the
+    organ rather than a cohort of its own. It therefore sits inside
+    saha-v1-prostate, as PDAC sits inside pancreas, distinguished by
+    `condition`. No code is needed for this -- the default branch below already
+    routes it -- but the reasoning is recorded so it is not re-argued later.
     """
     organ = row["organ"].replace("_", "-")
     if row["organ"] == "pancreas":
-        return f"saha-pancreas-{row['platform']}"
-    return f"saha-{organ}"
+        return f"saha-v1-pancreas-{row['platform']}"
+    if row["organ"] == "colon" and row.get("condition") == "cancer":
+        return "saha-v1-crc"
+    return f"saha-v1-{organ}"
 
 
 def md5(path: Path, blocksize: int = 8 << 20) -> str:
@@ -127,8 +155,11 @@ def write_record_docs(rec_dir: Path, slug: str, rows: pd.DataFrame,
                 "assay_type": r.assay_type,
                 "organ": r.organ,
                 "condition": r.condition,
-                "donor_id": r.donor_id,
+                # donor is per-cell (obs donor_core); a scalar donor_id here
+                # collapsed whole tissue microarrays onto one fictional person
+                "n_donors": r.n_donors,
                 "n_cells": r.n_cells,
+                "n_cells_qc_pass": r.n_cells_qc_pass,
                 "size_bytes": checksums[f"{r.zarr_name}.zip"][1],
                 "md5": checksums[f"{r.zarr_name}.zip"][0],
             }
@@ -290,7 +321,7 @@ def main():
 
     all_files = df.assign(zip_name=df["zarr_name"] + ".zip")[
         ["zip_name", "sample_id", "record", "platform", "assay_type", "organ",
-         "condition", "donor_id", "n_cells"]
+         "condition", "n_donors", "n_cells", "n_cells_qc_pass"]
     ]
     all_files.to_csv(parent / "file_manifest.csv", index=False)
     print(f"\n=== parent-collection ===\n  {', '.join(copied)}, file_manifest.csv")
