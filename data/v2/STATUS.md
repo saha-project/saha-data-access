@@ -198,6 +198,14 @@ populated.
   `derived/_replaced/v2_objects_zarr2_20261006/`. 31.5 GB, down from 36.6.
 - **Queued S3 layout:** `processed/saha-v2-prostate/<object>.zarr/` (v1 convention,
   no `zarr/` level).
+- **Shared-bucket naming (decided 2026-10-09):** `s3://saha-data-access/phase2/processed/saha-phase2-prostate/`.
+  Bucket prefixes are `phase1/` / `phase2/` and the collection is `saha-phase2-prostate`: "v2" would read as a new
+  version of the Zenodo v1.0 records. The phase-1 record names stay `saha-v1-*` (already deposited), and the internal
+  paths (`data/v2`, `release/s3_v2`) are unchanged.
+- **Shared-bucket naming (decided 2026-10-09):** `s3://saha-data-access/phase2/processed/saha-phase2-prostate/`.
+  Bucket prefixes are `phase1/` / `phase2/` and the collection is `saha-phase2-prostate`: "v2" would read as a new
+  version of the Zenodo v1.0 records. The phase-1 record names stay `saha-v1-*` (already deposited), and the internal
+  paths (`data/v2`, `release/s3_v2`) are unchanged.
 - **Raw is mapped:** `aws/raw_manifest_v2.csv` (`scripts/build_raw_manifest_v2.py`),
   693 GB / 157,628 files under `raw/<platform>/<institution>/<run>/<sample_id>/`.
   AtoMx TileDB and md5 lists cover both slides and sit under `.../<run>/_run/`.
@@ -218,7 +226,10 @@ Release stores: `/athena/project-saha/derived/release/s3_v2/processed/saha-v2-pr
   (<1 um) of the old element, the stored transform read back exactly, and 8 tiles per object
   match the svs pixel for pixel. Re-check after the swap: NCC 0.14/0.16, cells on H&E tissue 0.84
   (the same serial-section reading as before), and the gate is clean. Old elements are in
-  `release_qc/v2_he_l0/real/backup/`. CosMx H&E stays at svs level 1 (~1 um/px).
+  `release_qc/v2_he_l0/real/backup/`. CosMx H&E upgraded the same way afterwards (svs level 1 -> 0; A2 46,251x63,743, A3 47,546x69,719;
+  3,899 / 4,384 files; backups in `release_qc/v2_he_l0/real_cosmx/backup/`). Gate is clean; H&E check: A2 NCC 0.44 with
+  12/12 windows within 2.5 um, A3 NCC 0.36 with 9/12 (the same windows as before; two edge windows moved 2 -> 3 um,
+  which is pixel granularity, not a worse fit). **All four v2 H&E images now ship at full resolution (0.2476 um/px).**
 - **H&E alignment measured** (`he_alignment_check.py`, `release_qc/he_check/v2pros/`).
   CosMx same-section: A2 has 12/12 windows within ~2 um at zero shift (NCC 0.41), A3 has
   11/12 (NCC 0.39), so it is cell-level. Xenium serial sections: NCC 0.17/0.20, with
@@ -254,4 +265,13 @@ Still open: blocker 1 (`condition`, needs a pathologist or the block accession),
 demographics for all 69 cores, cell types (`cell_type_broad`: no prostate reference
 labels exist in v1 or v2; objects ship with `leiden`), and Xenium core labels (different
 section; would need a registration to the CosMx slide).
+
+## 2026-10-09 — shared on Wasabi
+
+`s3://saha-data-access/phase2/` (README = `data/v2/BUCKET_README.md`, metadata = the 4 v2 parquet tables,
+`processed/saha-phase2-prostate/` = the 4 stores). Uploaded from Cayuga (`release_qc/wasabi_phase2/upload.sbatch`,
+`aws s3 sync --delete`). Verified: per-store file counts and bytes equal the source (119,909 files, 58.57 GB);
+the bucket holds exactly the stores + 4 metadata files + README (119,914 objects); 91/91 md5-comparable files
+match, including full-res H&E tiles. `spatialdata` 0.8.0 with zarr 3.3.0 cannot open remote s3:// stores
+(`_resolve_zarr_store` TypeError), so the README documents sync-then-read only.
 
