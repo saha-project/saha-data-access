@@ -275,3 +275,7 @@ the bucket holds exactly the stores + 4 metadata files + README (119,914 objects
 match, including full-res H&E tiles. `spatialdata` 0.8.0 with zarr 3.3.0 cannot open remote s3:// stores
 (`_resolve_zarr_store` TypeError), so the README documents sync-then-read only.
 
+2026-10-09 22:10: the H&E backups (`release_qc/he_v1/v2_retile/backup/`, `release_qc/v2_he_l0/{real,real_cosmx}/backup/`)
+and the test copies were removed with Jiwoon's OK. They were lower-resolution copies; the full-res elements are live
+and in the bucket, and the source .svs scans in `2026_SAHA_data/processed/he/` are untouched.
+
