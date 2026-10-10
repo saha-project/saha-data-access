@@ -172,7 +172,7 @@ def check(store, outdir, hn):
 
     # figure
     nrow = 1 + len(shown)
-    fig, axes = plt.subplots(nrow, 3, figsize=(16, 5.3 * nrow))
+    fig, axes = plt.subplots(nrow, 3, figsize=(16, 5.3 * nrow), squeeze=False)
     lo, Mlo, _ = lowest_level(sd.images[hn])
     rng = np.random.default_rng(0)
     sel = rng.choice(np.flatnonzero(good), min(good.sum(), 60000), replace=False)
