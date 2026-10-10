@@ -2,6 +2,9 @@
 
 This guide shows how to find and load SAHA spatial omics data — no account required for open-access data.
 
+> **Status (October 2026):** the AWS bucket `s3://saha-open-data` is not live yet. S3 paths in these
+> docs show the planned layout. Until it opens, use the metadata tables in [`data/`](data/).
+
 ## Option 1: Local Parquet (fastest)
 
 Download the metadata tables once, then filter locally.
@@ -28,7 +31,12 @@ colon = samples.query("organ == 'colon' and platform == 'cosmx' and qc_pass == T
 print(colon[["sample_id", "run_id", "panel_name", "n_cells"]].head())
 ```
 
-## Option 2: Amazon Athena (SQL, no download)
+## Option 2: Amazon Athena (SQL, once the bucket is live)
+
+> **Not available yet.** Once the AWS bucket is live, Athena works only after you register the
+> tables in **your own** AWS account (setup steps will be published with the bucket). There is
+> no shared `saha` database to connect to. The queries below assume
+> that setup; without it, use pandas (Option 1) on the same Parquet files.
 
 Query petabytes of SAHA data with standard SQL — pay only for bytes scanned (~$5/TB).
 
@@ -45,11 +53,8 @@ WHERE qc_pass = true
 GROUP BY organ, platform
 ORDER BY total_cells DESC;
 
--- Join to donors to get sex and age group
-SELECT s.sample_id, s.organ, s.condition, d.sex, d.age_group
-FROM saha.samples s
-JOIN saha.donors d ON s.donor_id = d.donor_id
-WHERE s.qc_pass = true;
+-- There is no samples.donor_id: one acquisition images many donor cores, and donor identity
+-- is per cell (obs['donor_core'] inside each object). Query samples and donors separately.
 ```
 
 ## Option 3: AWS CLI (browse raw files)
