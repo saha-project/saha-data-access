@@ -7,7 +7,9 @@ Data schemas, metadata infrastructure, and access documentation for the **Spatia
 
 ## About SAHA
 
-SAHA is a multimodal, subcellular-resolution spatial reference atlas of human tissues, profiling 15M+ cells from 100+ donors across 16 tissue types. It captures matched RNA (up to 19,000 genes), protein (67 markers), and histological data at ~50 nm resolution using CosMx, Xenium, GeoMx, and RNAscope spatial omics platforms. The atlas includes both healthy and disease tissues (colorectal cancer, pancreatic ductal adenocarcinoma, inflammatory bowel disease).
+SAHA is a multimodal, subcellular-resolution spatial reference atlas of human tissues. This release holds 11.2M cells from 94 donor cores across 9 organs, in 71 acquisitions on the CosMx and Xenium platforms, with matched RNA (up to 19,000 genes) and protein (64-67 markers) on the same tissue. The atlas includes both healthy and disease tissues (colorectal cancer, pancreatic ductal adenocarcinoma, inflammatory bowel disease).
+
+Most slides are **tissue microarrays** carrying 2-28 donor cores, so donor identity is a per-**cell** property held in `obs['donor_core']`, not a column on `samples.parquet`. See [docs/DATA_DICTIONARY.md](docs/DATA_DICTIONARY.md).
 
 - **Website**: [saha-project.org](https://www.saha-project.org/)
 - **Preprint**: [bioRxiv 2025.06.16.658716](https://www.biorxiv.org/content/10.1101/2025.06.16.658716v3)
@@ -35,10 +37,10 @@ Four Parquet tables are provided in `data/` and mirrored at `s3://saha-open-data
 
 | Table | Rows | Description |
 |-------|------|-------------|
-| `samples.parquet` | 47 | One row per sample — organ, condition, platform, donor, n_cells, QC status, S3 paths |
-| `donors.parquet` | 5 | One row per donor — age group, sex, tissue source, consent level |
-| `runs.parquet` | 11 | One row per acquisition run — instrument, institution, date, panel, protocol fields |
-| `panels.parquet` | 6 | Panel configurations — platform, plex, gene/protein lists |
+| `samples.parquet` | 126 | One row per acquisition — organ, condition, platform, n_donors, n_cells, QC status, S3 paths |
+| `donors.parquet` | 121 | One row per donor **core** — slide, organ, condition (demographics are registered-tier; see [ACCESS_TIERS](docs/ACCESS_TIERS.md)) |
+| `runs.parquet` | 19 | One row per acquisition run — instrument, institution, date, panel, protocol fields |
+| `panels.parquet` | 8 | Panel configurations — platform, plex, gene/protein lists |
 
 ## Data Organization on S3
 
@@ -61,6 +63,18 @@ s3://saha-open-data/
 
 CosMx processed data is aggregated to organ level (all samples from one organ in one h5ad). Xenium processed data is kept at sample level. Raw data requires registration — see [docs/ACCESS_TIERS.md](docs/ACCESS_TIERS.md).
 
+## Note on Cell Types
+
+Cell types were assigned by a mix of manual and automated methods: expert annotation where it
+existed, mapping of earlier reference-based labels onto one shared vocabulary, and label
+transfer (logistic regression) from annotated SAHA objects for objects that had no labels.
+Each cell records how its label was made in `cell_type_broad_source`; transferred labels also
+carry `cell_type_broad_confidence`, and cells without a confident label are `NA`. The original
+labels of the source objects (`cell_type`, `cell_type_detailed`, ...) are kept unchanged.
+
+**These labels are a starting point, not ground truth. We strongly recommend evaluating them,
+and re-labelling, for your own analysis.**
+
 ## Quick Start
 
 **Load metadata locally** (no AWS credentials needed):
@@ -69,8 +83,11 @@ CosMx processed data is aggregated to organ level (all samples from one organ in
 import pandas as pd
 
 samples = pd.read_parquet("data/samples.parquet")
-colon = samples.query("organ == 'colon' and qc_pass == True")
-print(colon[["sample_id", "donor_id", "n_cells", "s3_processed_path"]])
+colon = samples.query("organ == 'colon'")
+print(colon[["sample_id", "n_donors", "n_cells", "s3_processed_path"]])
+
+# donor identity is per cell, inside the objects:
+#   adata.obs.merge(donors, on="donor_core", how="left")
 ```
 
 **Load metadata from S3** (anonymous access):
@@ -84,14 +101,13 @@ samples = pd.read_parquet(
 )
 ```
 
-**Load a processed h5ad** (anonymous access):
+**Open a SpatialData object** (anonymous access):
 
 ```python
-import scanpy as sc
+import spatialdata
 
-adata = sc.read_h5ad(
-    "s3://saha-open-data/processed/h5ad/cosmx/RNA/SAHA_COL_RNA.h5ad",
-    backed="r",
+sdata = spatialdata.read_zarr(
+    "s3://saha-open-data/processed/saha-v1-colon/SAHA_CR_COL_A1_TAP01.zarr"
 )
 ```
 
@@ -100,7 +116,7 @@ adata = sc.read_h5ad(
 ```python
 import pandas as pd
 samples = pd.read_parquet("data/samples.parquet")
-samples[samples.qc_pass.eq(True)].groupby(["organ", "platform"]).n_cells.agg(["count", "sum"])
+samples.groupby(["organ", "platform"]).n_cells.agg(["count", "sum"])
 ```
 
 Amazon Athena (SQL over S3) will work once the AWS bucket is live, and only after you register the
@@ -113,10 +129,12 @@ See [tutorials/](tutorials/) for full worked examples.
 
 | Script | Purpose |
 |--------|---------|
-| `standardize_h5ad.py` | Produce public h5ad files from internal objects (whitelist obs columns, add `sample_id` and `donor_id`) |
+| `standardize_h5ad.py` | Produce public h5ad files from internal objects (whitelist obs columns, add `sample_id` and `donor_core`) |
 | `create_cosmx_zarr.py` | Build CosMx SpatialData zarr from raw flat files |
 | `ingest_samples.py` | Validate and convert sample manifest → `samples.parquet` |
-| `ingest_donors.py` | Validate and convert donor metadata → `donors.parquet` |
+| `build_donors_table.py` | Build `donors.parquet`, one row per donor core, from the resolved assignments + Table 1 |
+| `donor_map.py` | Single source for sample → donor cores; used by ingest, build and validate |
+| `release_tally.py` | Generate `zenodo/release_breakdown.csv` and refresh the record split |
 | `ingest_runs.py` | Validate and convert run metadata → `runs.parquet` |
 | `ingest_panels.py` | Validate and convert panel definitions → `panels.parquet` |
 | `validate_release.py` | Cross-check parquet referential integrity and S3 object existence |
