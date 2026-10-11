@@ -4,7 +4,7 @@
     "POST the 'parent' object to https://zenodo.org/api/records to create a draft.",
     "Child records are built from 'child_template' by substituting {PLACEHOLDERS}.",
     "Every TODO must be resolved before deposit. Dry-run on sandbox.zenodo.org first.",
-    "Description fields are HTML rendered from zenodo/DESCRIPTION.md \u2014 edit that file, not these strings."
+    "Description fields are HTML rendered from zenodo/DESCRIPTION.md — edit that file, not these strings."
   ],
   "_todo": [
     "Fill in the two ORCIDs in creators[] (Park, Mason)",
@@ -205,7 +205,7 @@
       ],
       "funding": [
         {
-          "_comment": "TODO: add grant IDs \u2014 Zenodo auto-resolves NIH/NSF/ERC award numbers",
+          "_comment": "TODO: add grant IDs — Zenodo auto-resolves NIH/NSF/ERC award numbers",
           "funder": {
             "name": "TODO"
           },
@@ -259,7 +259,7 @@
       "resource_type": {
         "id": "dataset"
       },
-      "title": "Spatial Atlas of Human Anatomy (SAHA): {PLATFORM} SpatialData objects \u2014 {ORGAN_GROUP}, v1.0",
+      "title": "Spatial Atlas of Human Anatomy (SAHA): {PLATFORM} SpatialData objects — {ORGAN_GROUP}, v1.0",
       "publisher": "Zenodo",
       "version": "v1.0",
       "languages": [
@@ -318,42 +318,87 @@
         "slug": "saha-v1-appendix",
         "platform": "cosmx+xenium",
         "organ_group": "appendix",
-        "n_samples": 11,
-        "measured_gb": 29.0,
-        "n_cells": 1527610,
-        "has_images": true,
-        "files_on": {
-          "cluster": 3,
-          "local": 8
-        },
-        "title": "Spatial Atlas of Human Anatomy (SAHA): appendix, v1.0"
-      },
-      {
-        "slug": "saha-v1-colon",
-        "platform": "cosmx",
-        "organ_group": "colon",
-        "n_samples": 4,
-        "measured_gb": 7.5,
-        "n_cells": 679317,
-        "has_images": true,
-        "files_on": {
-          "cluster": 4
-        },
-        "title": "Spatial Atlas of Human Anatomy (SAHA): colon, v1.0"
-      },
-      {
-        "slug": "saha-v1-ileum",
-        "platform": "cosmx+xenium",
-        "organ_group": "ileum",
         "n_samples": 13,
-        "measured_gb": 36.7,
-        "n_cells": 1679278,
+        "measured_gb": 29.6,
+        "n_cells": 1795478,
+        "n_donor_cores": 4,
         "has_images": true,
         "files_on": {
           "cluster": 5,
           "local": 8
         },
+        "title": "Spatial Atlas of Human Anatomy (SAHA): appendix, v1.0"
+      },
+      {
+        "slug": "saha-v1-bone-marrow",
+        "platform": "cosmx",
+        "organ_group": "bone_marrow",
+        "n_samples": 7,
+        "measured_gb": 2.7,
+        "n_cells": 328798,
+        "n_donor_cores": 4,
+        "has_images": true,
+        "files_on": {
+          "cluster": 7
+        },
+        "title": "Spatial Atlas of Human Anatomy (SAHA): bone marrow, v1.0"
+      },
+      {
+        "slug": "saha-v1-colon",
+        "platform": "cosmx",
+        "organ_group": "colon",
+        "n_samples": 6,
+        "measured_gb": 7.8,
+        "n_cells": 837447,
+        "n_donor_cores": 7,
+        "has_images": true,
+        "files_on": {
+          "cluster": 6
+        },
+        "title": "Spatial Atlas of Human Anatomy (SAHA): colon, v1.0"
+      },
+      {
+        "slug": "saha-v1-crc",
+        "platform": "cosmx",
+        "organ_group": "colon",
+        "n_samples": 3,
+        "measured_gb": 0.8,
+        "n_cells": 192474,
+        "n_donor_cores": 3,
+        "has_images": true,
+        "files_on": {
+          "cluster": 3
+        },
+        "title": "Spatial Atlas of Human Anatomy (SAHA): colorectal cancer, v1.0"
+      },
+      {
+        "slug": "saha-v1-ileum",
+        "platform": "cosmx+xenium",
+        "organ_group": "ileum",
+        "n_samples": 27,
+        "measured_gb": 38.2,
+        "n_cells": 2152086,
+        "n_donor_cores": 18,
+        "has_images": true,
+        "files_on": {
+          "cluster": 13,
+          "local": 14
+        },
         "title": "Spatial Atlas of Human Anatomy (SAHA): ileum, v1.0"
+      },
+      {
+        "slug": "saha-v1-liver",
+        "platform": "cosmx",
+        "organ_group": "liver",
+        "n_samples": 6,
+        "measured_gb": 4.4,
+        "n_cells": 469053,
+        "n_donor_cores": 4,
+        "has_images": true,
+        "files_on": {
+          "cluster": 6
+        },
+        "title": "Spatial Atlas of Human Anatomy (SAHA): liver, v1.0"
       },
       {
         "slug": "saha-v1-lymph-node",
@@ -361,7 +406,8 @@
         "organ_group": "lymph_node",
         "n_samples": 2,
         "measured_gb": 6.3,
-        "n_cells": 1062737,
+        "n_cells": 1062736,
+        "n_donor_cores": 10,
         "has_images": true,
         "files_on": {
           "cluster": 2
@@ -374,7 +420,8 @@
         "organ_group": "pancreas",
         "n_samples": 6,
         "measured_gb": 37.3,
-        "n_cells": 2619816,
+        "n_cells": 2655620,
+        "n_donor_cores": 40,
         "has_images": true,
         "files_on": {
           "cluster": 6
@@ -388,6 +435,7 @@
         "n_samples": 9,
         "measured_gb": 26.9,
         "n_cells": 1242392,
+        "n_donor_cores": 12,
         "has_images": true,
         "files_on": {
           "local": 9
@@ -395,12 +443,43 @@
         "title": "Spatial Atlas of Human Anatomy (SAHA): pancreas (Xenium), v1.0"
       },
       {
+        "slug": "saha-v1-prostate",
+        "platform": "cosmx+xenium",
+        "organ_group": "prostate",
+        "n_samples": 5,
+        "measured_gb": 4.6,
+        "n_cells": 297683,
+        "n_donor_cores": 5,
+        "has_images": true,
+        "files_on": {
+          "cluster": 4,
+          "local": 1
+        },
+        "title": "Spatial Atlas of Human Anatomy (SAHA): prostate, v1.0"
+      },
+      {
+        "slug": "saha-v1-rectum",
+        "platform": "cosmx+xenium",
+        "organ_group": "rectum",
+        "n_samples": 40,
+        "measured_gb": 0.4,
+        "n_cells": 838904,
+        "n_donor_cores": 14,
+        "has_images": true,
+        "files_on": {
+          "cluster": 14,
+          "local": 26
+        },
+        "title": "Spatial Atlas of Human Anatomy (SAHA): rectum, v1.0"
+      },
+      {
         "slug": "saha-v1-stomach",
         "platform": "cosmx",
         "organ_group": "stomach",
         "n_samples": 2,
         "measured_gb": 8.1,
-        "n_cells": 513747,
+        "n_cells": 536119,
+        "n_donor_cores": 6,
         "has_images": true,
         "files_on": {
           "cluster": 2
@@ -409,10 +488,11 @@
       }
     ],
     "totals": {
-      "n_records": 7,
-      "n_samples": 47,
-      "measured_gb": 151.8,
-      "n_cells": 9324897,
+      "n_records": 12,
+      "n_samples": 126,
+      "measured_gb": 167.1,
+      "n_cells": 12408790,
+      "n_donor_cores": 115,
       "cosmx_images_zenodo_gb": 52.0,
       "cosmx_images_awsfull_gb": 623.0
     },
@@ -423,6 +503,7 @@
       "record, sharing one concept DOI that always resolves to the latest. The",
       "version lives in the `version` field and the title suffix, not in the record",
       "name, so the concept DOI stays citable across versions."
-    ]
+    ],
+    "_generated_by": "scripts/release_tally.py -- do not hand-edit; rerun after repackaging"
   }
 }

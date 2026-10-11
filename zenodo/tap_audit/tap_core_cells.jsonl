@@ -1,0 +1,14 @@
+{"sample": "SAHA_CP_APE_A9_TAP03", "counts": {"APE_A9_3": 39442, "APE_A9_4": 37930, "APE_A9_2": 36209, "APE_A9_1": 31584}}
+{"sample": "SAHA_CP_COL_A1_TAP01", "counts": {"COL_A1_7": 35970, "COL_A1_5": 32986, "COL_A1_1": 32662}}
+{"sample": "SAHA_CP_ILE_A1_TAP03", "counts": {"ILE_A1_1": 62886, "ILE_A1_3": 37002, "ILE_A1_4": 14375, "ILE_A1_2": 12561}}
+{"sample": "SAHA_CP_LIV_A1_TAP01", "counts": {"LIV_A1_3": 66208, "LIV_A1_1": 33006}}
+{"sample": "SAHA_CP_LIV_A2_TAP01", "counts": {"LIV_A2_1": 65046, "LIV_A2_3": 13370}}
+{"sample": "SAHA_CP_PROS_A1_TAP01", "counts": {"PROS_A1_5": 30721, "PROS_A1_4": 24030, "PROS_A1_2": 16460, "PROS_A1_3": 8162}}
+{"sample": "SAHA_CR_APE_A9_TAP03", "counts": {"APE_A9_3": 34518, "APE_A9_4": 27248, "APE_A9_2": 26342, "APE_A9_1": 22121}}
+{"sample": "SAHA_CR_COL_A1_TAP01", "counts": {"COL_A1_1": 16943, "COL_A1_5": 12523, "COL_A1_7": 5801}}
+{"sample": "SAHA_CR_ILE_A1_TAP03", "counts": {"ILE_A1_1": 46049, "ILE_A1_3": 27024, "ILE_A1_2": 9986, "ILE_A1_4": 9569}}
+{"sample": "SAHA_CR_LIV_A1_TAP01", "counts": {"LIV_A1_3": 31212}}
+{"sample": "SAHA_CR_LIV_A1_TAP02", "counts": {"LIV_A1_3": 73014, "LIV_A1_1": 41398}}
+{"sample": "SAHA_CR_LIV_A2_TAP01", "counts": {"LIV_A2_1": 20099, "LIV_A2_3": 7735}}
+{"sample": "SAHA_CR_LIV_A2_TAP02", "counts": {"LIV_A2_1": 74096, "LIV_A2_3": 39043}}
+{"sample": "SAHA_CR_PROS_A1_TAP01", "counts": {"PROS_A1_5": 34227, "PROS_A1_4": 23843, "PROS_A1_2": 13202, "PROS_A1_3": 9837}}
