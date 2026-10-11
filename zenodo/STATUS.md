@@ -1,114 +1,135 @@
-# SAHA v1 Zenodo release — status
+# SAHA v1 release — status
 
-Last updated 2026-09-09.
+Last updated 2026-09-25.
 
-## Where things are
+Every claim below was re-verified against the objects and tables on 2026-09-25.
+The previous revision of this file asserted three things that were not true —
+that the PRCA build had not completed, that its Xenium leg had never started,
+and that the Dulai obs whitelist had been applied to no object. All three were
+already done. Treat a claim here as stale until a check reproduces it; the
+commands that produce each number are named alongside it.
 
-| What | Path |
-|------|------|
-| CosMx objects (22), donor_core applied | `~/SAHA_zarr_build/` (local, 23.8 GB) |
-| Xenium objects (25), donor_core applied | `.../2025_SAHA/Data/preprocessed/spatialdata/RNA/` (68 GB) |
-| Packaged records, Xenium half | `~/SAHA_zenodo_v1/` (hard links) |
-| Packaged records, CosMx half | `/athena/project-saha/derived/zenodo_upload_v1/` |
-| Zenodo-tier objects + 4x images | `/athena/project-saha/derived/zenodo_objects/` |
-| AWS-tier objects + full-res images | `/athena/project-saha/derived/aws_objects/` |
-| Stitched images, 4x / full-res | `/athena/project-saha/derived/images_d4` (52 GB) / `images_full` (623 GB) |
-| Donor QC figures, CSVs, provenance | `zenodo/donor_qc/` |
-| Cluster python (spatialdata 0.8.0, zarr 3.3.0) | `~/.venv-sd08/bin/python` on Cayuga |
+## Where the release stands
 
-Archives are split across two machines on purpose: CosMx on Cayuga, Xenium
-local. Each half uploads to the same Zenodo draft from where it already sits,
-which avoids moving ~70 GB over a link that failed repeatedly.
+    126 acquisitions · 12,408,790 cells
+    121 donor rows (115 measured, 6 awaiting acquisition)
+    12 records · all under Zenodo's 50 GB cap
 
-## Release shape — 7 records, 151.8 GB
+`scripts/validate_release.py` — **17 passed, 0 failed** (one WARN:
+`s3_processed_path` empty for 69/69, expected until after upload).
 
-| Record | slides | acquisitions | donors | cells | GB |
-|---|---|---|---|---|---|
-| saha-v1-appendix | 1 | 11 | 4 | 1,527,610 | 29.0 |
-| saha-v1-colon | 1 | 4 | 7 | 679,317 | 7.5 |
-| saha-v1-ileum | 3 | 13 | 12 | 1,679,278 | 36.7 |
-| saha-v1-lymph-node | 1 | 2 | 10 | 1,062,737 | 6.3 |
-| saha-v1-pancreas-cosmx | 2 | 6 | 40 | 2,619,816 | 37.3 |
-| saha-v1-pancreas-xenium | 1 | 9 | 12 | 1,242,392 | 26.9 |
-| saha-v1-stomach | 1 | 2 | 6 | 513,747 | 8.1 |
+A measurement is one donor core imaged in one acquisition; that is the unique
+unit, not the acquisition and not the donor. See `zenodo/measurements.csv`.
 
-9 slides, 47 acquisitions, **79 donors**, 9,324,897 cells. Every record is under
-Zenodo's 50 GB per-record cap.
+## What this release is made of
 
-## Donor identity — done
+| Source | Acquisitions | Cells |
+|---|---:|---:|
+| SAHA core (WCM / St Jude / MSK) | 47 | 9,429,451 |
+| TAP, pre-commercial instrument | 24 | 1,762,538 |
+| Northwestern / Dulai IBD | 52 | 1,079,600 |
+| PRCA, prostate cancer | 3 | 137,201 |
 
-These slides are tissue microarrays: `A1` / `A9` are SLIDE ids, not donors, and
-one acquisition covers 2-28 donor cores. Donor is therefore a per-CELL property.
+126 objects exist on disk and match `samples.parquet` row for row:
+`zenodo_objects` 22 · `tap_zarr` 24 · `dulai_zarr` 52 · `prca_zarr` 3 ·
+`xenium_zarr` 25. All 126 read cleanly.
 
-All 47 samples carry obs `donor_core`; PDAC also carries `donor_patient`
-(28 cores from 14 KRAS-typed patients, kept alongside but NOT collapsed --
-each core counts as an independent case).
+## Verified complete
 
-Sources, per `zenodo/donor_qc/resolution_report.csv`:
+- **The donor mixup is fixed at its root.** `ingest_samples.py` had a
+  slide-suffix lookup (`A1 -> SAHA_D001`) that collapsed 32 samples onto one
+  fictional donor. The lookup is deleted; `samples.parquet` carries `n_donors`
+  and no scalar `donor_id`. The validator now asserts sample organ == donor
+  organ rather than mere existence of the id.
+- **PRCA is built, all three acquisitions, in both tiers.** `SAHA_CR_PRCA_UA_EC02`
+  14,482 cells · `SAHA_CP_PRCA_UA_EC02` 63,449 · `SAHA_XR_PRCA_UA_MS01` 59,270.
+  All carry `donor_core`; the CosMx pair shows 14896x9576 on the Zenodo tier
+  against 59584x38304 on AWS, the Xenium object is vendor-native and identical
+  in both. PRCA is folded into `saha-v1-prostate` (5 acquisitions, 297,683
+  cells), distinguished by `condition` — see `record_slug()` for why it is not
+  split out the way CRC is.
+- **Dulai obs whitelist is applied to all 52.** `apply_obs_whitelist.py
+  --dry-run` over `dulai_zarr` reports 0 columns dropped on every object and
+  "0 distinct obs columns removed across the release"; `derived/obs_dropped/`
+  holds 52 Dulai backup files. It is a no-op because these objects were built
+  from Seurat RDS, not AtoMx, so they never carried the 551-column explosion.
+  Do not infer whitelist state from obs column counts — the 33/35 vs 55/57
+  split across these objects is Xenium vs CosMx, not whitelisted vs not.
+- **No object exceeds the 63-column public ceiling** (max observed: 57).
+- `donor_core` written into all cluster objects; 104,563 cells the published
+  h5ads had dropped were recovered by FOV.
+- **Xenium mirror to Cayuga is complete** — 73.25 GB, 16,279 files, verified by
+  `rsync --dry-run` reporting 0 files remaining; all 25 stores read, 3,308,851
+  cells.
+- **Raw corpus measured** (slurm 3391556, 21 min): **3.61 TB, 2,668,726 files**.
+  `data/RawFiles` 2,249.7 GB / 2,156,124 files · `data_TAP` 1,163.2 GB ·
+  root files (H&E, RDS) 140.4 GB · `data/TileDB` 94.6 GB · `flatFiles` 24.3 GB ·
+  `data_IBD` 19.5 GB. Per-acquisition detail in
+  `/athena/masonlab/scratch/users/jip2007/raw_sizes.tsv`. Very lumpy:
+  `SAHA_CP_PANC_A1_SJ01` alone is 388 GB and `SAHA_CR_IBD_A1_EC04` is 680K
+  files; the top 8 acquisitions are about two-thirds of the bytes.
+- **Glue catalog schema corrected.** `setup_glue_catalog.py` still declared the
+  pre-fix schema: `samples.donor_id` (deleted by the donor fix), four `donors`
+  columns that do not exist, and a published example query joining
+  `samples.donor_id = donors.donor_id` — the exact collapsed-donor join the fix
+  existed to remove. All four tables now match the parquet schemas.
 
-- `SAHA_Sample` in the published organ h5ads (10 CosMx RNA)
-- recorded FOV->core maps in `ProjectConfig_*.yaml` and `FOV_Metadata/*.csv` (4 protein)
-- FOV map derived from `adata.joint.h5ad` (2 IBD)
-- FOV-layout transfer, LN protein from LN RNA (566 px median offset)
-- footprint/shape matching (STO protein)
-- sample id suffix, `_03` -> `APE_A9_3` (24 Xenium)
-- hand assignment by Jiwoon from the QC figures, recorded in
-  `manual_assignments.csv` and `fov_overrides.csv`
+## Open
 
-`donors.parquet` is rebuilt: 79 rows, demographics from Table_1 of the
-manuscript. It previously claimed **5** donors and mapped every `*_A1` slide to
-one `SAHA_D001` -- that was wrong and would have published 32 samples across
-five organs as one person.
+1. **Packaging** — one pass over all 12 records. The existing
+   `derived/zenodo_upload_v1/` holds 6 of 12 records, 74 GB of ~165 GB, zipped
+   Aug 31 / Sep 7 — before TAP, Dulai, PRCA, the donor fix and the whitelist.
+   Every existing zip predates the objects it claims to contain, so this is a
+   clean re-run into `zenodo_upload_v2/`, not a patch.
+2. **`combined_manifest.csv` is stale** — 47 rows, and still carries the scalar
+   `donor_id` column. Regenerated by the packaging run.
+3. **`release_breakdown.csv` is stale** — 123 acquisitions, missing all 3 PRCA.
+   Rerun `release_tally.py --sizes` against the new packaging manifest.
+4. `record_metadata.json` still has both ORCIDs, funder/award numbers, the
+   embargo date (twice), the child DOI placeholders and the two HTML
+   descriptions unresolved. Needs Jiwoon.
+5. Donor demographics are **registered tier** (decided 2026-09-28): donor age
+   group, sex, and ethnicity if available and deidentifiable. Exact age is
+   controlled. `data/donors.parquet`, `measurements.csv` and
+   `cohort_coverage.csv` are the open renderings and carry none of these;
+   `build_donors_table.py` writes the registered/controlled tables to the
+   gitignored `private/`. **Table 1 of the manuscript still lists exact age,
+   sex and ethnicity per core under the same ids** -- coarsen it before the
+   paper's supplement is published, or the tiering protects nothing.
+6. Three CRC cores ship without demographics — Table 1 has one pooled `CRC` row
+   for three slides. PRCA likewise: single specimen `PCa_9224`, not in Table 1,
+   so its demographics are null.
+7. Six cohort cores have no data yet and are kept in `donors.parquet` flagged
+   `in_release = false`: `BM_A1_1`, `BM_A1_2`, `BM_A2_1` (never acquired) and
+   `LIV_A1_2`, `LIV_A2_2`, `PROS_A1_1` (outside the acquired FOVs).
 
-### Things only a human caught
-- `SAHA_APE_RNA.h5ad` has cores 2 and 3 transposed for the SJ01 run (fixed via
-  `CORE_LABEL_FIX`, confirmed by two other runs at Procrustes 0.11 vs 1.85).
-- The Xenium `PANC_A1_MS01` whole-slide scan is rotated **180 degrees** relative
-  to CosMx. Three automatic methods found the right shape and the wrong
-  orientation; a 3x4 grid maps onto itself under 180 degrees.
+## AWS
 
-## Cohort coverage — 79 of Table_1's 150
+The bucket **does not exist** — `s3://saha-open-data` returns `NoSuchBucket`.
+Of the eight profiles in `~/.aws/credentials` exactly one authenticates
+(`scu_aws`, `arn:aws:iam::106083868292:user/system/svc-mason-lab`) and it cannot
+even `ListBuckets`, so it can create nothing. Which account owns the public
+bucket is an open decision, not a scripting task.
 
-Every organ present in v1 is complete. Absent entirely:
+Sizes if pushed as built: processed **~818 GB** (aws_objects 607, tap_aws 123,
+xenium 68, prca_aws 19, dulai 0.5), raw **3.61 TB** — about 4.4 TB total. Note
+that 165 GB is the *Zenodo* tier, not the AWS one.
 
-| Group | cores | note |
-|---|---|---|
-| IBD, Dulai / `IBD_PD_*` | 52 | separate cohort |
-| Bone marrow | 7 | |
-| Liver | 6 | |
-| Prostate `PROS_A1` | 5 | raw CosMx on Cayuga as `PRCA_UA_EC02`, not in the manifest |
-| CRC | 1 | `excluded_precommercial` -- pre-commercial instrument, unreadable format |
+Also missing on the AWS side: `data/h5ad_public/` does not exist though
+`processed/h5ad/` is advertised in the layout (either run
+`standardize_h5ad.py --batch` or drop the tree); `aws/raw_manifest.csv` now
+exists (generated 2026-09-27, 121 rows) for review before raw upload; TileDB in/out is undecided;
+and `set_bucket_policy.py` currently keeps `raw/cosmx/` private, which
+contradicts publishing raw at all — if raw is not public it does not belong in
+the open bucket and ODP will not cover its egress.
 
-## Open work
+## Deferred
 
-1. `samples.parquet` still carries the incorrect scalar `donor_id` -- drop it,
-   keep `slide_id`, add `n_donors`.
-2. Propagate `donor_core` to `zenodo_objects` and `aws_objects` on Cayuga
-   (the CSVs are small; run it there rather than re-transferring objects).
-3. Re-package all 7 records and re-checksum -- both CosMx and Xenium objects
-   changed after packaging.
-4. `DESCRIPTION.md`: document donor identity as per-cell, and state the
-   79-of-150 cohort coverage.
-5. Blocked on Jiwoon: ORCIDs for Park and Mason, funder/award numbers,
-   `ZENODO_TOKEN`, and whether to upload from Cayuga or locally.
-6. The public obs whitelist in `standardize_h5ad.py` (`RNA_KEEP` etc.) is NOT
-   applied by `create_cosmx_zarr.py`: 47 of 90 CosMx RNA obs columns are
-   internal AtoMx run-tracking fields, 25 carrying UUIDs. Decide whether to
-   enforce it before publishing.
+`zenodo/stamp/DEFERRED.md` — astroSTAMP / astronaut PBMC (4.86M cells), held
+until v1 ships. Consent and data-sharing terms are the gating item.
 
-## In progress — `/athena/project-saha/data_TAP`
+## Generated tables
 
-New material for the organs missing from v1 (APE, BM, COL, CRC, ILE, LIV_A1,
-LIV_A2, PROS, plus `I17-1673_B1_S1` and `I18-4753_B1_S2`).
-
-Generated by NanoString directly, and the format differs from
-`/athena/project-saha/data`:
-
-- has `CellStatsDir` (16) and `Morphology2D` (10) -- images are present
-- has **no** `flatFiles`, no `*_exprMat_file*`, no TileDB -- so there is no
-  AtoMx flat-file export to build expression from
-- expression would have to come from the per-FOV `AnalysisResults/*/FOV*`
-  barcode calls, which `create_cosmx_zarr.py` does not read
-
-Jiwoon is uploading RDS objects so the runs can be matched, and only the raw
-files that are consistent with the existing pipeline will be converted.
+    zenodo/release_breakdown.csv   per acquisition, by record   (release_tally.py)
+    zenodo/measurements.csv        per acquisition x core       (cohort_coverage.py)
+    zenodo/cohort_coverage.csv     per core, vs Table 1         (cohort_coverage.py)

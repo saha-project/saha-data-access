@@ -1,0 +1,13 @@
+organ,cohort,samples,acquisitions,cells,platforms,states
+appendix,SAHA + TAP,28,13,1795478,"CosMx UCC, CosMx Protein, Xenium Multi",Healthy
+bone_marrow,SAHA + TAP,7,7,328798,"CosMx UCC, CosMx Protein",Healthy
+colon,SAHA + TAP,29,9,1029921,"CosMx UCC, CosMx Protein","Healthy, Cancer"
+ileum,Dulai IBD,12,12,240696,"CosMx UCC, Xenium Multi",IBD
+ileum,SAHA + TAP,36,15,1908676,"CosMx UCC, CosMx 6K, CosMx Protein, Xenium Multi","Healthy, IBD"
+liver,SAHA + TAP,11,6,464227,"CosMx UCC, CosMx Protein",Healthy
+lymph_node,SAHA + TAP,20,2,1061542,"CosMx UCC, CosMx Protein",Healthy
+pancreas,SAHA + TAP,124,15,3898003,"CosMx UCC, CosMx Protein, Xenium Multi","Healthy, Cancer"
+prostate,SAHA + TAP,11,5,297683,"CosMx UCC, CosMx Protein, Xenium Multi","Healthy, Cancer"
+rectum,Dulai IBD,40,40,838904,"CosMx UCC, CosMx 6K, Xenium Multi, Xenium 5K, Xenium Colon","Healthy, IBD"
+stomach,SAHA + TAP,12,2,536119,"CosMx UCC, CosMx Protein",Healthy
+PBMC,astroSTAMP (deferred),25,3,4855308,CosMx WTx,Healthy

@@ -12,10 +12,13 @@ Two variants below: the parent collection record and the per-part child records.
 **Spatial Atlas of Human Anatomy (SAHA): SpatialData objects, v1.0**
 
 The Spatial Atlas of Human Anatomy (SAHA) is a multimodal, subcellular-resolution
-spatial reference atlas of human tissues, profiling 8.5M+ annotated cells from
-normal and diseased donor tissue across the gastrointestinal tract and associated
-organs. SAHA captures matched RNA and protein measurements at ~50 nm resolution
-using the NanoString CosMx and 10x Genomics Xenium platforms.
+spatial reference atlas of human tissues, profiling 11.2M cells from normal and
+diseased donor tissue across the gastrointestinal tract and associated organs.
+SAHA captures matched RNA and protein measurements at ~50 nm resolution using the
+NanoString CosMx and 10x Genomics Xenium platforms.
+
+This release comprises 71 acquisitions across 9 organs from 94 donor cores,
+distributed as 11 organ-level child records.
 
 This record is the **top-level collection** for the v1.0 SpatialData release. It
 contains the release documentation, the four metadata tables that describe every
@@ -28,8 +31,8 @@ records, listed under *Related works* below.
 | File | Description |
 |------|-------------|
 | `README.md` | Release notes, file inventory, and reading instructions |
-| `samples.parquet` | One row per sample — organ, condition, platform, donor, cell count, QC status |
-| `donors.parquet` | One row per donor — age group, sex, tissue source, consent level |
+| `samples.parquet` | One row per acquisition — organ, condition, platform, panel, cell count, number of donors |
+| `donors.parquet` | One row per donor **core** — slide, organ, condition. Demographics are not in this public record; see ACCESS_TIERS |
 | `runs.parquet` | One row per acquisition run — instrument, institution, date, panel, protocol parameters |
 | `panels.parquet` | Panel configurations — platform, plex, gene and protein lists |
 | `file_manifest.csv` | Maps every data file in the collection to sample_id, organ, platform, child record DOI |
@@ -40,6 +43,64 @@ records, listed under *Related works* below.
 
 Each child record holds zipped SpatialData (OME-NGFF/Zarr) objects for one
 platform and organ group. See *Related works*.
+
+### Donor identity is per cell, not per sample
+
+Most SAHA slides are **tissue microarrays**: a single acquisition images between
+2 and 28 separate donor cores. `PANC_A1` and `APE_A9` name the *slide*, not a
+person. A scalar donor id per sample therefore cannot describe this data, and
+`samples.parquet` deliberately does not carry one — it records `n_donors`, the
+number of cores an acquisition covers.
+
+Every object carries donor identity per cell, in `obs['donor_core']`, which joins
+to `donors.parquet`:
+
+```python
+import pandas as pd
+donors = pd.read_parquet("donors.parquet")
+obs = adata.obs.merge(donors, on="donor_core", how="left")
+obs.groupby("donor_core").size()          # cells per donor
+```
+
+The pancreatic-cancer slide additionally carries `obs['donor_patient']`: its 28
+cores come from 14 KRAS-typed patients, two cores each. The cores are **not**
+collapsed — each is treated as an independent case — so group by `donor_patient`
+if you want per-patient statistics.
+
+This record carries no donor demographics. Donor age group, sex, and ethnicity if available and deidentifiable are
+available at the registered tier, and exact age at the controlled tier (see
+`docs/ACCESS_TIERS.md` in the saha-data-access repository).
+
+### Cell counts: `n_cells` versus `qc_pass`
+
+The released objects contain **every cell the instrument segmented**. Where a
+published, QC-filtered h5ad exists for a sample, the cells it kept are marked by
+`obs['qc_pass']`, and that subset is what the manuscript's cell counts refer to.
+The two differ by up to 25,203 cells on a single sample.
+
+```python
+adata                                  # n_cells       — everything in the file
+adata[adata.obs["qc_pass"]]            # n_cells_qc_pass — the published set
+```
+
+`samples.parquet` carries both columns. Samples with no published h5ad carry no
+`qc_pass` column and a null `n_cells_qc_pass`.
+
+### A note on the pre-commercial acquisitions
+
+The bone-marrow, liver, prostate and colorectal-cancer records, and the `TAP*`
+acquisitions in the appendix, colon and ileum records, were produced on a
+**pre-commercial CosMx instrument**. They are included because the tissue and the
+donors are part of the atlas, but their yields are not comparable to the
+commercial runs: the pre-commercial colon acquisition recovers 35,267 cells from
+the same slide on which a commercial run recovers 92,636. Treat cell-density and
+detection-efficiency comparisons across that boundary with care; `runs.parquet`
+identifies which run produced each sample.
+
+Colorectal-cancer channel names are the standard-panel fallback — the
+pre-commercial instrument recorded no channel dictionary. The colon protein
+acquisition `SAHA_CP_COL_A1_TAP01` holds background-subtracted intensities rather
+than raw counts (`uns['x_is_raw_counts']` is `False`); it is the only such object.
 
 ### How to read the data
 
@@ -80,6 +141,19 @@ CD68, Membrane, CD45 and DNA. Channel names are read per sample from the
 instrument's own channel dictionary; where a run left a target unnamed the
 channel is labelled by its optical ID (e.g. `Channel-G`) rather than assigned a
 marker by inference.
+
+### Cell types: how they were made
+
+`cell_type_broad` uses one 13-type vocabulary across the release.
+Cell types were assigned by a mix of manual and automated methods: expert annotation where it
+existed, mapping of earlier reference-based labels onto one shared vocabulary, and label
+transfer (logistic regression) from annotated SAHA objects for objects that had no labels.
+Each cell records how its label was made in `cell_type_broad_source`; transferred labels also
+carry `cell_type_broad_confidence`, and cells without a confident label are `NA`. The original
+labels of the source objects (`cell_type`, `cell_type_detailed`, ...) are kept unchanged.
+
+**These labels are a starting point, not ground truth. We strongly recommend evaluating them,
+and re-labelling, for your own analysis.**
 
 ### Image resolution, and where to get full resolution
 
