@@ -1,6 +1,6 @@
 # DATA_DICTIONARY.md
 
-> Auto-generated from `schemas/*.json` on 2026-03-16. Edit the JSON Schema
+> Auto-generated from `schemas/*.json` on 2026-10-10. Edit the JSON Schema
 > files to update this document, then re-run
 > `python scripts/generate_data_dictionary.py`.
 
@@ -25,7 +25,15 @@ are lowercase per SAHA conventions.
 
 ## samples.parquet
 
-One row per tissue sample.  Joins to `donors.parquet` on `donor_id`, to `runs.parquet` on `run_id`, and to `panels.parquet` on `panel_name`.
+One row per acquisition.  Joins to `runs.parquet` on `run_id` and to `panels.parquet` on `panel_name`.
+
+There is **no** `donor_id` column, and no direct join to `donors.parquet`. Most SAHA slides are tissue microarrays carrying 2-28 donor cores, so a single acquisition images many donors and donor identity is a per-**cell** property. Each released object carries it in `obs['donor_core']`; join that to `donors.parquet.donor_core`:
+
+```python
+adata.obs.merge(donors, on="donor_core", how="left")
+```
+
+`n_donors` records how many cores an acquisition covers, for filtering without opening the object.
 
 
 > **Partitioning:** Partitioned by `organ` and `platform`.
@@ -37,43 +45,49 @@ One row per tissue sample.  Joins to `donors.parquet` on `donor_id`, to `runs.pa
 | `run_id` | `string` | yes |  | Run/batch identifier linking to runs.parquet (e.g. TAP01, EC02, SJJP01). |
 | `platform` | `string` | yes | enum: `cosmx`, `xenium`, `g4x`, `geomx`, `rnascope` | Spatial omics instrument platform. |
 | `assay_type` | `string | null` |  | enum: `rna`, `protein`, `multiome` | Molecular modality measured (rna or protein). |
-| `generation_institution` | `string` | yes | enum: `cornell`, `wcm`, `st_jude`, `msk`, `broad`, `other` | Institution that performed the data acquisition run. |
+| `generation_institution` | `string` | yes | enum: `cornell`, `wcm`, `st_jude`, `msk`, `broad`, `northwestern`, `upitt`, `other` | Institution that performed the data acquisition run. |
 | `tissue_source_institution` | `string | null` |  |  | Institution that sourced the tissue (ISO 3166-1 alpha-2 country appended if needed). |
-| `organ` | `string` | yes | enum: `appendix`, `bone_marrow`, `colon`, `ileum`, `kidney`, `liver`, `lung`, `lymph_node`, `pancreas`, `prostate`, `spleen`, `stomach`, `thymus`, `other` | Organ of tissue origin. |
+| `organ` | `string` | yes | enum: `appendix`, `bone_marrow`, `colon`, `ileum`, `kidney`, `liver`, `lung`, `lymph_node`, `pancreas`, `prostate`, `rectum`, `spleen`, `stomach`, `thymus`, `other` | Organ of tissue origin. |
 | `condition` | `string` | yes | enum: `normal`, `cancer`, `disease`, `other` | Gross tissue condition. |
 | `anatomical_region` | `string | null` |  |  | Short tissue-type code from the source manifest (e.g. COL, LIV, APE). |
-| `donor_id` | `string | null` |  |  | Donor identifier linking to donors.parquet. |
+| `n_donors` | `integer | null` |  | min=1 | Number of distinct donor cores this acquisition covers. These slides are tissue microarrays, so one acquisition can span 1-28 donors; the identities are per-cell in obs `donor_core` and resolve through donors.parquet. There is deliberately no scalar donor_id. |
 | `slide_id` | `string | null` |  |  | Instrument slide or section identifier. |
 | `panel_name` | `string | null` |  |  | Panel name linking to panels.parquet. |
 | `panel_plex` | `integer | null` |  | min=1 | Number of targets (genes or proteins) in the panel. |
-| `n_cells` | `integer | null` |  | min=0 | Number of cells detected after segmentation. |
+| `n_cells` | `integer | null` |  | min=0 | Total cells in the released object, i.e. every cell the instrument segmented. Use n_cells_qc_pass for the QC-filtered subset the manuscript reports. |
+| `n_cells_qc_pass` | `integer | null` |  | min=0 | Cells retained by the published QC filtering, matching obs `qc_pass`. Lower than n_cells wherever a published h5ad exists; null where none does. |
 | `n_fovs` | `integer | null` |  | min=0 | Number of fields of view (CosMx) or sections (Xenium) in this sample. |
-| `qc_pass` | `boolean | null` |  |  | Whether the sample passed QC review. |
 | `processing_date` | `string | null` |  | format: date | Instrument run start date (ISO 8601 YYYY-MM-DD). |
 | `slide_prepared_date` | `string | null` |  | format: date | Slide preparation date (ISO 8601 YYYY-MM-DD). |
 | `s3_raw_prefix` | `string | null` |  |  | S3 URI prefix for raw instrument output (e.g. s3://saha-open-data/cosmx/wcm/TAP01/SAHA_CR_COL_A1_TAP01/). |
 | `s3_processed_path` | `string | null` |  |  | S3 URI for the processed AnnData/Seurat object. |
-| `on_wasabi` | `boolean | null` |  |  | Whether raw data is currently mirrored on Wasabi object storage. |
 
 
 ---
 
 ## donors.parquet
 
-One row per de-identified tissue donor.  Controlled-access columns (age, ethnicity, comorbidities) are omitted from the open tier.
+One row per donor **core** -- the unit of donor identity on a tissue microarray, not the slide.  Joins to `obs['donor_core']` in the released objects.
+
+`donor_patient` groups cores known to come from the same person (the PDAC slide carries 28 cores from 14 KRAS-typed patients). Cores are never collapsed: each is treated as an independent case.
+
+Demographics come from Table 1 of the manuscript and are null for cores outside the published cohort.
 
 
 | Column | Type | Required | Constraints | Description |
 |--------|------|:--------:|-------------|-------------|
 | `donor_id` | `string` | yes |  | Unique donor identifier (de-identified, e.g. SAHA_D001). |
-| `age` | `integer | null` |  | min=0; max=120 | Donor age in years at time of tissue collection. |
-| `age_group` | `string | null` |  | enum: `pediatric`, `adult`, `elderly` | Broad age category for access-tier reporting. |
-| `sex` | `string | null` |  | enum: `M`, `F`, `unknown` | Biological sex (M/F/unknown). |
-| `ethnicity` | `string | null` |  |  | Self-reported ethnicity using NIH standard categories. |
-| `comorbidities` | `array[string] | null` |  |  | List of relevant comorbidities or diagnoses. |
-| `tissue_source_institution` | `string | null` |  |  | Institution that collected or provided the tissue. |
-| `tissue_source_country` | `string | null` |  | pattern: `^[A-Z]{2}$` | Country of tissue collection (ISO 3166-1 alpha-2, e.g. US, DE). |
-| `consent_level` | `string | null` |  | enum: `open`, `registered`, `controlled` | Maximum data access tier permitted by donor consent. |
+| `donor_core` | `string` | yes |  | Donor core label, `<SLIDE>_<CORE>` (e.g. COL_A1_5). Joins to obs `donor_core` in the released objects and to SampleID in Table 1 of the manuscript. snake_case throughout. |
+| `donor_patient` | `string | null` |  |  | Grouping key where two cores are known to be the same person. Populated for the PDAC slide only (28 cores from 14 KRAS-typed patients); cores are never collapsed. |
+| `slide_id` | `string | null` |  |  | Slide the core sits on (e.g. PANC_A1). |
+| `organ` | `string | null` |  |  | Organ of tissue origin for this core. |
+| `condition` | `string | null` |  | enum: `normal`, `cancer`, `disease` | Gross tissue condition for this core. |
+| `age` | `integer | null` |  | min=0; max=120 | Controlled tier only; absent from the open donors.parquet. Donor age in years at time of tissue collection. |
+| `age_group` | `string | null` |  | enum: `pediatric`, `adult`, `elderly` | Registered tier; absent from the open donors.parquet. Broad age category for access-tier reporting. |
+| `sex` | `string | null` |  | enum: `M`, `F`, `unknown` | Registered tier; absent from the open donors.parquet. Biological sex (M/F/unknown). |
+| `ethnicity` | `string | null` |  |  | Registered tier; absent from the open donors.parquet. Self-reported ethnicity using NIH standard categories. |
+| `in_release` | `boolean` |  |  | Whether any released object carries cells from this core. False for cohort members whose block is held on a slide but which no acquisition covers yet -- they are kept so the table describes the cohort, not just the subset with data. |
+| `status_note` | `string | null` |  |  | Why a core has no released data yet (block not acquired, or outside the acquired fields of view). Null for released cores. |
 
 
 ---
@@ -96,6 +110,12 @@ One row per instrument acquisition run (batch).  Links to `samples.parquet` via 
 | `instrument_software_version` | `string | null` |  |  | Instrument acquisition software version. |
 | `slide_prep_manual` | `string | null` |  |  | NanoString/10x slide preparation manual part number. |
 | `instrument_manual` | `string | null` |  |  | Instrument user manual part number. |
+| `fiducial_concentration_pct` | `number | null` |  |  | Fiducial concentration used during the run (%, CosMx only). |
+| `prehyb_storage_time` | `string | null` |  |  | Pre-hybridization storage time (e.g. '130 min at 4°C', CosMx only). |
+| `hybridization_duration_h` | `number | null` |  |  | Hybridization duration in hours (CosMx only). |
+| `prerun_overnight_4c` | `boolean | null` |  |  | Whether an optional pre-run overnight at 4°C step was performed (CosMx only). |
+| `prebleach_profile` | `string | null` |  |  | Pre-bleaching profile identifier (CosMx only). |
+| `cell_segmentation_profile` | `string | null` |  |  | Cell segmentation profile identifier (CosMx only). |
 | `qc_summary` | `string | null` |  |  | Free-text QC summary or flag for the run. |
 | `s3_raw_prefix` | `string | null` |  |  | S3 URI prefix for all raw data from this run. |
 

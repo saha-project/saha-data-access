@@ -2,53 +2,108 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://saha.org/schemas/donors.json",
   "title": "Donor",
-  "description": "One row per tissue donor in the SAHA consortium.",
+  "description": "One row per donor core in the SAHA consortium. These slides are tissue microarrays, so a core -- not a slide -- is the unit of donor identity. Includes cohort members awaiting acquisition, flagged by in_release.",
   "type": "object",
-  "required": ["donor_id"],
+  "required": [
+    "donor_id",
+    "donor_core"
+  ],
   "additionalProperties": false,
   "properties": {
     "donor_id": {
       "type": "string",
       "description": "Unique donor identifier (de-identified, e.g. SAHA_D001)."
     },
+    "donor_core": {
+      "type": "string",
+      "description": "Donor core label, `<SLIDE>_<CORE>` (e.g. COL_A1_5). Joins to obs `donor_core` in the released objects and to SampleID in Table 1 of the manuscript. snake_case throughout."
+    },
+    "donor_patient": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Grouping key where two cores are known to be the same person. Populated for the PDAC slide only (28 cores from 14 KRAS-typed patients); cores are never collapsed."
+    },
+    "slide_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Slide the core sits on (e.g. PANC_A1)."
+    },
+    "organ": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Organ of tissue origin for this core."
+    },
+    "condition": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "normal",
+        "cancer",
+        "disease",
+        null
+      ],
+      "description": "Gross tissue condition for this core."
+    },
     "age": {
-      "type": ["integer", "null"],
+      "type": [
+        "integer",
+        "null"
+      ],
       "minimum": 0,
       "maximum": 120,
-      "description": "Donor age in years at time of tissue collection."
+      "description": "Controlled tier only; absent from the open donors.parquet. Donor age in years at time of tissue collection."
     },
     "age_group": {
-      "type": ["string", "null"],
-      "enum": ["pediatric", "adult", "elderly", null],
-      "description": "Broad age category for access-tier reporting."
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "pediatric",
+        "adult",
+        "elderly",
+        null
+      ],
+      "description": "Registered tier; absent from the open donors.parquet. Broad age category for access-tier reporting."
     },
     "sex": {
-      "type": ["string", "null"],
-      "enum": ["M", "F", "unknown", null],
-      "description": "Biological sex (M/F/unknown)."
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "M",
+        "F",
+        "unknown",
+        null
+      ],
+      "description": "Registered tier; absent from the open donors.parquet. Biological sex (M/F/unknown)."
     },
     "ethnicity": {
-      "type": ["string", "null"],
-      "description": "Self-reported ethnicity using NIH standard categories."
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Registered tier; absent from the open donors.parquet. Self-reported ethnicity using NIH standard categories."
     },
-    "comorbidities": {
-      "type": ["array", "null"],
-      "items": {"type": "string"},
-      "description": "List of relevant comorbidities or diagnoses."
+    "in_release": {
+      "type": "boolean",
+      "description": "Whether any released object carries cells from this core. False for cohort members whose block is held on a slide but which no acquisition covers yet -- they are kept so the table describes the cohort, not just the subset with data."
     },
-    "tissue_source_institution": {
-      "type": ["string", "null"],
-      "description": "Institution that collected or provided the tissue."
-    },
-    "tissue_source_country": {
-      "type": ["string", "null"],
-      "pattern": "^[A-Z]{2}$",
-      "description": "Country of tissue collection (ISO 3166-1 alpha-2, e.g. US, DE)."
-    },
-    "consent_level": {
-      "type": ["string", "null"],
-      "enum": ["open", "registered", "controlled", null],
-      "description": "Maximum data access tier permitted by donor consent."
+    "status_note": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Why a core has no released data yet (block not acquired, or outside the acquired fields of view). Null for released cores."
     }
   }
 }

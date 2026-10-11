@@ -28,7 +28,7 @@
     },
     "generation_institution": {
       "type": "string",
-      "enum": ["cornell", "wcm", "st_jude", "msk", "broad", "other"],
+      "enum": ["cornell", "wcm", "st_jude", "msk", "broad", "northwestern", "upitt", "other"],
       "description": "Institution that performed the data acquisition run."
     },
     "tissue_source_institution": {
@@ -37,11 +37,7 @@
     },
     "organ": {
       "type": "string",
-      "enum": [
-        "appendix", "bone_marrow", "colon", "ileum", "kidney", "liver",
-        "lung", "lymph_node", "pancreas", "prostate", "spleen",
-        "stomach", "thymus", "other"
-      ],
+      "enum": ["appendix", "bone_marrow", "colon", "ileum", "kidney", "liver", "lung", "lymph_node", "pancreas", "prostate", "rectum", "spleen", "stomach", "thymus", "other"],
       "description": "Organ of tissue origin."
     },
     "condition": {
@@ -53,9 +49,10 @@
       "type": ["string", "null"],
       "description": "Short tissue-type code from the source manifest (e.g. COL, LIV, APE)."
     },
-    "donor_id": {
-      "type": ["string", "null"],
-      "description": "Donor identifier linking to donors.parquet."
+    "n_donors": {
+      "type": ["integer", "null"],
+      "minimum": 1,
+      "description": "Number of distinct donor cores this acquisition covers. These slides are tissue microarrays, so one acquisition can span 1-28 donors; the identities are per-cell in obs `donor_core` and resolve through donors.parquet. There is deliberately no scalar donor_id."
     },
     "slide_id": {
       "type": ["string", "null"],
@@ -73,16 +70,17 @@
     "n_cells": {
       "type": ["integer", "null"],
       "minimum": 0,
-      "description": "Number of cells detected after segmentation."
+      "description": "Total cells in the released object, i.e. every cell the instrument segmented. Use n_cells_qc_pass for the QC-filtered subset the manuscript reports."
+    },
+    "n_cells_qc_pass": {
+      "type": ["integer", "null"],
+      "minimum": 0,
+      "description": "Cells retained by the published QC filtering, matching obs `qc_pass`. Lower than n_cells wherever a published h5ad exists; null where none does."
     },
     "n_fovs": {
       "type": ["integer", "null"],
       "minimum": 0,
       "description": "Number of fields of view (CosMx) or sections (Xenium) in this sample."
-    },
-    "qc_pass": {
-      "type": ["boolean", "null"],
-      "description": "Whether the sample passed QC review."
     },
     "processing_date": {
       "type": ["string", "null"],
@@ -101,10 +99,6 @@
     "s3_processed_path": {
       "type": ["string", "null"],
       "description": "S3 URI for the processed AnnData/Seurat object."
-    },
-    "on_wasabi": {
-      "type": ["boolean", "null"],
-      "description": "Whether raw data is currently mirrored on Wasabi object storage."
     }
   }
 }
