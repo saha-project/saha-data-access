@@ -31,6 +31,9 @@ from pathlib import Path
 import pandas as pd
 import pyarrow.parquet as pq
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import donor_map
+
 REPO = Path(__file__).parent.parent
 DATA = REPO / "data"
 BUCKET = "saha-open-data"
@@ -102,14 +105,79 @@ def check_referential_integrity(tables: dict, require_s3_paths: bool = False) ->
     else:
         ok("All run_ids in samples exist in runs.parquet")
 
-    # 6.3  donor_id
-    sample_donor_ids = set(samples["donor_id"].dropna())
-    donor_ids        = set(donors["donor_id"].dropna())
-    missing          = sample_donor_ids - donor_ids
-    if missing:
-        fail(f"donor_ids in samples missing from donors.parquet: {missing}")
+    # 6.3  donor identity
+    #
+    # This check used to compare samples.donor_id against donors.donor_id and
+    # report PASS. It passed while 36 of 47 samples pointed at a donor from a
+    # different organ: the ids existed, they were simply the wrong people. An
+    # existence test cannot catch a re-pointed key, so the check now follows the
+    # cores through and verifies the organs agree.
+    if "donor_id" in samples.columns:
+        fail("samples.parquet still carries a scalar donor_id — donor is per-cell "
+             "(obs donor_core); a single id per sample cannot describe a TMA")
     else:
-        ok("All donor_ids in samples exist in donors.parquet")
+        ok("samples.parquet carries no scalar donor_id")
+
+    cores = donor_map.sample_cores()
+    by_core = donors.set_index("donor_core") if not donors.empty else None
+
+    # donors.parquet also documents cohort members with no data yet. They must
+    # never be referenced by a sample -- if one is, either the flag is stale or
+    # an acquisition was attributed to tissue that was never imaged.
+    if "in_release" in donors.columns:
+        awaiting = set(donors.loc[~donors.in_release, "donor_core"])
+        referenced = {c for s_id in samples["sample_id"]
+                      for c in donor_map.cores_for(s_id, cores)}
+        wrong = sorted(awaiting & referenced)
+        if wrong:
+            fail(f"{len(wrong)} core(s) flagged as awaiting data are referenced by a "
+                 f"sample: {wrong[:5]}")
+        else:
+            ok(f"{len(awaiting)} core(s) awaiting acquisition, none referenced by a sample")
+
+    unknown, mismatched, uncovered = [], [], []
+    for _, r in samples.iterrows():
+        sample_cores = donor_map.cores_for(r["sample_id"], cores)
+        if not sample_cores:
+            uncovered.append(r["sample_id"])
+            continue
+        for c in sample_cores:
+            if by_core is None or c not in by_core.index:
+                unknown.append((r["sample_id"], c))
+                continue
+            donor_organ = by_core.loc[c, "organ"]
+            if donor_organ and r["organ"] and donor_organ != r["organ"]:
+                mismatched.append((r["sample_id"], c, r["organ"], donor_organ))
+
+    if uncovered:
+        fail(f"{len(uncovered)} sample(s) with no donor core: {uncovered[:5]}")
+    else:
+        ok(f"All {len(samples)} samples resolve to at least one donor core")
+
+    if unknown:
+        fail(f"{len(unknown)} donor core(s) referenced by samples but absent from "
+             f"donors.parquet: {unknown[:5]}")
+    else:
+        ok("Every donor core referenced by a sample exists in donors.parquet")
+
+    if mismatched:
+        fail(f"{len(mismatched)} sample/donor organ mismatch(es) — "
+             f"e.g. {mismatched[0][0]} is {mismatched[0][2]} but core "
+             f"{mismatched[0][1]} is {mismatched[0][3]}")
+    else:
+        ok("Every sample's donor cores come from the same organ as the sample")
+
+    # n_donors must agree with the cores actually assigned
+    if "n_donors" in samples.columns:
+        wrong = [(r["sample_id"], r["n_donors"],
+                  len(donor_map.cores_for(r["sample_id"], cores)))
+                 for _, r in samples.iterrows()
+                 if r["n_donors"] != len(donor_map.cores_for(r["sample_id"], cores))]
+        if wrong:
+            fail(f"n_donors disagrees with the donor map for {len(wrong)} sample(s): "
+                 f"{wrong[:5]}")
+        else:
+            ok("n_donors matches the resolved donor cores for every sample")
 
     # panel_name
     sample_panels = set(samples["panel_name"].dropna())
@@ -152,26 +220,25 @@ def check_schema_enums(tables: dict) -> None:
     if samples.empty:
         return
 
-    valid_platforms = {"cosmx", "xenium", "g4x", "geomx", "rnascope"}
-    valid_organs    = {
-        "appendix", "bone_marrow", "colon", "ileum", "kidney", "liver",
-        "lung", "lymph_node", "pancreas", "prostate", "spleen",
-        "stomach", "thymus", "other"
-    }
-    valid_conditions = {"normal", "cancer", "disease", "other"}
-    valid_institutions = {"cornell", "wcm", "st_jude", "msk", "broad", "other"}
+    # Read the allowed values from schemas/samples.json rather than keeping a
+    # second copy here. The duplicate lists went stale the moment the release
+    # gained a rectum organ and a Northwestern site: the schema accepted the
+    # rows, this check rejected them, and neither was wrong about the data.
+    import json
+    schema = json.loads((REPO / "schemas" / "samples.json").read_text())
+    props = schema.get("properties", {})
 
-    for col, valid in [
-        ("platform",              valid_platforms),
-        ("organ",                 valid_organs),
-        ("condition",             valid_conditions),
-        ("generation_institution", valid_institutions),
-    ]:
-        bad = samples[~samples[col].isin(valid)][col].unique().tolist()
+    for col in ("platform", "organ", "condition", "generation_institution"):
+        enum = props.get(col, {}).get("enum")
+        if not enum:
+            fail(f"{col} has no enum in schemas/samples.json")
+            continue
+        valid = {v for v in enum if v is not None}
+        bad = sorted(set(samples[col].dropna()) - valid)
         if bad:
-            fail(f"Invalid {col} values: {bad}")
+            fail(f"Invalid {col} values: {bad} (allowed: {sorted(valid)})")
         else:
-            ok(f"All {col} values are valid enums")
+            ok(f"All {col} values are valid enums ({len(valid)} allowed)")
 
 
 # ---------------------------------------------------------------------------
@@ -233,7 +300,7 @@ def check_anonymous_access(bucket: str, region: str) -> None:
             region_name=region,
             config=Config(signature_version=UNSIGNED),
         )
-        for prefix in ("metadata/", "processed/", "zarr/", "docs/"):
+        for prefix in ("metadata/", "processed/", "docs/"):
             resp = anon.list_objects_v2(Bucket=bucket, Prefix=prefix, MaxKeys=1)
             if resp.get("KeyCount", 0) > 0:
                 ok(f"Anonymous list: s3://{bucket}/{prefix}")
@@ -244,27 +311,27 @@ def check_anonymous_access(bucket: str, region: str) -> None:
 
 
 def check_stream_large_file(s3, bucket: str) -> None:
-    """6.6 — Stream the large all-organ h5ad with backed='r'."""
-    section("S3 — Large file streaming (6.6)")
+    """6.6 — Open the largest SpatialData object anonymously, straight from S3."""
+    section("S3 — Remote read of the largest object (6.6)")
     try:
-        import anndata as ad
-        import s3fs
+        import spatialdata
+        from package_for_zenodo import record_slug
     except ImportError:
-        fail("anndata or s3fs not installed — skipping stream test")
+        fail("spatialdata not installed — skipping stream test")
         return
 
-    key = "processed/h5ad/cosmx/RNA/SAHA_All_RNA.h5ad"
-    uri = f"s3://{bucket}/{key}"
+    s = pd.read_parquet(DATA / "samples.parquet")
+    row = s[s.platform == "cosmx"].sort_values("n_cells").iloc[-1]   # no _RNA suffix on CosMx
+    uri = f"s3://{bucket}/processed/{record_slug(row)}/{row.sample_id}.zarr"
     try:
-        fs = s3fs.S3FileSystem(anon=False)
-        if not fs.exists(uri):
-            fail(f"{uri} does not exist — skipping")
-            return
-        adata = ad.read_h5ad(uri, backed="r")
-        ok(f"Streamed {uri}: shape={adata.shape}")
-        adata.file.close()
+        sd = spatialdata.read_zarr(uri, storage_options={"anon": True})
+        n = sum(t.n_obs for t in sd.tables.values())
+        if n == row.n_cells:
+            ok(f"Opened {uri} anonymously: {n:,} cells")
+        else:
+            fail(f"Opened {uri} but it holds {n:,} cells, samples.parquet says {row.n_cells:,}")
     except Exception as e:
-        fail(f"Stream test failed: {e}")
+        fail(f"Remote read failed for {uri}: {e}")
 
 
 # ---------------------------------------------------------------------------

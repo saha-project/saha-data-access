@@ -202,6 +202,17 @@ def write_record_docs(rec_dir: Path, slug: str, rows: pd.DataFrame,
         "`file_manifest.csv`.",
         "",
     ]
+    lines += ["## Note on cell types", "",
+              'Cell types were assigned by a mix of manual and automated methods: expert annotation where it',
+              'existed, mapping of earlier reference-based labels onto one shared vocabulary, and label',
+              'transfer (logistic regression) from annotated SAHA objects for objects that had no labels.',
+              'Each cell records how its label was made in `cell_type_broad_source`; transferred labels also',
+              'carry `cell_type_broad_confidence`, and cells without a confident label are `NA`. The original',
+              'labels of the source objects (`cell_type`, `cell_type_detailed`, ...) are kept unchanged.',
+              '',
+              '**These labels are a starting point, not ground truth. We strongly recommend evaluating them,',
+              'and re-labelling, for your own analysis.**',
+              ""]
     if slug.startswith("cosmx"):
         lines += [
             "## Note on images",
@@ -313,7 +324,7 @@ def main():
             copied.append(src.name)
         else:
             print(f"  WARNING: {rel} not found — not copied to parent record")
-    for extra in ("zenodo/DESCRIPTION.md", "zenodo/file_manifest_cosmx.csv"):
+    for extra in ("zenodo/DESCRIPTION.md",):  # file_manifest_cosmx.csv is a stale July file (old SAHA_D00x ids)
         src = REPO / extra
         if src.exists():
             shutil.copy2(src, parent / src.name)

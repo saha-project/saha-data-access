@@ -58,6 +58,24 @@ NUCLEAR = ("DNA", "DAPI", "Nuclear", "nuclear")
 # obs columns holding each cell's centroid in the shapes' pixel frame
 OBS_CENTROIDS = [("x_centroid_px", "y_centroid_px"), ("CenterX_global_px", "CenterY_global_px")]
 CELLTYPE_COLS = ["cell_type_broad", "cell_type", "celltype", "annotation", "cell_type_l1"]
+# cell_type_broad gets ONE colour per type across every object (annotate_broad.py's palette), so the
+# gallery reads the same organ to organ; other label columns are coloured by frequency rank
+BROAD = ["Epithelial", "Stem", "Lymphoid-T", "Lymphoid-B", "Lymphoid-Plasma", "Lymphoid-DC", "Lymphoid-Other",
+         "Myeloid", "Endothelial", "Mesenchymal-Stromal", "Neuronal-Glial", "Erythroid"]
+
+
+def colour_lut(col, v):
+    """(categories in legend order, {category: colour}) for one label column's values."""
+    import matplotlib.pyplot as plt
+    cats = pd.Series(v).value_counts().index
+    if col == "cell_type_broad":
+        tab = plt.get_cmap("tab20")
+        lut = {c: tab(i) for i, c in enumerate(BROAD)}
+        cats = [c for c in BROAD if c in set(cats)] + [c for c in cats if c not in lut]
+        lut.update({c: (0.8, 0.8, 0.8, 1) for c in cats if c not in lut})   # NA and anything unexpected: grey
+        return cats, lut
+    cmap = plt.get_cmap("tab20" if len(cats) <= 20 else "gist_ncar", len(cats))
+    return cats, {c: cmap(k) for k, c in enumerate(cats)}
 # no cell types: colour by an existing clustering, coarsest first
 CLUSTER_COLS = ["leiden_res0.3", "leiden_res0.5", "leiden_res0.1", "leiden_res1.0", "leiden",
                 "gene_expression_graphclust", "seurat_clusters", "louvain"]
@@ -82,13 +100,13 @@ def targets(only=None):
     both    store in release/s3 that is also the Zenodo copy (Dulai, Xenium)
     v2      store in release/s3_v2
     """
-    if only:
-        tier = "v2" if "s3_v2" in Path(only).parts else "both"
-        return [(str(p), tier) for p in sorted((D / only).glob("*.zarr"))]
     zen = {p.name for p in ZENODO_TIER.glob("*/*.zarr") if not p.is_symlink()}
     out = [(str(p), "zenodo") for p in sorted(ZENODO_TIER.glob("*/*.zarr")) if not p.is_symlink()]
     out += [(str(p), "aws" if p.name in zen else "both") for p in sorted(S3.glob("*/*.zarr"))]
     out += [(str(p), "v2") for p in sorted(S3_V2.glob("*/*.zarr"))]
+    if only:   # same tier labels as a full run (a blanket "both" put every object twice in the gallery)
+        want = {str(p) for p in (D / only).glob("*.zarr")}
+        return [t for t in out if t[0] in want]
     return out
 
 
@@ -455,9 +473,7 @@ def render(rec, panels, gray, Mpx, ext, outdir, he_panel=None):
             show_img(ax, 0.35)
         if sel is not None and col is not None:
             v = labels(obs[col])[sel]
-            cats = pd.Series(v).value_counts().index
-            cmap = plt.get_cmap("tab20" if len(cats) <= 20 else "gist_ncar", len(cats))
-            lut = {c: cmap(k) for k, c in enumerate(cats)}
+            cats, lut = colour_lut(col, v)
             ax.scatter(*xy[sel].T, s=0.4, c=[lut[x] for x in v], lw=0)
             if len(cats) <= 40:
                 ax.legend(handles=[plt.Line2D([], [], marker="o", ls="", color=lut[c], label=c)
@@ -496,9 +512,7 @@ def render(rec, panels, gray, Mpx, ext, outdir, he_panel=None):
     fig, ax = plt.subplots(figsize=(3, 3))
     if col:
         v = labels(obs[col])[sel]
-        cats = pd.Series(v).value_counts().index
-        cmap = plt.get_cmap("tab20" if len(cats) <= 20 else "gist_ncar", len(cats))
-        lut = {c: cmap(k) for k, c in enumerate(cats)}
+        cats, lut = colour_lut(col, v)
         ax.scatter(*xy[sel].T, s=0.15, c=[lut[x] for x in v], lw=0)
     else:
         ax.scatter(*xy[sel].T, s=0.15, c="#555", lw=0)

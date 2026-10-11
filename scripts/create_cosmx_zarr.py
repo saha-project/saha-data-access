@@ -43,6 +43,7 @@ Requirements:
 """
 
 import argparse
+import re
 import shutil
 import sys
 from pathlib import Path
@@ -54,6 +55,11 @@ import pandas as pd
 # CHUNK x n_genes float32 before it is compressed to sparse.
 EXPR_CHUNK = 20_000
 TX_CHUNK = 2_000_000
+
+# Fixed column order of a CosMx flat-file transcript export, for the rare file
+# that ships without a header row.
+TX_COLUMNS = ["fov", "cell_ID", "cell", "x_local_px", "y_local_px",
+              "x_global_px", "y_global_px", "z", "target", "CellComp"]
 
 # exprMat columns that are not genes.
 ID_COLS = {"cell_id", "cell_ID", "fov", "cell"}
@@ -102,25 +108,39 @@ def flat_files(run_dir: Path) -> dict:
     }
 
 
-def cell_key(df: pd.DataFrame, what: str) -> pd.Series:
+def cell_key(df: pd.DataFrame, what: str, slide: int = 1) -> pd.Series:
     """Globally unique cell identifier.
 
     CosMx `cell_ID` restarts at 1 in every FOV, so it is unique only within an
     FOV. `cell` (e.g. c_1_1_1 = c_slide_fov_cell) is unique slide-wide. Prefer
     it; otherwise synthesise the equivalent from fov + cell_ID.
+
+    `slide` matters when several slides were imaged in one run: the exprMat
+    carries no slide column, so the number has to come from the metadata. It
+    is 1 for a single-slide run, which is why the default reproduces the
+    original ids exactly.
     """
     if "cell" in df.columns:
         return df["cell"].astype(str)
     if {"fov", "cell_ID"} <= set(df.columns):
-        return "c_1_" + df["fov"].astype(str) + "_" + df["cell_ID"].astype(str)
+        return (f"c_{slide}_" + df["fov"].astype(str)
+                + "_" + df["cell_ID"].astype(str))
     raise KeyError(f"{what}: need a 'cell' column, or both 'fov' and 'cell_ID'")
+
+
+def slide_of(meta: pd.DataFrame) -> int:
+    """Slide number the metadata's `cell` ids were minted with (c_<slide>_..)."""
+    if "cell" not in meta.columns or meta.empty:
+        return 1
+    m = re.match(r"c_(\d+)_", str(meta["cell"].iloc[0]))
+    return int(m.group(1)) if m else 1
 
 
 # ---------------------------------------------------------------------------
 # Table
 # ---------------------------------------------------------------------------
 
-def read_expr(expr_file: Path):
+def read_expr(expr_file: Path, slide: int = 1):
     """Chunked read of the cell x gene matrix -> (sparse counts, cells, genes,
     sparse control-probe counts, control names).
 
@@ -139,7 +159,7 @@ def read_expr(expr_file: Path):
     gene_blocks, ctrl_blocks, cells = [], [], []
     n = 0
     for chunk in pd.read_csv(expr_file, chunksize=EXPR_CHUNK):
-        cells.append(cell_key(chunk, "exprMat"))
+        cells.append(cell_key(chunk, "exprMat", slide))
         gene_blocks.append(sp.csr_matrix(chunk[genes].to_numpy(dtype="float32")))
         if controls:
             ctrl_blocks.append(sp.csr_matrix(chunk[controls].to_numpy(dtype="float32")))
@@ -178,12 +198,13 @@ def build_table(files: dict, sample_id: str, h5ad_path: "Path | None",
     import anndata as ad
     from spatialdata.models import TableModel
 
-    print("  expression matrix …")
-    X, expr_cells, genes, controls_X, control_names = read_expr(files["expr"])
-
     print("  cell metadata …")
     meta = pd.read_csv(files["meta"])
     meta.index = cell_key(meta, "metadata")
+    slide = slide_of(meta)
+
+    print("  expression matrix …")
+    X, expr_cells, genes, controls_X, control_names = read_expr(files["expr"], slide)
 
     # exprMat and metadata can disagree at the margins (cells dropped by QC in
     # one export but not the other). Intersect, preserving exprMat row order.
@@ -322,6 +343,15 @@ def build_points(tx_file: Path, tmp_parquet: Path):
 
     cols = ["x_global_px", "y_global_px", "z", "target", "fov", "CellComp", "cell"]
     header = pd.read_csv(tx_file, nrows=0).columns.tolist()
+    # Some exports ship the tx file with no header row (seen on CRC_C18), in
+    # which case the first transcript is mistaken for the column names. The
+    # schema is fixed across every CosMx flat-file export, so supply it.
+    if "x_global_px" not in header:
+        header = TX_COLUMNS
+        names = TX_COLUMNS
+        print(f"    no header row — assuming standard column order")
+    else:
+        names = None
     use = [c for c in cols if c in header]
     for req in ("x_global_px", "y_global_px", "target"):
         if req not in use:
@@ -340,6 +370,7 @@ def build_points(tx_file: Path, tmp_parquet: Path):
     n = 0
     try:
         for chunk in pd.read_csv(tx_file, usecols=use, chunksize=TX_CHUNK,
+                                 names=names, header=(None if names else "infer"),
                                  dtype={k: v for k, v in dtypes.items() if k in use}):
             for c in ("target", "CellComp", "cell"):
                 if c in chunk.columns:

@@ -221,6 +221,18 @@ def parse_args():
 def main():
     args = parse_args()
 
+    # donors.parquet is keyed on donor_core and built by build_donors_table.py
+    # from the resolved per-cell assignments plus Table 1. A flat
+    # donor_metadata.csv cannot express a tissue microarray -- the one that used
+    # to live here claimed 5 donors for what are really 94 cores, and ingesting
+    # it would silently undo that. Ingest only into a different output.
+    out = Path(args.output)
+    if out.resolve() == Path("data/donors.parquet").resolve():
+        sys.exit(
+            "ERROR: data/donors.parquet is built per donor core, not from a flat CSV.\n"
+            "       Use:  python scripts/build_donors_table.py --qc-dir zenodo/donor_qc\n"
+            "       Pass --output elsewhere if you really meant to convert a CSV.")
+
     csv_path = Path(args.input)
     if not csv_path.exists():
         sys.exit(f"ERROR: input file not found: {csv_path}")

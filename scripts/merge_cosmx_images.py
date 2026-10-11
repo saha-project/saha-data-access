@@ -60,14 +60,39 @@ def merge(target: Path, source: Path, overwrite: bool) -> dict:
             dst.write_element(name)
             added.append(name)
 
-    # label_id lets users join the table to the stitched cell_labels image.
-    table = dst.tables["table"]
-    if "label_id" not in table.obs.columns or overwrite:
+    # label_id lets users join the table to the stitched cell_labels image. It
+    # is only meaningful when such an image exists: the data_TAP exports carry
+    # no CellLabels, so their stores hold morphology alone, and writing a join
+    # key to a label image that is not there would be a claim the object cannot
+    # honour -- besides rewriting 22 tables for nothing.
+    if not dst.tables:
+        raise ValueError("target has no table -- refusing to touch it")
+    tname = list(dst.tables)[0]
+    table = dst.tables[tname]
+    has_labels = bool(dst.labels)
+    if not has_labels:
+        skipped.append("table:label_id (no label image in this object)")
+    elif "label_id" not in table.obs.columns or overwrite:
         table.obs["label_id"] = label_ids(table.obs).to_numpy()
+
         # write_element(overwrite=True) refuses to write into its own store, so
-        # the element is removed first -- same pattern as create_cosmx_zarr.py.
-        dst.delete_element_from_disk("table")
-        dst.write_element("table")
+        # the element is removed first. That ordering is destructive: if the
+        # write raises, or the process dies between the two calls, the object is
+        # left with NO table. Two objects were lost that way before this guard
+        # existed, so validate while the good copy is still on disk.
+        from spatialdata.models import TableModel
+        try:
+            TableModel.parse(table)
+        except Exception as e:
+            raise ValueError(f"table fails validation, nothing written: {e}")
+        attrs = dict(table.uns.get("spatialdata_attrs", {}))
+        for k in ("region_key", "instance_key"):
+            col = attrs.get(k)
+            if col and col not in table.obs.columns:
+                raise ValueError(f"{k} '{col}' missing from obs, nothing written")
+
+        dst.delete_element_from_disk(tname)
+        dst.write_element(tname)
         added.append("table:label_id")
 
     return {"added": added, "skipped": skipped}
