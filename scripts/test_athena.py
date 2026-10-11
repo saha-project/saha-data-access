@@ -80,11 +80,6 @@ TESTS = [
         1,
     ),
     (
-        "qc_pass_filter",
-        "SELECT COUNT(*) AS n FROM {db}.samples WHERE qc_pass = true",
-        1,
-    ),
-    (
         "s3_paths_non_null",
         (
             "SELECT sample_id, s3_processed_path "

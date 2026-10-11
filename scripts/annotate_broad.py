@@ -60,6 +60,14 @@ CRC = {  # CRC TAP00 Insitutype immune reference: "stroma" is every non-immune c
     "NK": "Lymphoid-Other", "B": "Lymphoid-B", "pDC": "Lymphoid-DC", "mDC": "Lymphoid-DC",
     **{k: "Myeloid" for k in ["macrophage", "monocyte", "neutrophil", "mast"]}, "stroma": None,
 }
+LIVER = {  # liver-atlas vocabulary (TAP liver RNA cell_type) -> broad; hepatocytes count as Epithelial
+    **{f"Hep.{i}": "Epithelial" for i in range(1, 7)}, "Cholangiocytes": "Epithelial",
+    "Stellate.cells": "Mesenchymal-Stromal", "Inflammatory.macrophages": "Myeloid", "Non.inflammatory.macrophages": "Myeloid",
+    "Periportal.LSECs": "Endothelial", "Central.venous.LSECs": "Endothelial", "Portal.endothelial.cells": "Endothelial",
+    "Antibody.secreting.B.cells": "Lymphoid-Plasma", "Mature.B.cells": "Lymphoid-B",
+    "CD3..alpha.beta.T.cells": "Lymphoid-T", "gamma.delta.T.cells.1": "Lymphoid-T", "gamma.delta.T.cells.2": "Lymphoid-T",
+    "NK.like.cells": "Lymphoid-Other", "Erthyroid.cells": "Erythroid",
+}
 MARKERS = {
     "rna": ["EPCAM", "KRT20", "LGR5", "MKI67", "CD3E", "CD4", "CD8A", "NKG7", "MS4A1", "CD79A", "MZB1", "LAMP3",
             "CD68", "CD14", "KIT", "PECAM1", "VWF", "ACTA2", "DES", "CHGA"],
@@ -105,6 +113,8 @@ def labels_of(t, kind):
         return ct.where(ct.isin(BROAD)), "Seurat annotation (SAHA broad vocabulary)"
     if kind == "protein" and "cell_type_detailed" in o:
         return o["cell_type_detailed"].astype(object).map(PROTEIN), "mapped from cell_type_detailed (CosMx protein vocabulary)"
+    if s <= set(LIVER) | {"NA", "nan"}:
+        return ct.map(LIVER), "mapped from cell_type (liver-atlas vocabulary; hepatocytes -> Epithelial)"
     if s <= set(CRC) | {"NA", "nan"}:
         return ct.map(CRC), "mapped from cell_type (CRC immune-reference vocabulary; catch-all 'stroma', which includes tumour, -> NA)"   # before FINE: 'Treg' is in both
     if s & set(FINE):

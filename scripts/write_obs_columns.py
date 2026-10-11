@@ -18,6 +18,8 @@ Usage (on Cayuga):
 --replace-null lets a sidecar column overwrite an existing obs column ONLY if that column is
 null in every cell (v2 PROS_A3 donor_core): nothing can be lost, it keeps its column-order slot,
 and its old array is backed up.
+--replace-from VALUE does the same for a column that holds VALUE in every cell (a constant that
+was assigned wrongly, e.g. the Xenium donor_core suffix rule); the old value is fully known.
 """
 
 import argparse
@@ -44,6 +46,7 @@ def main():
     ap.add_argument("--sidecar", type=Path, required=True)
     ap.add_argument("--table")
     ap.add_argument("--replace-null", action="store_true")
+    ap.add_argument("--replace-from", metavar="VALUE")
     a = ap.parse_args()
     store = a.store.resolve()
     tname = a.table or list(zarr.open_group(str(store / "tables"), mode="r").keys())[0]
@@ -52,8 +55,10 @@ def main():
     obs = ad.io.read_elem(og)
     new = pd.read_parquet(a.sidecar)
     clash = [c for c in new.columns if c in obs.columns]
-    if clash and not (a.replace_null and all(obs[c].isna().all() for c in clash)):
-        sys.exit(f"{store.name}: obs already has {clash} (non-null, or no --replace-null) -- refusing")
+    replaceable = (a.replace_null and all(obs[c].isna().all() for c in clash)) or \
+        (a.replace_from is not None and all((obs[c].astype(str) == a.replace_from).all() for c in clash))
+    if clash and not replaceable:
+        sys.exit(f"{store.name}: obs already has {clash} (not all-null / not all {a.replace_from!r}) -- refusing")
     keep = [c for c in obs.columns if c not in clash]
     if not new.index.equals(obs.index):
         if set(new.index) != set(obs.index) or len(new) != len(obs):
@@ -85,7 +90,7 @@ def main():
             if not pd.api.types.is_float_dtype(want) else ((got.values == want.values) | (pd.isna(got.values) & pd.isna(want.values))).all()
         assert same, f"{c} differs after write"
     vc = t.obs[new.columns[0]].astype(object).fillna("NA").value_counts(normalize=True).head(5).round(3).to_dict()
-    print(f"{store.parent.name}/{store.name}[{tname}]: added {list(new.columns)} (replaced all-null {clash}); verified; {vc}")
+    print(f"{store.parent.name}/{store.name}[{tname}]: added {list(new.columns)} (replaced {clash}); verified; {vc}")
 
 
 if __name__ == "__main__":

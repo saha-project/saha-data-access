@@ -25,6 +25,9 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 from jsonschema import Draft202012Validator, ValidationError
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import donor_map
+
 # ---------------------------------------------------------------------------
 # Lookup tables derived from the SAHA manifest conventions
 # ---------------------------------------------------------------------------
@@ -47,6 +50,7 @@ INSTITUTION_MAP = {
     "msk-sail": "msk",
     "msk":      "msk",
     "broad":    "broad",
+    "northwestern": "northwestern",
 }
 
 ORGAN_MAP = {
@@ -60,6 +64,7 @@ ORGAN_MAP = {
     "lymph node":  "lymph_node",
     "pancreas":    "pancreas",
     "prostate":    "prostate",
+    "rectum":      "rectum",
     "spleen":      "spleen",
     "stomach":     "stomach",
     "thymus":      "thymus",
@@ -71,38 +76,27 @@ CONDITION_MAP = {
     "disease": "disease",
 }
 
-# Slide ID suffix → donor_id.
-# Slide ID format: {ORGAN}_{DONOR_CODE} (e.g. APE_A9, PANC_CA, IBD_A1).
-# Map only the part after the first underscore (or the full value for IBD slides).
-SLIDE_ID_DONOR_MAP = {
-    "A1":     "SAHA_D001",
-    "A9":     "SAHA_D002",
-    "CA":     "SAHA_D003",   # PANC_CA → PDAC patient
-    "IBD_A1": "SAHA_D004",
-    "IBD_A2": "SAHA_D005",
-}
-
-
-def donor_from_slide_id(slide_id: object) -> "str | None":
-    """Return donor_id from a Slide ID string (e.g. 'APE_A9' → 'SAHA_D002')."""
-    if slide_id is None:
-        return None
-    s = str(slide_id).strip()
-    if not s or s in ("", "nan", "N/A"):
-        return None
-    parts = s.split("_", 1)
-    if len(parts) < 2:
-        return None
-    organ, suffix = parts[0], parts[1]
-    if organ == "IBD":
-        return SLIDE_ID_DONOR_MAP.get(f"IBD_{suffix}")
-    return SLIDE_ID_DONOR_MAP.get(suffix)
+# There is deliberately no slide-id → donor_id mapping here.
+#
+# There used to be one, keyed on the slide suffix: A1 → SAHA_D001, A9 →
+# SAHA_D002, and so on. It was wrong. A1/A9 identify the SLIDE, and these
+# slides are tissue microarrays carrying 2-28 donor cores each, so that rule
+# collapsed 32 samples across five organs onto a single fictional donor -- and
+# once donors.parquet was rebuilt per core, those stale ids silently re-pointed
+# at unrelated people (every PANC/COL/ILE/STO/LN sample claimed an appendix
+# donor's age and sex).
+#
+# Donor is a per-CELL property, carried in obs `donor_core`. samples.parquet
+# records only how many donors an acquisition covers; the identities live in
+# donors.parquet and are joined through the objects.
 
 
 # Panel plex is extracted from the canonical panel name.
 # Extend this dict when new panels are added.
 PANEL_PLEX_MAP = {
     "ucc 1k":    1000,
+    "xenium 5k": 5001,
+    "xenium colon": 322,
     "6k discovery": 6000,
     "19k":       19000,
 }
@@ -195,6 +189,7 @@ def safe_bool(value: object) -> "bool | None":
 def transform(df: pd.DataFrame) -> list[dict]:
     """Map raw manifest columns to the samples schema."""
     records = []
+    cores = donor_map.sample_cores()
 
     for _, row in df.iterrows():
         folder_name = str(row.get("Folder Name", "")).strip()
@@ -234,18 +229,17 @@ def transform(df: pd.DataFrame) -> list[dict]:
             "organ":                   organ,
             "condition":               condition,
             "anatomical_region":       str(row.get("Tissue type", "")).strip() or None,
-            "donor_id":                donor_from_slide_id(row.get("Slide ID")),
+            "n_donors":                len(donor_map.cores_for(folder_name, cores)) or None,
             "slide_id":                str(row.get("Slide ID", "")).strip() or None,
             "panel_name":              panel_name,
             "panel_plex":              panel_plex,
             "n_cells":                 safe_int(row.get("n_cells")),
+            "n_cells_qc_pass":         safe_int(row.get("n_cells_qc_pass")),
             "n_fovs":                  safe_int(row.get("#")),
-            "qc_pass":                 safe_bool(row.get("Wasabi")),
             "processing_date":         parse_date(row.get("Run start date")),
             "slide_prepared_date":     parse_date(row.get("Slide prepared")),
             "s3_raw_prefix":           None,
             "s3_processed_path":       None,
-            "on_wasabi":               safe_bool(row.get("Wasabi")),
         }
         records.append(record)
 
@@ -281,18 +275,17 @@ PARQUET_SCHEMA = pa.schema([
     ("organ",                   pa.string()),
     ("condition",               pa.string()),
     ("anatomical_region",       pa.string()),
-    ("donor_id",                pa.string()),
+    ("n_donors",                pa.int32()),
     ("slide_id",                pa.string()),
     ("panel_name",              pa.string()),
     ("panel_plex",              pa.int32()),
     ("n_cells",                 pa.int64()),
+    ("n_cells_qc_pass",         pa.int64()),
     ("n_fovs",                  pa.int32()),
-    ("qc_pass",                 pa.bool_()),
     ("processing_date",         pa.string()),
     ("slide_prepared_date",     pa.string()),
     ("s3_raw_prefix",           pa.string()),
     ("s3_processed_path",       pa.string()),
-    ("on_wasabi",               pa.bool_()),
 ])
 
 

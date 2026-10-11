@@ -37,14 +37,30 @@ are lowercase per SAHA conventions.
 
 TABLE_INTRO = {
     "samples": (
-        "One row per tissue sample.  "
-        "Joins to `donors.parquet` on `donor_id`, to `runs.parquet` on "
-        "`run_id`, and to `panels.parquet` on `panel_name`."
+        "One row per acquisition.  "
+        "Joins to `runs.parquet` on `run_id` and to `panels.parquet` on "
+        "`panel_name`.\n\n"
+        "There is **no** `donor_id` column, and no direct join to "
+        "`donors.parquet`. Most SAHA slides are tissue microarrays carrying "
+        "2-28 donor cores, so a single acquisition images many donors and "
+        "donor identity is a per-**cell** property. Each released object "
+        "carries it in `obs['donor_core']`; join that to "
+        "`donors.parquet.donor_core`:\n\n"
+        "```python\n"
+        "adata.obs.merge(donors, on=\"donor_core\", how=\"left\")\n"
+        "```\n\n"
+        "`n_donors` records how many cores an acquisition covers, for "
+        "filtering without opening the object."
     ),
     "donors": (
-        "One row per de-identified tissue donor.  "
-        "Controlled-access columns (age, ethnicity, comorbidities) are "
-        "omitted from the open tier."
+        "One row per donor **core** -- the unit of donor identity on a tissue "
+        "microarray, not the slide.  Joins to `obs['donor_core']` in the "
+        "released objects.\n\n"
+        "`donor_patient` groups cores known to come from the same person "
+        "(the PDAC slide carries 28 cores from 14 KRAS-typed patients). "
+        "Cores are never collapsed: each is treated as an independent case.\n\n"
+        "Demographics come from Table 1 of the manuscript and are null for "
+        "cores outside the published cohort."
     ),
     "runs": (
         "One row per instrument acquisition run (batch).  "

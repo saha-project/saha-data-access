@@ -19,7 +19,6 @@ Usage:
 """
 
 import argparse
-import re
 import sys
 import warnings
 from pathlib import Path
@@ -28,14 +27,11 @@ warnings.filterwarnings("ignore")
 
 
 def core_of(sample_id: str):
-    """SAHA_XR_APE_A9_MS01_03 -> APE_A9_3, or None when there is no core number."""
-    stem = re.sub(r"_(RNA|PRT)$", "", sample_id)
-    p = stem.split("_")
-    if len(p) < 4:
-        return None
-    slide = f"{p[2]}_{p[3]}"
-    m = re.search(r"_(\d+)$", stem)
-    return f"{slide}_{int(m.group(1))}" if m else None
+    """SAHA_XR_APE_A9_MS01_03 -> APE_A9_3, or None when there is no core number.
+    One rule for all callers: donor_map.xenium_core (suffix rule + XENIUM_CORE_OVERRIDE)."""
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from donor_map import xenium_core
+    return xenium_core(sample_id)
 
 
 def main():

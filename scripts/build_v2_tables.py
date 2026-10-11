@@ -118,12 +118,10 @@ def build_samples() -> pd.DataFrame:
             "n_cells": cells,
             "n_cells_qc_pass": None,
             "n_fovs": fovs,
-            "qc_pass": None,
             "processing_date": "2026-04-22" if run == "UP01" else "2026-06-29",
             "slide_prepared_date": None,
             "s3_raw_prefix": None,
             "s3_processed_path": None,
-            "on_wasabi": False,
         })
     return pd.DataFrame(rows)
 

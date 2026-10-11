@@ -51,8 +51,9 @@ TIER_UM = {"aws": 0.0, "zenodo": 1.0, "both": 0.5}
 
 def classify(rec):
     off, on, bg = rec.get("nuclear_offset_um_refined"), rec["cells_on_he_tissue"], rec["he_tissue_fraction_random"]
-    if on < 2 * bg:
-        return None
+    if on < 2 * bg and (1 - on) > 0.5 * (1 - bg):   # same rule as the release gate: a section filling >50% of
+        return None                                  # the frame can't reach 2x random on-tissue, so also accept
+                                                     # off-tissue <= 0.5x random off-tissue
     w = rec.get("refine_windows") or 0
     if off is not None and off <= 6.0 and (w >= 20 or (w >= 8 and on >= 0.90)):
         return "he_same_section"     # small imaged areas (TAP) give few windows but agree tightly

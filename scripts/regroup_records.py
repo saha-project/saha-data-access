@@ -33,30 +33,27 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
-# Verified by reading the stores directly. These four disease samples have no
-# published h5ad to reconcile against, so samples.parquet carries no n_cells --
-# see DESCRIPTION.md on qc_pass.
-KNOWN_CELL_COUNTS = {
-    "SAHA_CR_IBD_A1_EC04": 386896,
-    "SAHA_CR_IBD_A2_EC04": 54003,
-    "SAHA_CP_PDAC_RC_EC02": 293365,
-    "SAHA_CR_PDAC_RC_EC02": 106718,
-}
-
-
 def load(manifest: Path) -> list:
+    """Rows from a packaging manifest.
+
+    There used to be a hardcoded patch here filling n_cells for four disease
+    samples the manifest left blank. samples.parquet now carries a measured
+    n_cells for every sample, so a blank is a real error and is reported as one
+    rather than quietly papered over.
+    """
     rows = list(csv.DictReader(open(manifest)))
-    for r in rows:
-        if not (r.get("n_cells") or "").strip():
-            n = KNOWN_CELL_COUNTS.get(r["sample_id"])
-            if n:
-                r["n_cells"] = str(n)
+    blank = [r["sample_id"] for r in rows if not (r.get("n_cells") or "").strip()]
+    if blank:
+        sys.exit(f"ERROR: n_cells missing for {len(blank)} sample(s) in {manifest}: "
+                 f"{blank[:5]}\n       Rebuild the manifest from samples.parquet.")
     return rows
 
 
 def readme(record: str, rows: list) -> str:
     gb = sum(int(r["size_bytes"]) for r in rows) / 1e9
     cells = sum(float(r["n_cells"] or 0) for r in rows)
+    qc = sum(float(r.get("n_cells_qc_pass") or 0) for r in rows)
+    donors = sum(int(float(r.get("n_donors") or 0)) for r in rows)
     plats = sorted({r["platform"] for r in rows})
     organs = sorted({r["organ"] for r in rows})
     assays = sorted({r["assay_type"] for r in rows})
@@ -64,7 +61,8 @@ def readme(record: str, rows: list) -> str:
     lines = [
         f"# SAHA v1.0 — {record}",
         "",
-        f"{len(rows)} SpatialData objects, {gb:.1f} GB, {int(cells):,} cells.",
+        f"{len(rows)} SpatialData objects, {gb:.1f} GB, {int(cells):,} cells."
+        + (f" {int(qc):,} pass the published QC filter." if qc else ""),
         f"Organ: {', '.join(organs)}. Platform: {', '.join(plats)}. "
         f"Assay: {', '.join(assays)}.",
         "",
@@ -73,15 +71,23 @@ def readme(record: str, rows: list) -> str:
         "",
         "## Contents",
         "",
-        "| file | sample | platform | assay | condition | cells | GB |",
-        "|------|--------|----------|-------|-----------|-------|-----|",
+        "`cells` is every cell in the file. `qc_pass` is the subset the",
+        "published h5ads kept — the number the manuscript quotes. `donors` is",
+        "how many donor cores the acquisition covers; identity is per-cell in",
+        "`obs['donor_core']`.",
+        "",
+        "| file | sample | platform | assay | condition | cells | qc_pass | donors | GB |",
+        "|------|--------|----------|-------|-----------|-------|---------|--------|-----|",
     ]
     for r in sorted(rows, key=lambda x: x["file"]):
         lines.append(
             f"| `{r['file']}` | {r['sample_id']} | {r['platform']} | "
             f"{r['assay_type']} | {r['condition']} | "
             f"{int(float(r['n_cells'] or 0)):,} | "
-            f"{int(r['size_bytes']) / 1e9:.2f} |"
+            + (f"{int(float(r['n_cells_qc_pass'])):,} | "
+               if (r.get('n_cells_qc_pass') or '').strip() else "— | ")
+            + f"{r.get('n_donors') or '—'} | "
+            + f"{int(r['size_bytes']) / 1e9:.2f} |"
         )
 
     lines += [
