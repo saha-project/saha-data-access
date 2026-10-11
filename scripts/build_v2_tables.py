@@ -165,7 +165,6 @@ def build_donors() -> pd.DataFrame:
         "slide_id": "PROS_A2",
         "organ": "prostate",
         "condition": None,
-        "age": None, "age_group": None, "sex": None, "ethnicity": None,
         "in_release": False,        # pre-publication, staged privately
         "status_note": "Core identity from Core_ID/Composite_Core_ID in the "
                        "SAHA_CR_PROS_A2_EC05 RNA table. Demographics not yet "
@@ -174,7 +173,6 @@ def build_donors() -> pd.DataFrame:
     rows += [{
         "donor_id": None, "donor_core": f"PROS_A3_geo{n:02d}", "donor_patient": None,
         "slide_id": "PROS_A3", "organ": "prostate", "condition": None,
-        "age": None, "age_group": None, "sex": None, "ethnicity": None,
         "in_release": False,
         "status_note": "Core grouping recovered geometrically (Core_ID empty in AtoMx): "
                        "tissue islands checked against the same-section H&E. Reading-order "
