@@ -30,3 +30,7 @@ raw_from_tracker/
 zenodo/donor_qc/*.donor_core.csv
 zenodo/donor_qc/_stale_from_buggy_run/
 zenodo/donor_qc/previous/
+
+# Registered- and controlled-tier renderings of donors.parquet (demographics).
+# This repo is public; only the open rendering in data/ is tracked.
+private/
