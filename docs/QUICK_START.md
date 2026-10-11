@@ -26,8 +26,8 @@ donors  = pd.read_parquet("s3://saha-open-data/metadata/donors/",  storage_optio
 runs    = pd.read_parquet("s3://saha-open-data/metadata/runs/",    storage_options={"anon": True})
 panels  = pd.read_parquet("s3://saha-open-data/metadata/panels/",  storage_options={"anon": True})
 
-# Find QC-passing colon samples on CosMx
-colon = samples.query("organ == 'colon' and platform == 'cosmx' and qc_pass == True")
+# Colon samples on CosMx
+colon = samples.query("organ == 'colon' and platform == 'cosmx'")
 print(colon[["sample_id", "run_id", "panel_name", "n_cells"]].head())
 ```
 
@@ -41,20 +41,29 @@ print(colon[["sample_id", "run_id", "panel_name", "n_cells"]].head())
 Query petabytes of SAHA data with standard SQL — pay only for bytes scanned (~$5/TB).
 
 ```sql
--- All QC-passing colon samples
+-- All colon samples
 SELECT sample_id, run_id, n_cells, panel_name
 FROM saha.samples
-WHERE organ = 'colon' AND qc_pass = true;
+WHERE organ = 'colon';
 
 -- Sample counts per organ/platform
 SELECT organ, platform, COUNT(*) AS n_samples, SUM(n_cells) AS total_cells
 FROM saha.samples
-WHERE qc_pass = true
 GROUP BY organ, platform
 ORDER BY total_cells DESC;
 
--- There is no samples.donor_id: one acquisition images many donor cores, and donor identity
--- is per cell (obs['donor_core'] inside each object). Query samples and donors separately.
+-- Donors on a slide. There is NO samples.donor_id: most SAHA slides are tissue
+-- microarrays carrying 2-28 donor cores, so one acquisition images many donors
+-- and identity is a per-CELL property in obs['donor_core']. Joining a scalar
+-- donor id is what once collapsed 32 samples onto one fictional donor.
+-- (Donor age group, sex and ethnicity are registered-tier, not in these tables.)
+SELECT s.sample_id, s.organ, s.n_donors, d.donor_core, d.condition
+FROM saha.samples s
+JOIN saha.donors d ON s.slide_id = d.slide_id AND s.organ = d.organ
+WHERE d.in_release;
+
+-- Which cores were imaged in which acquisition (the authoritative crossing)
+--   s3://saha-open-data/metadata/measurements.csv
 ```
 
 ## Option 3: AWS CLI (browse raw files)
@@ -78,17 +87,23 @@ samples = pd.read_parquet("s3://saha-open-data/metadata/samples/",
                           storage_options={"anon": True})
 
 # Pick a sample
-row = samples.query("organ == 'ileum' and qc_pass == True").iloc[0]
+row = samples.query("organ == 'ileum'").iloc[0]
 
-# Stream the processed H5AD directly from S3
-adata = sc.read_h5ad(row["s3_processed_path"],
-                     backed="r")   # backed="r" streams without loading all into RAM
+# Open the SpatialData store directly from S3. Nothing is downloaded until you
+# touch it, so inspecting a 5 GB object costs a few MB.
+import spatialdata
+sdata = spatialdata.read_zarr(row["s3_processed_path"])
 
-print(adata)
-# AnnData object with n_obs=42101, n_vars=1000
-#   obs: cell_type, organ, condition, donor_id, ...
-#   var: gene_ids, ...
-#   obsm: X_umap, spatial, ...
+print(sdata)
+# SpatialData object
+#   images: morphology            (CosMx)  /  morphology_focus (Xenium)
+#   labels: cell_labels                    (CosMx only)
+#   shapes: cells                 (CosMx)  /  cell_boundaries, nucleus_boundaries
+#   points: transcripts
+#   tables: table
+
+table = sdata.tables["table"]
+table.obs["donor_core"]   # per-cell donor identity; join to donors.parquet
 ```
 
 ## Load a Processed Seurat Object (R)
@@ -99,13 +114,12 @@ library(arrow)
 
 # Read metadata
 samples <- read_parquet("s3://saha-open-data/metadata/samples/")
-row <- subset(samples, organ == "colon" & qc_pass == TRUE)[1, ]
+row <- subset(samples, organ == "colon")[1, ]
 
-# Download and load
-s3_path <- row$s3_processed_path
-local_rds <- tempfile(fileext = ".rds")
-aws.s3::save_object(s3_path, file = local_rds, region = "us-east-1")
-obj <- readRDS(local_rds)
+# The release ships SpatialData (OME-NGFF zarr), not .rds. From R, read the
+# store with SpatialExperiment/zellkonverter, or pull the Zenodo zip for a
+# whole organ if you would rather work locally.
+# s3://saha-open-data/processed/<record_slug>/<sample_id>.zarr/   e.g. saha-v1-colon
 ```
 
 ## Explore Spatial Coordinates
@@ -115,7 +129,8 @@ import scanpy as sc
 import squidpy as sq
 import matplotlib.pyplot as plt
 
-adata = sc.read_h5ad(row["s3_processed_path"])
+sdata = spatialdata.read_zarr(row["s3_processed_path"])
+adata = sdata.tables["table"]
 
 # Plot cell types in tissue space
 sq.pl.spatial_scatter(adata, color="cell_type", shape=None, size=2)
@@ -131,8 +146,15 @@ large_normal = samples.query("condition == 'normal' and n_cells >= 10000")
 # Samples run with the 6K panel
 panel_6k = samples.query("panel_plex == 6000")
 
-# Multi-organ samples from a single donor
-donor_samples = samples.groupby("donor_id").filter(lambda g: g["organ"].nunique() > 1)
+# Acquisitions covering more than one donor core (most TMA slides do)
+multi_donor = samples.query("n_donors > 1")
+
+# Donors appearing in more than one organ: go through donors.parquet, not
+# samples -- samples has no donor column by design.
+donors = pd.read_parquet("s3://saha-open-data/metadata/donors/",
+                         storage_options={"anon": True})
+multi_organ = (donors[donors.in_release]
+               .groupby("donor_patient").filter(lambda g: g["organ"].nunique() > 1))
 
 # All available platforms
 print(samples["platform"].value_counts())

@@ -7,9 +7,9 @@ SAHA data are organized into three access tiers based on donor consent and data 
 
 | Tier | Who can access | What's available | License |
 |------|---------------|------------------|---------|
-| **Open** | Anyone, no account | Expression matrices, cell coordinates, metadata (organ, platform, QC) | CC-BY 4.0 |
-| **Registered** | Researchers who accept DUA | Open tier + donor demographics (age group, sex) | CC-BY 4.0 |
-| **Controlled** | Approved projects with IRB | Registered tier + exact age, ethnicity, comorbidities, clinical data | Full DUA required |
+| **Open** | Anyone, no account | Expression matrices, cell coordinates, metadata (organ, platform, condition, QC), donor-core identity, tissue source country | CC-BY 4.0 |
+| **Registered** | Researchers who accept DUA | Open tier + donor age group, sex, and ethnicity if available and deidentifiable; tissue source institution | CC-BY 4.0 |
+| **Controlled** | Approved projects with IRB | Registered tier + exact age, comorbidities, clinical annotations | Full DUA required |
 
 Open- and registered-tier data are released under [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/) — free to use, modify, and redistribute, including commercially, provided you give attribution. Controlled-tier data are not publicly licensed; access is granted under a signed Data Use Agreement.
 
@@ -25,7 +25,9 @@ No registration required. All data are hosted on the AWS Open Data Program (S3) 
 - Raw instrument output (CosMx flat files, Xenium HDF5, etc.)
 - Processed AnnData/Seurat objects with gene expression
 - Cell segmentation masks and spatial coordinates
-- Metadata: `sample_id`, `organ`, `platform`, `condition`, `panel_name`, `n_cells`, `qc_pass`
+- Metadata: `sample_id`, `organ`, `platform`, `condition`, `panel_name`, `n_cells`, `n_cells_qc_pass`
+- Donor-core identity: `donors.donor_id`, `donor_core`, `donor_patient`, `slide_id`, `organ`, `condition`, `in_release` -- no demographics
+- `donors.tissue_source_country`
 - Normal tissue samples **and** disease/cancer samples (CRC, PDAC, IBD) where donor consent permits open release
 
 > **Note:** Some future disease/cancer samples may be restricted to the registered or controlled tier based on consent level.
@@ -46,13 +48,15 @@ samples = pd.read_parquet("s3://saha-open-data/metadata/samples/",
 
 ## Registered Tier
 
-Researchers who complete a short data use acknowledgment gain access to donor-level demographic metadata.
+Researchers who complete a short data use acknowledgment gain access to donor age group, sex, and ethnicity if available and deidentifiable.
 
 **Additional data beyond open tier:**
 - `donors.age_group` (pediatric / adult / elderly)
 - `donors.sex` (M / F / unknown)
+- `donors.ethnicity` (NIH standard categories)
 - `donors.tissue_source_institution`
-- `donors.tissue_source_country`
+
+Each field is released only where it was recorded and where, combined with organ, condition and the other released fields, it does not single out an individual. Institution sits here rather than in the open tier because, alongside age group, sex, ethnicity and a small disease cohort, it narrows a donor down.
 
 **To register:**
 1. Visit [saha-project.org/access](https://www.saha-project.org/access)
@@ -66,13 +70,12 @@ Researchers who complete a short data use acknowledgment gain access to donor-le
 
 ## Controlled Tier
 
-Projects requiring the most sensitive donor attributes must apply for controlled access.
+Projects requiring exact age or clinical detail must apply for controlled access.
 
 **Additional data beyond registered tier:**
 - `donors.age` (exact age in years)
-- `donors.ethnicity` (NIH standard categories)
 - `donors.comorbidities` (free-text list)
-- Clinical annotations linked to tissue samples
+- Clinical annotations linked to tissue samples (e.g. treatment response, pathology detail)
 
 **Requirements:**
 - Institutional Review Board (IRB) approval or equivalent
@@ -100,7 +103,7 @@ The `donors.consent_level` field records the maximum tier permitted by each dono
 | `registered` | Requires DUA acknowledgment |
 | `controlled` | Requires full IRB and DUA review |
 
-Metadata tables automatically include only the columns permissible at each tier. The `open` version of `donors.parquet` omits `age`, `ethnicity`, and `comorbidities`.
+Metadata tables automatically include only the columns permissible at each tier. The `open` version of `donors.parquet` carries donor-core identity, organ and condition only. The registered version adds `age_group`, `sex` and `ethnicity`; the controlled version adds exact `age`, `comorbidities` and clinical annotations. `measurements.csv` and `cohort_coverage.csv` ship in the open tier and carry no demographics.
 
 ---
 

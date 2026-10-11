@@ -62,16 +62,24 @@ See [DATA_DICTIONARY.md](DATA_DICTIONARY.md) for all optional columns.
 
 #### `donor_metadata.csv`
 
-Only needed if new donors are being added. Controlled fields (exact age, ethnicity) should be submitted separately via secure channel.
+Only needed if new donors are being added. Donor age group, sex, and ethnicity if available and deidentifiable are released at the registered tier; exact age and clinical fields (comorbidities, clinical annotations) are controlled. Submit donor demographics via secure channel, never in a pull request -- this repository is public.
 
 | Column | Example |
 |--------|---------|
-| `donor_id` | `SAHA_D042` |
+| `donor_core` | `COL_A1_7` |
+| `slide_id` | `COL_A1` |
+| `organ` | `colon` |
 | `sex` | `M` |
 | `age_group` | `adult` |
-| `consent_level` | `registered` |
 | `tissue_source_institution` | `Cornell` |
-| `tissue_source_country` | `US` |
+
+A row is **one donor core on one slide**, not one person. SAHA slides are mostly
+tissue microarrays carrying 2-28 cores, so a submission must say which core is
+which — `donor_core` is the key the released objects carry per cell in
+`obs['donor_core']`. Use `donor_patient` if several cores come from the same
+person. Do **not** submit a scalar `donor_id` per sample: a slide is not a donor,
+and collapsing the two is how 32 samples were once attributed to one fictional
+donor.
 
 ### 2b. Validate your CSVs
 
@@ -142,13 +150,18 @@ aws s3 ls s3://saha-open-data/raw/cosmx/cornell/TAP01/SAHA_CR_COL_A1_TAP01/ \
 
 ### Uploading processed objects
 
-Processed H5AD and Seurat RDS files go under:
+The release format is SpatialData (OME-NGFF / Zarr), one store per acquisition,
+filed under its Zenodo record slug:
 ```
-s3://saha-open-data/processed/by_sample/{sample_id}.h5ad
-s3://saha-open-data/processed/by_sample/{sample_id}.rds
+s3://saha-open-data/processed/{record_slug}/{sample_id}.zarr/
 ```
+`record_slug` comes from `record_slug()` in `package_for_zenodo.py`, computed
+from `samples.parquet` -- never from parsing the sample id; the three-letter codes
+are not one-to-one with the organ enum.
 
-Ensure `s3_processed_path` in your sample metadata CSV points to the correct URI.
+H5AD and Seurat RDS are accepted as *submission* formats and converted; they are
+not what the release ships. `s3_processed_path` is populated after upload by the
+backfill step, so submitters leave it blank.
 
 ---
 
