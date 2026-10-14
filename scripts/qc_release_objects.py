@@ -586,7 +586,7 @@ def summarize(outdir, public=None):
     print(df[df.n_problems > 0][["sample_id", "dir", "problems"]].to_string(index=False))
 
 
-CONTACT = "Contact Jiwoon Park, Ph.D. for any questions/suggestions."
+CONTACT = 'Questions or suggestions? Contact Jiwoon Park, Ph.D. (<a href="mailto:jip2007@med.cornell.edu">jip2007@med.cornell.edu</a>) and Christopher E. Mason, Ph.D. (<a href="mailto:chm2042@med.cornell.edu">chm2042@med.cornell.edu</a>).'
 
 
 def write_gallery(df, path, src_root=None, public=False):
@@ -693,7 +693,7 @@ button{{font:13px system-ui;padding:5px 14px;margin-right:4px;border:1px solid #
 #box img{{display:block;max-width:100%;max-height:80vh;margin:0 auto;background:#fff}} #btxt{{color:#fff;text-align:center;margin:8px auto 0;font-size:13px;max-width:900px}}
 #tabs{{text-align:center;margin-bottom:8px;color:#fff;cursor:default}} #tabs button{{background:#333;color:#fff;border-color:#777}} #tabs button.on{{background:#fff;color:#111}}
 .he{{font-size:9px;background:#8a2be2;color:#fff;border-radius:3px;padding:0 3px;margin-left:3px;vertical-align:middle}}
-footer{{margin:32px 0 8px;color:#999;font-size:10.5px;text-align:center}}
+footer{{margin:32px 0 8px;color:#999;font-size:10.5px;text-align:center}}footer a{{color:inherit}}
 </style><h1>{title}</h1>
 <p>{intro}</p>
 <div class=bar>{tabs} {toggle}
