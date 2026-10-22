@@ -88,7 +88,8 @@ def main():
         dict(Release="AWS v1", Objects=len(s), Cells=int(s.n_cells.sum()),
              Cores=int(cov.in_release.sum()),
              Size=f"{s.aws_gb.sum():.1f} GB processed + {raw_in.bytes.sum() / 1e12:.2f} TB raw",
-             Imagery="full resolution", Status="built, verified; bucket not yet created"),
+             Imagery="full resolution",
+             Status="built, verified; public interim copy s3://saha-public (Wasabi); AWS bucket pending"),
         dict(Release="AWS v2 (queue)", Objects=len(v2_sizes), Cells=int(v2.n_cells.sum()),
              Cores="31 (A2); A3 pending",  # from data/v2/STATUS.md -- v2 has no measurements.csv yet
              Size=f"{v2_sizes.sum() / GB:.1f} GB processed",
@@ -97,7 +98,12 @@ def main():
     L += ["## At a glance", "", md_table(head), "",
           "Zenodo and AWS v1 hold the **same 126 objects** (same sample ids, same cells, same "
           "labels). AWS swaps in full-resolution morphology for the 49 CosMx objects; the 52 Dulai "
-          "(no imagery) and 25 Xenium (vendor-native imagery) objects are one store serving both. "
+          "and 25 Xenium (vendor-native imagery) objects are one store serving both. "
+          "AWS sizes are the stores as uploaded to s3://saha-public, including the H&E images "
+          "(same-section, serial-section and unaligned) added in October. Zenodo sizes come from "
+          "zenodo/combined_manifest.csv, which predates the 2026-10-09/10 repackaging that added the "
+          "H&E (the zips on Cayuga now total 199.0 GB, every record still under 50 GB); regenerate "
+          "the manifest's sizes and MD5s before deposit. "
           "v2 cores: 31 resolved on PROS_A2; PROS_A3 is not yet resolved.", ""]
 
     # --- by organ x modality
