@@ -1,12 +1,12 @@
-# SAHA phase 1 — SpatialData objects (collaborator early access)
+# SAHA phase 1 — SpatialData objects
 
-Pre-publication copy of the SAHA v1.0 objects, shared with collaborators for validation before the
-public release (Zenodo + AWS Open Data). Please do not redistribute. Phase 1 holds the same objects as
-the Zenodo v1.0 records `saha-v1-*`, at full image resolution; phase 2 (`phase2/`) is new prostate data
-alongside it, not a new version of it.
+Pre-publication release of the SAHA v1.0 objects (Spatial Atlas of Human Anatomy; preprint
+bioRxiv 10.1101/2025.06.16.658716), at full image resolution, open access under CC-BY 4.0.
+This copy is the interim host; at publication the same objects move to the AWS Open Data
+Program (`s3://saha-open-data`) and Zenodo (records `saha-v1-*`).
 
 ```
-s3://<SAHA AWS bucket>/phase1/          bucket location to be announced
+s3://saha-public/                      endpoint https://s3.wasabisys.com, no credentials needed
 ├── README.md                          this file
 ├── metadata/
 │   ├── samples.parquet                126 acquisitions (one row per object)
@@ -19,8 +19,9 @@ s3://<SAHA AWS bucket>/phase1/          bucket location to be announced
 │   saha-v1-appendix (13)   saha-v1-bone-marrow (7)  saha-v1-colon (6)          saha-v1-crc (3)
 │   saha-v1-ileum (27)      saha-v1-liver (6)        saha-v1-lymph-node (2)     saha-v1-pancreas-cosmx (6)
 │   saha-v1-pancreas-xenium (9)  saha-v1-prostate (5)  saha-v1-rectum (40)      saha-v1-stomach (2)
+├── source_data/                       per-figure-panel Source Data tables (_MANIFEST.tsv lists their origin)
 └── docs/
-    ├── DATA_DICTIONARY.md  FILE_FORMATS.md  QUICK_START.md  RELEASE_BREAKDOWN.md
+    ├── DATA_DICTIONARY.md  FILE_FORMATS.md
     └── gallery/index.html             one card per object: image, cells, donor cores, cell types, H&E
 ```
 
@@ -48,11 +49,17 @@ Every object is a zarr v3 SpatialData store.
 
 ## Reading
 
-The AWS bucket name and access instructions will be added here once the bucket is set up.
+Anonymous access with the AWS CLI (any S3 client works; pass the endpoint):
 
 ```bash
-aws s3 sync s3://<SAHA AWS bucket>/phase1/processed/saha-v1-prostate/ ./saha-v1-prostate/
+E="--no-sign-request --endpoint-url https://s3.wasabisys.com"
+aws s3 ls s3://saha-public/processed/ $E                       # list records
+aws s3 cp s3://saha-public/metadata/ ./metadata/ --recursive $E
+aws s3 sync s3://saha-public/processed/saha-v1-prostate/ ./saha-v1-prostate/ $E
 ```
+
+Browse every object first in `docs/gallery/index.html`
+(https://s3.wasabisys.com/saha-public/docs/gallery/index.html).
 
 ```python
 import spatialdata as sd
@@ -61,13 +68,8 @@ adata = sdata.tables["table"]
 print(adata.obs[["donor_core", "cell_type_broad"]].value_counts().head())
 ```
 
-Access is by invitation; phase 1 is not public until the Zenodo / AWS release.
-
-## What we would like checked
-
-- Does each object open, and do cells sit on the tissue in the image and H&E?
-- Do cell types and donor cores look right for the tissues you know?
-- Do the counts in `metadata/samples.parquet` (`n_cells`) match what you see?
-- Anything missing that you expected to find.
+Code: https://github.com/saha-project/saha-2026-pub · schemas and tooling:
+https://github.com/saha-project/saha-data-access. Raw instrument output is not in this copy; it is
+released with the AWS Open Data bucket.
 
 Contact Jiwoon Park, Ph.D. for any questions/suggestions.
