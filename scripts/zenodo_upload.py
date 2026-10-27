@@ -3,15 +3,18 @@
 zenodo_upload.py
 Create Zenodo draft deposits, reserve DOIs, and upload the packaged records.
 
-Drafts are NOT published. Publishing is irreversible and starts a 45-day window
-after which files can no longer be edited, so it stays a separate, explicit act
-(--publish) taken only once the manuscript is accepted.
+Drafts are NOT published. Publishing is a separate, explicit act (--publish).
+Records are published with an embargo on files (access in record_metadata.json):
+metadata and DOIs go public, files open on embargo.until. The date can be edited
+after publishing -- extend it, or make files public on acceptance. Files cannot be
+replaced after publishing; corrections go in a new version.
 
 Flow per record directory:
     1. create a draft            POST /api/records
     2. reserve its DOI           POST {draft}/pids/doi
     3. upload each file          POST/PUT/POST {draft}/files...
-    4. stop. Review in the web UI, then publish when ready.
+    4. link the parent draft to every child DOI (haspart)
+    5. stop. Review in the web UI, then publish when ready.
 
 State is written to <out-dir>/.zenodo_state.json so re-runs resume instead of
 creating duplicate drafts.
@@ -33,7 +36,7 @@ Usage:
         --records-dir ~/SAHA_zenodo --metadata zenodo/record_metadata.json
 
 Requirements:
-    pip install requests
+    pip install requests markdown
 """
 
 import argparse
@@ -42,6 +45,7 @@ import os
 import sys
 from pathlib import Path
 
+import markdown
 import requests
 
 PROD = "https://zenodo.org"
@@ -106,6 +110,11 @@ class Zenodo:
             )
         self._check(self.s.post(f"{files_link}/{key}/commit"), f"commit {key}")
 
+    def update_draft(self, draft_url: str, mutate) -> None:
+        cur = self._check(self.s.get(draft_url), "read draft").json()
+        mutate(cur)
+        self._check(self.s.put(draft_url, json=cur), "update draft")
+
     def publish(self, draft: dict) -> dict:
         r = self.s.post(draft["links"]["publish"])
         return self._check(r, "publish").json()
@@ -122,12 +131,9 @@ def build_metadata(spec: dict, slug: str, parent_doi: str = "") -> dict:
     if is_parent:
         meta["title"] = parent["metadata"]["title"]
     else:
-        child = next((c for c in spec["_proposed_split"]["children"]
-                      if c["slug"] == slug), None)
-        label = (f"{child['platform']} SpatialData objects — {child['organ_group']}"
-                 if child else slug.replace("-", " "))
-        stem = parent["metadata"]["title"].rsplit(":", 1)[0]
-        meta["title"] = f"{stem}: {label}, {parent['metadata']['version']}"
+        child = next(c for c in spec["_proposed_split"]["children"]
+                     if c["slug"] == slug)
+        meta["title"] = child["title"]
     meta["description"] = describe(slug, spec, parent_doi)
 
     if not is_parent:
@@ -157,45 +163,30 @@ def build_metadata(spec: dict, slug: str, parent_doi: str = "") -> dict:
         meta.pop("funding")
     meta.pop("dates", None)
 
-    # Drafts are created restricted. Access is set deliberately at publish time,
-    # never as a side effect of uploading.
-    return {"access": {"record": "public", "files": "restricted"},
-            "metadata": meta}
+    # Files restricted under an embargo; metadata public once published.
+    access = spec["parent" if is_parent else "child_template"]["access"]
+    return {"access": access, "metadata": meta}
+
+
+DESCRIPTION_MD = Path(__file__).resolve().parent.parent / "zenodo" / "DESCRIPTION.md"
 
 
 def describe(slug: str, spec: dict, parent_doi: str) -> str:
-    child = next((c for c in spec["_proposed_split"]["children"]
-                  if c["slug"] == slug), None)
+    """Render the PARENT or CHILD section of zenodo/DESCRIPTION.md to HTML."""
+    text = DESCRIPTION_MD.read_text()
+    parent_part, child_part = text.split("## PARENT", 1)[1].split("## CHILD", 1)
     if slug == "parent-collection":
-        body = (
-            "<p>Top-level collection for the SAHA v1.0 SpatialData release. "
-            "Contains release documentation and the metadata tables describing "
-            "every sample, donor, acquisition run, and panel. The SpatialData "
-            "objects are deposited as separate child records, linked under "
-            "related works.</p>"
-        )
+        body = parent_part.split("\n", 1)[1].rstrip().removesuffix("---")
     else:
-        imgs = ("includes morphology images" if child and child["has_images"]
-                else "contains no morphology images — the source exports include none")
-        body = (
-            f"<p>Part of the SAHA v1.0 SpatialData release: "
-            f"{child['n_samples']} SpatialData objects from the "
-            f"{child['platform']} platform ({child['organ_group']}), "
-            f"{child['measured_gb']} GB. This subset {imgs}.</p>"
-        ) if child else f"<p>Part of the SAHA v1.0 SpatialData release ({slug}).</p>"
-        if parent_doi:
-            body += (f'<p>Collection record: <a href="https://doi.org/{parent_doi}">'
-                     f"{parent_doi}</a></p>")
-
-    return body + (
-        "<p>Each file is one SpatialData (OME-NGFF / Zarr v3) store, packaged as "
-        "an uncompressed ZIP. Written with spatialdata 0.8.0 / zarr 3.3.0. "
-        "See the record's README.md for reading instructions and MD5SUMS.txt "
-        "for checksums.</p>"
-        "<p><strong>Full description:</strong> see zenodo/DESCRIPTION.md in "
-        '<a href="https://github.com/saha-project/saha-data-access">'
-        "github.com/saha-project/saha-data-access</a>.</p>"
-    )
+        c = next(c for c in spec["_proposed_split"]["children"] if c["slug"] == slug)
+        link = (f"[{parent_doi}](https://doi.org/{parent_doi})" if parent_doi
+                else "see *Related works*")
+        body = child_part.split("\n", 1)[1].format(
+            N_SAMPLES=c["n_samples"], PLATFORM=" + ".join({"cosmx": "CosMx", "xenium": "Xenium"}[p] for p in c["platform"].split("+")),
+            ORGAN_GROUP=c["organ_group"].replace("-", " "),
+            N_CELLS=f"{c['n_cells']:,}", N_DONOR_CORES=c["n_donor_cores"],
+            MEASURED_GB=c["measured_gb"], PARENT_LINK=link)
+    return markdown.markdown(body, extensions=["tables", "fenced_code"])
 
 
 def main():
@@ -299,6 +290,21 @@ def main():
             entry["published"] = out["links"].get("self_html", "")
             print(f"  PUBLISHED: {entry['published']}")
             state_path.write_text(json.dumps(state, indent=2))
+
+    # The parent draft is created first, so it learns the child DOIs only now.
+    pe = env_state.get("parent-collection", {})
+    kids = [env_state[s]["doi"] for s in sorted(env_state)
+            if s != "parent-collection" and env_state[s].get("doi")]
+    if pe.get("draft_url") and kids and not args.publish:
+        def add_children(rec):
+            rel = [r for r in rec["metadata"].get("related_identifiers", [])
+                   if r.get("relation_type", {}).get("id") != "haspart"]
+            rel += [{"identifier": k, "scheme": "doi",
+                     "relation_type": {"id": "haspart"},
+                     "resource_type": {"id": "dataset"}} for k in kids]
+            rec["metadata"]["related_identifiers"] = rel
+        z.update_draft(pe["draft_url"], add_children)
+        print(f"\nparent linked to {len(kids)} child DOIs")
 
     state_path.write_text(json.dumps(state, indent=2))
     print(f"\n{'=' * 60}")

@@ -3,13 +3,10 @@
     "Zenodo (InvenioRDM) record metadata for the SAHA v1.0 SpatialData release.",
     "POST the 'parent' object to https://zenodo.org/api/records to create a draft.",
     "Child records are built from 'child_template' by substituting {PLACEHOLDERS}.",
-    "Every TODO must be resolved before deposit. Dry-run on sandbox.zenodo.org first.",
+    "Dry-run on sandbox.zenodo.org first.",
     "Description fields are HTML rendered from zenodo/DESCRIPTION.md — edit that file, not these strings."
   ],
-  "_todo": [
-    "Replace 10.5281/zenodo.TODO-CHILD once each child DOI is reserved",
-    "Add funder / award numbers to funding[]"
-  ],
+  "_todo": [],
   "_resolved": [
     "Governance: institutional and consent approvals complete (2026-07-31)",
     "Disease samples (IBD x2, PDAC x2) are IN scope for v1, released unfiltered without qc_pass",
@@ -20,16 +17,15 @@
     "Records restructured to per-organ (2026-09-07), replacing the assay-type split. 7 child records; pancreas split by platform on size grounds."
   ],
   "_release_gate": {
-    "state": "hold as unpublished drafts with reserved DOIs",
+    "state": "publish with an embargo on files (decided 2026-10-27, Jiwoon)",
     "reason": [
-      "Release is gated on manuscript acceptance, with no known date.",
-      "Zenodo allows file edits only within 45 days of publication, and an embargo",
-      "opens automatically at midnight UTC on its end date. Publishing now would",
-      "start the file-edit clock during review and risk premature opening if",
-      "acceptance slips past the date. A reserved DOI is citable in the manuscript",
-      "without publishing."
+      "Metadata and DOIs become public and citable; files stay restricted until embargo.until.",
+      "The embargo date is editable after publishing: extend it before it passes, or lift early by making files public on acceptance.",
+      "The embargo opens automatically at midnight UTC on its end date -- extend it if acceptance slips.",
+      "Reviewers get files through a Zenodo share link while embargoed.",
+      "Files cannot be replaced after publishing; corrections go in a new version (concept DOI unchanged)."
     ],
-    "on_acceptance": "publish open, or set embargo.until to the publication date if the journal requires one"
+    "on_acceptance": "edit each record: files public (or embargo.until = publication date)"
   },
   "parent": {
     "access": {
@@ -37,7 +33,7 @@
       "files": "restricted",
       "embargo": {
         "active": true,
-        "until": "TODO-YYYY-MM-DD",
+        "until": "2027-10-31",
         "reason": "Pending publication of the associated manuscript."
       }
     },
@@ -54,10 +50,8 @@
         }
       ],
       "_creators_note": [
-        "Named leads followed by the consortium as an organizational creator.",
-        "Cites as: Park J, Mason CE, SAHA Consortium (2026).",
-        "Add further named leads before the organizational entry if wanted.",
-        "ORCIDs filled for Park and Mason."
+        "First author, the corresponding authors of the manuscript (in manuscript order, Mason last), then the consortium.",
+        "ORCIDs looked up on pub.orcid.org 2026-10-27 (unique name matches; affiliations from Author_List.xlsx)."
       ],
       "creators": [
         {
@@ -69,6 +63,117 @@
               {
                 "scheme": "orcid",
                 "identifier": "0000-0003-0045-1429"
+              }
+            ]
+          },
+          "affiliations": [
+            {
+              "name": "Weill Cornell Medicine"
+            }
+          ]
+        },
+        {
+          "person_or_org": {
+            "type": "personal",
+            "family_name": "Dulai",
+            "given_name": "Parambir Singh",
+            "identifiers": [
+              {
+                "scheme": "orcid",
+                "identifier": "0000-0002-9514-2321"
+              }
+            ]
+          },
+          "affiliations": [
+            {
+              "name": "Northwestern University Feinberg School of Medicine"
+            }
+          ]
+        },
+        {
+          "person_or_org": {
+            "type": "personal",
+            "family_name": "Martelotto",
+            "given_name": "Luciano",
+            "identifiers": [
+              {
+                "scheme": "orcid",
+                "identifier": "0000-0002-9625-1183"
+              }
+            ]
+          },
+          "affiliations": [
+            {
+              "name": "University of Adelaide, South Australian immunoGenomics Cancer Institute"
+            }
+          ]
+        },
+        {
+          "person_or_org": {
+            "type": "personal",
+            "family_name": "Plummer",
+            "given_name": "Jasmine T.",
+            "identifiers": [
+              {
+                "scheme": "orcid",
+                "identifier": "0000-0001-7263-350X"
+              }
+            ]
+          },
+          "affiliations": [
+            {
+              "name": "St. Jude Children's Research Hospital"
+            }
+          ]
+        },
+        {
+          "person_or_org": {
+            "type": "personal",
+            "family_name": "Rendeiro",
+            "given_name": "André F.",
+            "identifiers": [
+              {
+                "scheme": "orcid",
+                "identifier": "0000-0001-9362-5373"
+              }
+            ]
+          },
+          "affiliations": [
+            {
+              "name": "CeMM Research Center for Molecular Medicine of the Austrian Academy of Sciences"
+            },
+            {
+              "name": "Ludwig Boltzmann Institute for Network Medicine at the University of Vienna"
+            }
+          ]
+        },
+        {
+          "person_or_org": {
+            "type": "personal",
+            "family_name": "Alonso",
+            "given_name": "Alicia",
+            "identifiers": [
+              {
+                "scheme": "orcid",
+                "identifier": "0000-0001-7524-9052"
+              }
+            ]
+          },
+          "affiliations": [
+            {
+              "name": "Weill Cornell Medicine"
+            }
+          ]
+        },
+        {
+          "person_or_org": {
+            "type": "personal",
+            "family_name": "Houlihan",
+            "given_name": "Shauna Lee",
+            "identifiers": [
+              {
+                "scheme": "orcid",
+                "identifier": "0000-0002-2672-1530"
               }
             ]
           },
@@ -120,7 +225,7 @@
           ]
         }
       ],
-      "description": "TODO: render from zenodo/DESCRIPTION.md (PARENT section) to HTML",
+      "description": "Rendered from zenodo/DESCRIPTION.md (PARENT) by scripts/zenodo_upload.py",
       "rights": [
         {
           "id": "cc-by-4.0",
@@ -189,37 +294,152 @@
           "relation_type": {
             "id": "isdescribedby"
           }
-        },
-        {
-          "_comment": "One entry per child record; fill in after each child DOI is reserved",
-          "identifier": "10.5281/zenodo.TODO-CHILD",
-          "scheme": "doi",
-          "relation_type": {
-            "id": "haspart"
-          },
-          "resource_type": {
-            "id": "dataset"
-          }
         }
       ],
       "funding": [
         {
-          "_comment": "TODO: add grant IDs — Zenodo auto-resolves NIH/NSF/ERC award numbers",
           "funder": {
-            "name": "TODO"
+            "id": "01cwqze88"
           },
           "award": {
-            "number": "TODO"
+            "number": "R01MH117406",
+            "title": {
+              "en": "NIH award R01MH117406"
+            }
+          }
+        },
+        {
+          "funder": {
+            "id": "01cwqze88"
+          },
+          "award": {
+            "number": "U54CA302435",
+            "title": {
+              "en": "NIH award U54CA302435"
+            }
+          }
+        },
+        {
+          "funder": {
+            "id": "01cwqze88"
+          },
+          "award": {
+            "number": "R01CA266279",
+            "title": {
+              "en": "NIH award R01CA266279"
+            }
+          }
+        },
+        {
+          "funder": {
+            "id": "01cwqze88"
+          },
+          "award": {
+            "number": "P01CA272295",
+            "title": {
+              "en": "NIH award P01CA272295"
+            }
+          }
+        },
+        {
+          "funder": {
+            "id": "01cwqze88"
+          },
+          "award": {
+            "number": "U01DK134321",
+            "title": {
+              "en": "NIH award U01DK134321"
+            }
+          }
+        },
+        {
+          "funder": {
+            "id": "01cwqze88"
+          },
+          "award": {
+            "number": "R01DK135620",
+            "title": {
+              "en": "NIH award R01DK135620"
+            }
+          }
+        },
+        {
+          "funder": {
+            "id": "01cwqze88"
+          },
+          "award": {
+            "number": "U19AI181102",
+            "title": {
+              "en": "NIH award U19AI181102"
+            }
+          }
+        },
+        {
+          "funder": {
+            "name": "Blood Cancer United"
+          },
+          "award": {
+            "number": "MCL 7001-18",
+            "title": {
+              "en": "Blood Cancer United MCL 7001-18"
+            }
+          }
+        },
+        {
+          "funder": {
+            "name": "Blood Cancer United"
+          },
+          "award": {
+            "number": "9238-16",
+            "title": {
+              "en": "Blood Cancer United 9238-16"
+            }
+          }
+        },
+        {
+          "funder": {
+            "name": "Blood Cancer United"
+          },
+          "award": {
+            "number": "7029-23",
+            "title": {
+              "en": "Blood Cancer United 7029-23"
+            }
+          }
+        },
+        {
+          "funder": {
+            "name": "WorldQuant"
+          }
+        },
+        {
+          "funder": {
+            "name": "GI Research Foundation"
+          }
+        },
+        {
+          "funder": {
+            "name": "Bumrungrad International Hospital"
+          }
+        },
+        {
+          "funder": {
+            "name": "Angelini Ventures S.p.A."
+          }
+        },
+        {
+          "funder": {
+            "name": "Northwestern Memorial Foundation"
           }
         }
       ],
       "dates": [
         {
-          "date": "TODO-YYYY-MM-DD",
+          "date": "2027-10-31",
           "type": {
             "id": "available"
           },
-          "description": "Embargo lift date"
+          "description": "Embargo lift date (extendable; lifted early on acceptance)"
         }
       ]
     },
@@ -250,7 +470,7 @@
       "files": "restricted",
       "embargo": {
         "active": true,
-        "until": "TODO-YYYY-MM-DD",
+        "until": "2027-10-31",
         "reason": "Pending publication of the associated manuscript."
       }
     },
@@ -267,7 +487,7 @@
         }
       ],
       "creators": "SAME AS PARENT",
-      "description": "TODO: render from zenodo/DESCRIPTION.md (CHILD section) to HTML",
+      "description": "Rendered from zenodo/DESCRIPTION.md (CHILD) by scripts/zenodo_upload.py",
       "rights": [
         {
           "id": "cc-by-4.0"
@@ -318,7 +538,7 @@
         "platform": "cosmx+xenium",
         "organ_group": "appendix",
         "n_samples": 13,
-        "measured_gb": 29.6,
+        "measured_gb": 32.4,
         "n_cells": 1795478,
         "n_donor_cores": 4,
         "has_images": true,
@@ -333,7 +553,7 @@
         "platform": "cosmx",
         "organ_group": "bone_marrow",
         "n_samples": 7,
-        "measured_gb": 2.7,
+        "measured_gb": 2.8,
         "n_cells": 328798,
         "n_donor_cores": 4,
         "has_images": true,
@@ -347,7 +567,7 @@
         "platform": "cosmx",
         "organ_group": "colon",
         "n_samples": 6,
-        "measured_gb": 7.8,
+        "measured_gb": 11.3,
         "n_cells": 837447,
         "n_donor_cores": 7,
         "has_images": true,
@@ -361,7 +581,7 @@
         "platform": "cosmx",
         "organ_group": "colon",
         "n_samples": 3,
-        "measured_gb": 0.8,
+        "measured_gb": 4.6,
         "n_cells": 192474,
         "n_donor_cores": 3,
         "has_images": true,
@@ -375,7 +595,7 @@
         "platform": "cosmx+xenium",
         "organ_group": "ileum",
         "n_samples": 27,
-        "measured_gb": 38.2,
+        "measured_gb": 42.9,
         "n_cells": 2152086,
         "n_donor_cores": 18,
         "has_images": true,
@@ -390,7 +610,7 @@
         "platform": "cosmx",
         "organ_group": "liver",
         "n_samples": 6,
-        "measured_gb": 4.4,
+        "measured_gb": 7.2,
         "n_cells": 469053,
         "n_donor_cores": 4,
         "has_images": true,
@@ -404,7 +624,7 @@
         "platform": "cosmx",
         "organ_group": "lymph_node",
         "n_samples": 2,
-        "measured_gb": 6.3,
+        "measured_gb": 6.7,
         "n_cells": 1062736,
         "n_donor_cores": 10,
         "has_images": true,
@@ -418,7 +638,7 @@
         "platform": "cosmx",
         "organ_group": "pancreas",
         "n_samples": 6,
-        "measured_gb": 37.3,
+        "measured_gb": 40.0,
         "n_cells": 2655620,
         "n_donor_cores": 40,
         "has_images": true,
@@ -432,7 +652,7 @@
         "platform": "xenium",
         "organ_group": "pancreas",
         "n_samples": 9,
-        "measured_gb": 26.9,
+        "measured_gb": 27.8,
         "n_cells": 1242392,
         "n_donor_cores": 12,
         "has_images": true,
@@ -446,7 +666,7 @@
         "platform": "cosmx+xenium",
         "organ_group": "prostate",
         "n_samples": 5,
-        "measured_gb": 4.6,
+        "measured_gb": 5.7,
         "n_cells": 297683,
         "n_donor_cores": 5,
         "has_images": true,
@@ -461,7 +681,7 @@
         "platform": "cosmx+xenium",
         "organ_group": "rectum",
         "n_samples": 40,
-        "measured_gb": 0.4,
+        "measured_gb": 8.3,
         "n_cells": 838904,
         "n_donor_cores": 14,
         "has_images": true,
@@ -476,7 +696,7 @@
         "platform": "cosmx",
         "organ_group": "stomach",
         "n_samples": 2,
-        "measured_gb": 8.1,
+        "measured_gb": 9.2,
         "n_cells": 536119,
         "n_donor_cores": 6,
         "has_images": true,
