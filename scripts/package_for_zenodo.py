@@ -29,6 +29,10 @@ Usage:
         --zarr-dir "/path/to/spatialdata/RNA" \
         --manifest data/samples.parquet --out-dir ~/SAHA_zenodo
 
+    # refresh only the parent record (README + tables); no record matches the name
+    python scripts/package_for_zenodo.py --zarr-dir ... --out-dir ~/SAHA_zenodo \
+        --only parent-collection
+
     # one record only, resumable
     python scripts/package_for_zenodo.py ... --only cosmx-protein --skip-existing
 """
@@ -193,8 +197,7 @@ def write_record_docs(rec_dir: Path, slug: str, rows: pd.DataFrame,
         "",
         "```python",
         "import spatialdata as sd",
-        f"sdata = sd.read_zarr(\"{files['sample_id'].iloc[0] if len(files) else 'SAMPLE'}"
-        f"{'_RNA' if 'xenium' in slug else ''}.zarr\")",
+        f"sdata = sd.read_zarr(\"{files['file'].iloc[0].removesuffix('.zip') if len(files) else 'SAMPLE.zarr'}\")",
         "adata = sdata.tables[\"table\"]",
         "```",
         "",
@@ -324,11 +327,15 @@ def main():
             copied.append(src.name)
         else:
             print(f"  WARNING: {rel} not found — not copied to parent record")
-    for extra in ("zenodo/DESCRIPTION.md",):  # file_manifest_cosmx.csv is a stale July file (old SAHA_D00x ids)
-        src = REPO / extra
-        if src.exists():
-            shutil.copy2(src, parent / src.name)
-            copied.append(src.name)
+    # README.md = the PARENT section of zenodo/DESCRIPTION.md, the same text as
+    # the record's Zenodo description. DESCRIPTION.md itself is source, not shipped.
+    desc = (REPO / "zenodo/DESCRIPTION.md").read_text()
+    body = desc.split("## PARENT", 1)[1].split("## CHILD", 1)[0]
+    body = body.split("\n", 1)[1].strip().removesuffix("---").rstrip()
+    (parent / "README.md").write_text(
+        "# Spatial Atlas of Human Anatomy (SAHA): SpatialData objects, v1.0\n\n"
+        + body + "\n")
+    copied.append("README.md")
 
     all_files = df.assign(zip_name=df["zarr_name"] + ".zip")[
         ["zip_name", "sample_id", "record", "platform", "assay_type", "organ",

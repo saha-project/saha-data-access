@@ -33,6 +33,7 @@ release documentation and the metadata tables. The SpatialData objects are in
 | `panels.parquet` | Panel configurations: platform, plex, gene and protein lists |
 | `measurements.csv` | One row per acquisition x donor core: which cells came from which core |
 | `cohort_coverage.csv` | Donor cores against the manuscript's cohort table |
+| `file_manifest.csv` | Every object in the release: file, sample id, child record, platform, organ, condition, cell counts |
 | `LICENSE-DATA` | Data licence and attribution statement |
 
 ### Donor identity is per cell, not per sample
