@@ -7,7 +7,6 @@
     "Description fields are HTML rendered from zenodo/DESCRIPTION.md — edit that file, not these strings."
   ],
   "_todo": [
-    "Fill in the two ORCIDs in creators[] (Park, Mason)",
     "Replace 10.5281/zenodo.TODO-CHILD once each child DOI is reserved",
     "Add funder / award numbers to funding[]"
   ],
@@ -58,7 +57,7 @@
         "Named leads followed by the consortium as an organizational creator.",
         "Cites as: Park J, Mason CE, SAHA Consortium (2026).",
         "Add further named leads before the organizational entry if wanted.",
-        "Only the two ORCIDs below still need filling in."
+        "ORCIDs filled for Park and Mason."
       ],
       "creators": [
         {
@@ -69,7 +68,7 @@
             "identifiers": [
               {
                 "scheme": "orcid",
-                "identifier": "TODO-0000-0000-0000-0000"
+                "identifier": "0000-0003-0045-1429"
               }
             ]
           },
@@ -87,7 +86,7 @@
             "identifiers": [
               {
                 "scheme": "orcid",
-                "identifier": "TODO-0000-0000-0000-0000"
+                "identifier": "0000-0002-1850-1642"
               }
             ]
           },
