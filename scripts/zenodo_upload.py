@@ -193,8 +193,8 @@ def describe(slug: str, spec: dict, parent_doi: str) -> str:
         "See the record's README.md for reading instructions and MD5SUMS.txt "
         "for checksums.</p>"
         "<p><strong>Full description:</strong> see zenodo/DESCRIPTION.md in "
-        '<a href="https://github.com/masonlab/saha-data-access">'
-        "github.com/masonlab/saha-data-access</a>.</p>"
+        '<a href="https://github.com/saha-project/saha-data-access">'
+        "github.com/saha-project/saha-data-access</a>.</p>"
     )
 
 
