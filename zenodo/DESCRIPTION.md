@@ -239,7 +239,7 @@ restrictions beyond attribution.
 ### Related resources
 
 - Project website: https://www.saha-project.org/
-- Code, schemas, and tutorials: https://github.com/masonlab/saha-data-access
+- Code, schemas, and tutorials: https://github.com/saha-project/saha-data-access
 - Full-fidelity data on AWS Open Data: `s3://saha-open-data`
 
 ---

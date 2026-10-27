@@ -175,7 +175,7 @@
           }
         },
         {
-          "identifier": "https://github.com/masonlab/saha-data-access",
+          "identifier": "https://github.com/saha-project/saha-data-access",
           "scheme": "url",
           "relation_type": {
             "id": "issupplementedby"
