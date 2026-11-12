@@ -63,21 +63,29 @@ if (length(ctrl_assays)) {
 md <- o@meta.data
 md$cell <- rownames(md)
 
-im <- Images(o)[[1]]
-fov <- o[[im]]
-cent <- GetTissueCoordinates(fov[["centroids"]])
-# GetTissueCoordinates returns x, y, cell -- align it to the counts cell order
-rownames(cent) <- as.character(cent$cell)
-cent <- cent[md$cell, , drop = FALSE]
-md$x_centroid_px <- cent$x
-md$y_centroid_px <- cent$y
+if (length(Images(o))) {
+  im <- Images(o)[[1]]
+  fov <- o[[im]]
+  cent <- GetTissueCoordinates(fov[["centroids"]])
+  # GetTissueCoordinates returns x, y, cell -- align it to the counts cell order
+  rownames(cent) <- as.character(cent$cell)
+  cent <- cent[md$cell, , drop = FALSE]
+  md$x_centroid_px <- cent$x
+  md$y_centroid_px <- cent$y
+} else {
+  # No FOV image (the PBMC STAMP objects): centroids from slide millimetres at the CosMx
+  # pitch, as build_cosmx_from_rds.py does, and no segmentation to export.
+  im <- NA; fov <- NULL
+  md$x_centroid_px <- md$x_slide_mm * 8313.8688
+  md$y_centroid_px <- md$y_slide_mm * 8313.8688
+}
 
 md <- md[match(colnames(counts), md$cell), , drop = FALSE]
 stopifnot(identical(as.character(md$cell), colnames(counts)))
 write.csv(md, file.path(out_dir, "obs.csv"), row.names = FALSE)
 
 # ---- segmentation polygons --------------------------------------------------
-if ("segmentation" %in% names(fov@boundaries)) {
+if (!is.null(fov) && "segmentation" %in% names(fov@boundaries)) {
   seg <- GetTissueCoordinates(fov[["segmentation"]])
   write.csv(seg, file.path(out_dir, "polygons.csv"), row.names = FALSE)
   n_poly <- length(unique(seg$cell))

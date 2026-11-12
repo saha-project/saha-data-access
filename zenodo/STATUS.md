@@ -125,8 +125,9 @@ the open bucket and ODP will not cover its egress.
 
 ## Deferred
 
-`zenodo/stamp/DEFERRED.md` — PBMC STAMP / PBMC STAMP (4.86M cells), held
-until v1 ships. Consent and data-sharing terms are the gating item.
+`zenodo/stamp/DEFERRED.md` (not committed) — PBMC STAMP, controlled access
+(CosMx WTx 3.22M cells; Xenium 5K total unverified), held until v1 ships. Consent
+and data-sharing terms are the gating item.
 
 ## Generated tables
 

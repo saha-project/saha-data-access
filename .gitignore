@@ -34,3 +34,6 @@ zenodo/donor_qc/previous/
 # Registered- and controlled-tier renderings of donors.parquet (demographics).
 # This repo is public; only the open rendering in data/ is tracked.
 private/
+
+# PBMC STAMP working notes and sample tables: controlled-access cohort, never commit
+zenodo/stamp/

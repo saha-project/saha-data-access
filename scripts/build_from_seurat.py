@@ -112,6 +112,11 @@ def main():
     ap.add_argument("--sample", required=True)
     ap.add_argument("--out-dir", type=Path, required=True)
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--spot-map", type=Path,
+                    help="CSV keyed by donor_core: per-cell donor for slides carrying many donors (STAMP)")
+    ap.add_argument("--spot-col", default="orig.ident", help="obs column holding each cell's spot")
+    ap.add_argument("--allow-circles", action="store_true",
+                    help="build without polygons.csv: every cell becomes a centroid circle (PBMC STAMP)")
     args = ap.parse_args()
 
     import anndata as ad
@@ -171,6 +176,13 @@ def main():
         print(f"  dropping case-variant duplicate obs column(s): {casedrop}")
         obs = obs.drop(columns=casedrop)
 
+    # A source column that case-collides with a release column written below (STAMP's per-spot
+    # `Sample_ID` vs `sample_id`) would also make SpatialData refuse the table; keep it as source_*.
+    release = {"sample_id", "platform", "assay_type", "organ", "condition", "disease",
+               "disease_state", "donor_core", "donor_patient", "region"}
+    obs = obs.rename(columns={c: f"source_{c}" for c in obs.columns
+                              if str(c).lower() in release and c not in release})
+
     obs.index = pd.Index(cells, name=None)
     obs["sample_id"] = args.sample
     obs["platform"] = row["platform"]
@@ -182,8 +194,20 @@ def main():
     # Donor is per-cell everywhere in SAHA. Here one acquisition is one block,
     # so every cell shares a core -- but the column is written the same way so
     # it joins donors.parquet identically to the microarray acquisitions.
-    obs["donor_core"] = pd.Categorical([row["donor_core"]] * len(obs))
-    obs["donor_patient"] = pd.Categorical([row["donor_patient"]] * len(obs))
+    if args.spot_map:
+        # STAMP: one slide carries many donor x timepoint spots, so the donor comes from each
+        # cell's spot label, and every spot-map column (donor_patient, timepoint, ...) follows it.
+        sm = pd.read_csv(args.spot_map, dtype=str).set_index("donor_core")
+        spot = obs[args.spot_col].astype(str)
+        unknown = sorted(set(spot) - set(sm.index))
+        if unknown:
+            sys.exit(f"ERROR: spots not in {args.spot_map}: {unknown[:5]}")
+        obs["donor_core"] = pd.Categorical(spot)
+        for c in sm.columns:
+            obs[c] = pd.Categorical(spot.map(sm[c]))
+    else:
+        obs["donor_core"] = pd.Categorical([row["donor_core"]] * len(obs))
+        obs["donor_patient"] = pd.Categorical([row["donor_patient"]] * len(obs))
     obs["region"] = pd.Categorical(["cells"] * len(obs))
 
     gx = obs["x_centroid_px"].to_numpy(dtype="float64")
@@ -200,9 +224,12 @@ def main():
     table.obsm["spatial"] = np.c_[gx, gy]
 
     poly_path = d / "polygons.csv"
-    if not poly_path.exists():
+    if poly_path.exists():
+        geoms, degenerate, missing = polygons_for(poly_path, cells)
+    elif args.allow_circles:
+        geoms, degenerate, missing = {}, [], cells
+    else:
         sys.exit("ERROR: no polygons.csv -- refusing to build a boundary-free object")
-    geoms, degenerate, missing = polygons_for(poly_path, cells)
     if degenerate:
         print(f"  {len(degenerate)} cell(s) had fewer than 3 boundary points")
     if missing:

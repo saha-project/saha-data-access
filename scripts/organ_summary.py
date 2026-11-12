@@ -3,7 +3,7 @@
 organ_summary.py
 Write zenodo/organ_summary.csv -- one row per organ (Dulai IBD split out), plus
 the two cohorts not yet in measurements.csv: PRCA (build pending) and
-PBMC STAMP (deferred).
+PBMC STAMP (controlled access, deferred).
 
 samples = measurements = donor cores x acquisitions.
 """
@@ -22,9 +22,11 @@ ORDER = list(PLATFORM.values()) + ["CosMx WTx"]
 # ponytail: hand-entered until this cohort reaches measurements.csv; drop then.
 # (PRCA reached it on 2026-09-25 and now sits in the prostate row.)
 EXTRA = [
-    # 25 spots on 3 slides (zenodo/stamp/DEFERRED.md).
-    dict(organ="PBMC", cohort="PBMC STAMP (deferred)", samples=25, acquisitions=3,
-         cells=4855308, platforms="CosMx WTx", states="Healthy"),
+    # CosMx WTx STAMP: 36 spots on 3 flowcells, 3,220,395 cells (18,935 RNA targets).
+    # The 4,855,308-cell / 4,826-gene h5ad is the Xenium 5K STAMP run, not CosMx;
+    # its cell total is unverified (slide1/slide2 duplication), so it gets no row yet.
+    dict(organ="PBMC", cohort="STAMP (controlled, deferred)", samples=36, acquisitions=3,
+         cells=3220395, platforms="CosMx WTx", states="Healthy"),
 ]
 
 
