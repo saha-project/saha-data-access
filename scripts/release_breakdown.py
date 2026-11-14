@@ -177,7 +177,7 @@ def main():
     tree_z = ["zenodo (13 records)",
               "├── saha-v1  (parent collection)",
               "│   ├── samples.parquet  donors.parquet  runs.parquet  panels.parquet",
-              "│   ├── measurements.csv  cohort_coverage.csv  file_manifest.csv  file_manifest_cosmx.csv",
+              "│   ├── measurements.csv  cohort_coverage.csv  file_manifest.csv",
               "│   └── DESCRIPTION.md  LICENSE-DATA"]
     for i, (r, x) in enumerate(zrec.iterrows()):
         last = i == len(zrec) - 1

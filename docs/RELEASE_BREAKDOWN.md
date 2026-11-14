@@ -108,7 +108,7 @@ Six acquisitions on two prostate TMA slides, delivered as four objects: each sli
 zenodo (13 records)
 ├── saha-v1  (parent collection)
 │   ├── samples.parquet  donors.parquet  runs.parquet  panels.parquet
-│   ├── measurements.csv  cohort_coverage.csv  file_manifest.csv  file_manifest_cosmx.csv
+│   ├── measurements.csv  cohort_coverage.csv  file_manifest.csv
 │   └── DESCRIPTION.md  LICENSE-DATA
 ├── saha-v1-appendix            13 × <sample_id>.zarr.zip     29.6 GB   + file_manifest.csv  MD5SUMS.txt  README.md
 ├── saha-v1-bone-marrow          7 × <sample_id>.zarr.zip      2.7 GB   + file_manifest.csv  MD5SUMS.txt  README.md
