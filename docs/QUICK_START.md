@@ -1,169 +1,92 @@
 # SAHA Data Quick Start
 
-This guide shows how to find and load SAHA spatial omics data — no account required for open-access data.
+How to find and load SAHA spatial omics data. Open-access data need no account.
 
-> **Status (October 2026):** the AWS bucket `s3://saha-open-data` is not live yet. S3 paths in these
-> docs show the planned layout. Until it opens, use the metadata tables in [`data/`](data/).
-
-## Option 1: Local Parquet (fastest)
-
-Download the metadata tables once, then filter locally.
+> **Status (November 2026):** the AWS Open Data bucket `s3://saha-open-data` is not live yet.
+> A copy with the same layout is readable now at `s3://saha-public` (Wasabi; anonymous read).
+> Every example below takes one data root, so switching later changes a single line.
 
 ```bash
-# Install dependencies
-pip install pandas pyarrow s3fs fsspec
+pip install pandas pyarrow s3fs fsspec zarr anndata scanpy
 ```
+
+## 1. Pick the data root
+
+```python
+import os
+
+DATA_ROOT = os.environ.get("SAHA_DATA_ROOT", "s3://saha-public")
+if DATA_ROOT.startswith("s3://saha-public"):
+    S3_OPTS = {"anon": True, "client_kwargs": {"endpoint_url": "https://s3.wasabisys.com"}}
+elif DATA_ROOT.startswith("s3://"):
+    S3_OPTS = {"anon": True}          # s3://saha-open-data, once live
+else:
+    S3_OPTS = {}                      # a local copy with the same layout
+```
+
+Layout under the root:
+
+```
+metadata/                  samples.parquet, donors.parquet, runs.parquet, panels.parquet, measurements.csv
+processed/<record>/        one SpatialData store per acquisition, e.g. processed/saha-v1-colon/SAHA_CR_COL_A1_TAP01.zarr
+```
+
+The same four tables are also in this repository's [`data/`](../data/) folder.
+
+## 2. Query the metadata
 
 ```python
 import pandas as pd
 
-# Load metadata (directly from S3 — no credentials needed for open data)
-samples = pd.read_parquet(
-    "s3://saha-open-data/metadata/samples/",
-    storage_options={"anon": True},
-)
-donors  = pd.read_parquet("s3://saha-open-data/metadata/donors/",  storage_options={"anon": True})
-runs    = pd.read_parquet("s3://saha-open-data/metadata/runs/",    storage_options={"anon": True})
-panels  = pd.read_parquet("s3://saha-open-data/metadata/panels/",  storage_options={"anon": True})
+samples = pd.read_parquet(f"{DATA_ROOT}/metadata/samples.parquet", storage_options=S3_OPTS)
+donors  = pd.read_parquet(f"{DATA_ROOT}/metadata/donors.parquet",  storage_options=S3_OPTS)
 
-# Colon samples on CosMx
 colon = samples.query("organ == 'colon' and platform == 'cosmx'")
-print(colon[["sample_id", "run_id", "panel_name", "n_cells"]].head())
+print(colon[["sample_id", "panel_name", "n_cells", "s3_processed_path"]])
 ```
 
-## Option 2: Amazon Athena (SQL, once the bucket is live)
+`s3_processed_path` is relative to the data root. Most slides are tissue microarrays, so donor
+identity is a per-cell property (`obs['donor_core']`); join `donors` on `donor_core`.
 
-> **Not available yet.** Once the AWS bucket is live, Athena works only after you register the
-> tables in **your own** AWS account (setup steps will be published with the bucket). There is
-> no shared `saha` database to connect to. The queries below assume
-> that setup; without it, use pandas (Option 1) on the same Parquet files.
+## 3. Load one acquisition's cell table
 
-Query petabytes of SAHA data with standard SQL — pay only for bytes scanned (~$5/TB).
+Reading only the table avoids downloading images (stores with images are 2–6 GB).
 
-```sql
--- All colon samples
-SELECT sample_id, run_id, n_cells, panel_name
-FROM saha.samples
-WHERE organ = 'colon';
+```python
+import anndata as ad
+import zarr
 
--- Sample counts per organ/platform
-SELECT organ, platform, COUNT(*) AS n_samples, SUM(n_cells) AS total_cells
-FROM saha.samples
-GROUP BY organ, platform
-ORDER BY total_cells DESC;
-
--- Donors on a slide. There is NO samples.donor_id: most SAHA slides are tissue
--- microarrays carrying 2-28 donor cores, so one acquisition images many donors
--- and identity is a per-CELL property in obs['donor_core']. Joining a scalar
--- donor id is what once collapsed 32 samples onto one fictional donor.
--- (Donor age group, sex and ethnicity are registered-tier, not in these tables.)
-SELECT s.sample_id, s.organ, s.n_donors, d.donor_core, d.condition
-FROM saha.samples s
-JOIN saha.donors d ON s.slide_id = d.slide_id AND s.organ = d.organ
-WHERE d.in_release;
-
--- Which cores were imaged in which acquisition (the authoritative crossing)
---   s3://saha-open-data/metadata/measurements.csv
+row = samples.set_index("sample_id").loc["SAHA_CR_COL_A1_TAP01"]
+store = zarr.storage.FsspecStore.from_url(f"{DATA_ROOT}/{row.s3_processed_path}",
+                                          storage_options=S3_OPTS, read_only=True)
+adata = ad.io.read_elem(zarr.open_group(store, mode="r")["tables/table"])
+if "raw" in adata.layers:          # SAHA Xenium stores keep counts in layers['raw']
+    adata.X = adata.layers["raw"]
+print(adata)
 ```
 
-## Option 3: AWS CLI (browse raw files)
+## 4. Open the full SpatialData object (images, shapes)
+
+`spatialdata.read_zarr` does not open remote stores, so copy the store first:
 
 ```bash
-# List all CosMx runs from Cornell
-aws s3 ls s3://saha-open-data/raw/cosmx/cornell/ --no-sign-request
-
-# Download one sample's raw data
-aws s3 cp s3://saha-open-data/raw/cosmx/cornell/TAP01/SAHA_CR_COL_A1_TAP01/ \
-    ./SAHA_CR_COL_A1_TAP01/ --recursive --no-sign-request
+aws s3 sync s3://saha-public/processed/saha-v1-colon/SAHA_CR_COL_A1_TAP01.zarr ./SAHA_CR_COL_A1_TAP01.zarr \
+    --no-sign-request --endpoint-url https://s3.wasabisys.com
 ```
 
-## Load a Processed AnnData Object
-
 ```python
-import scanpy as sc
-import pandas as pd
-
-samples = pd.read_parquet("s3://saha-open-data/metadata/samples/",
-                          storage_options={"anon": True})
-
-# Pick a sample
-row = samples.query("organ == 'ileum'").iloc[0]
-
-# Open the SpatialData store directly from S3. Nothing is downloaded until you
-# touch it, so inspecting a 5 GB object costs a few MB.
 import spatialdata
-sdata = spatialdata.read_zarr(row["s3_processed_path"])
-
-print(sdata)
-# SpatialData object
-#   images: morphology            (CosMx)  /  morphology_focus (Xenium)
-#   labels: cell_labels                    (CosMx only)
-#   shapes: cells                 (CosMx)  /  cell_boundaries, nucleus_boundaries
-#   points: transcripts
-#   tables: table
-
-table = sdata.tables["table"]
-table.obs["donor_core"]   # per-cell donor identity; join to donors.parquet
+sdata = spatialdata.read_zarr("SAHA_CR_COL_A1_TAP01.zarr")
 ```
 
-## Load a Processed Seurat Object (R)
+## Amazon Athena (once the AWS bucket is live)
 
-```r
-library(Seurat)
-library(arrow)
+Athena will work only after you register the tables in your own AWS account; setup steps will be
+published with the bucket. There is no shared `saha` database.
 
-# Read metadata
-samples <- read_parquet("s3://saha-open-data/metadata/samples/")
-row <- subset(samples, organ == "colon")[1, ]
+## Access tiers
 
-# The release ships SpatialData (OME-NGFF zarr), not .rds. From R, read the
-# store with SpatialExperiment/zellkonverter, or pull the Zenodo zip for a
-# whole organ if you would rather work locally.
-# s3://saha-open-data/processed/<record_slug>/<sample_id>.zarr/   e.g. saha-v1-colon
-```
+Open and registered tiers are CC-BY 4.0; controlled-tier data need a signed DUA. Raw instrument
+output is not in the public copy. See [ACCESS_TIERS.md](ACCESS_TIERS.md).
 
-## Explore Spatial Coordinates
-
-```python
-import scanpy as sc
-import squidpy as sq
-import matplotlib.pyplot as plt
-
-sdata = spatialdata.read_zarr(row["s3_processed_path"])
-adata = sdata.tables["table"]
-
-# Plot cell types in tissue space
-sq.pl.spatial_scatter(adata, color="cell_type", shape=None, size=2)
-plt.savefig("spatial_cell_types.png", dpi=150, bbox_inches="tight")
-```
-
-## Common Filters
-
-```python
-# All normal tissue samples with ≥ 10,000 cells
-large_normal = samples.query("condition == 'normal' and n_cells >= 10000")
-
-# Samples run with the 6K panel
-panel_6k = samples.query("panel_plex == 6000")
-
-# Acquisitions covering more than one donor core (most TMA slides do)
-multi_donor = samples.query("n_donors > 1")
-
-# Donors appearing in more than one organ: go through donors.parquet, not
-# samples -- samples has no donor column by design.
-donors = pd.read_parquet("s3://saha-open-data/metadata/donors/",
-                         storage_options={"anon": True})
-multi_organ = (donors[donors.in_release]
-               .groupby("donor_patient").filter(lambda g: g["organ"].nunique() > 1))
-
-# All available platforms
-print(samples["platform"].value_counts())
-```
-
-## Next Steps
-
-- [DATA_DICTIONARY.md](DATA_DICTIONARY.md) — full column definitions for all four metadata tables
-- [ACCESS_TIERS.md](ACCESS_TIERS.md) — how to request registered/controlled-access data
-- [FILE_FORMATS.md](FILE_FORMATS.md) — raw file formats per platform
-- [CONTRIBUTING.md](CONTRIBUTING.md) — submitting data from your institution
-- `tutorials/` — Jupyter notebooks for end-to-end analyses
+Worked examples: [tutorials/](../tutorials/).

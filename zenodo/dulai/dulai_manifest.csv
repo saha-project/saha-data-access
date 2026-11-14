@@ -31,7 +31,7 @@ SAHA_XR_IBD_PD_A1_2_NU01,Xenium_MT_16/2_xen_so_qcnorm.RDS,xenium,rna,NU02,Xenium
 SAHA_XR_IBD_PD_A1_3_NU01,Xenium_MT_16/3_xen_so_qcnorm.RDS,xenium,rna,NU02,Xenium 377 MT,377,I0262 ITDF00A,I0262_ITDF00A,I0262,ileum,disease,CD,Non-inflamed,,,northwestern,NU_Dulai_IBD,SAHA_XR_IBD_PD_A2_2_NU02
 SAHA_XR_IBD_PD_A1_4_NU01,Xenium_MT_16/4_xen_so_qcnorm.RDS,xenium,rna,NU02,Xenium 377 MT,377,I0321 ITDF00A,I0321_ITDF00A,I0321,ileum,disease,UC,Non-inflamed,,,northwestern,NU_Dulai_IBD,SAHA_XR_IBD_PD_A3_2_NU02
 SAHA_XR_IBD_PD_A1_5_NU01,Xenium_MT_16/5_xen_so_qcnorm.RDS,xenium,rna,NU02,Xenium 377 MT,377,I0275 ITDF00A,I0275_ITDF00A,I0275,ileum,disease,CD,Inflamed,,,northwestern,NU_Dulai_IBD,SAHA_XR_IBD_PD_A2_1_NU02
-SAHA_XR_IBD_PD_A1_6_NU01,Xenium_MT_16/6_xen_so_qcnorm.RDS,xenium,rna,NU02,Xenium 377 MT,377,I0310 RSDF00A,I0310_RSDF00A,I0310,rectum,disease,UC,Non-inflamed,,,northwestern,NU_Dulai_IBD,SAHA_XR_IBD_PD_A2_2_NU02
+SAHA_XR_IBD_PD_A1_6_NU01,Xenium_MT_16/6_xen_so_qcnorm.RDS,xenium,rna,NU02,Xenium 377 MT,377,I0310 RSDF00A,I0310_RSDF00A,I0310,rectum,disease,UC,Non-inflamed,,,northwestern,NU_Dulai_IBD,SAHA_XR_IBD_PD_A6_2_NU02
 SAHA_XR_IBD_PD_A1_7_NU01,Xenium_MT_16/7_xen_so_qcnorm.RDS,xenium,rna,NU02,Xenium 377 MT,377,I0310 ITDF00A,I0310_ITDF00A,I0310,ileum,disease,UC,Non-inflamed,,,northwestern,NU_Dulai_IBD,SAHA_XR_IBD_PD_A3_1_NU02
 SAHA_XR_IBD_PD_A1_8_NU01,Xenium_MT_16/8_xen_so_qcnorm.RDS,xenium,rna,NU02,Xenium 377 MT,377,I0262 RSDF00A,I0262_RSDF00A,I0262,rectum,disease,CD,Inflamed,,,northwestern,NU_Dulai_IBD,SAHA_XR_IBD_PD_A4_2_NU02
 SAHA_XR_IBD_PD_A1_9_NU01,Xenium_MT_16/9_xen_so_qcnorm.RDS,xenium,rna,NU02,Xenium 377 MT,377,I0303 RSDF00A,I0303_RSDF00A,I0303,rectum,disease,CD,Inflamed,,,northwestern,NU_Dulai_IBD,SAHA_XR_IBD_PD_A5_1_NU02

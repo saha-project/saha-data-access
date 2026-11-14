@@ -12,7 +12,7 @@
   "properties": {
     "donor_id": {
       "type": "string",
-      "description": "Unique donor identifier (de-identified, e.g. SAHA_D001)."
+      "description": "De-identified donor identifier (e.g. SAHA_D001), one per patient: ids are numbered per core, then cores sharing a donor_patient take the lowest of their ids and the others are retired (gaps)."
     },
     "donor_core": {
       "type": "string",
@@ -23,7 +23,7 @@
         "string",
         "null"
       ],
-      "description": "Grouping key where two cores are known to be the same person. Populated for the PDAC slide only (28 cores from 14 KRAS-typed patients); cores are never collapsed."
+      "description": "Grouping key where two or more cores are known to be the same person: the PDAC slide (28 cores, 14 KRAS-typed patients), the normal pancreas slide (12 cores, 6 patients), Cohort 1 pre/post pairs (IBD_A1/A2) and Northwestern patients with both an ileal and a rectal block. Cores keep their own rows and share donor_id."
     },
     "slide_id": {
       "type": [

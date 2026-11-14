@@ -147,7 +147,16 @@ def main():
               "Reconciled per donor core (`zenodo/cohort_coverage.csv`): the core rows are "
               f"{len(t1) - n_dulai - 1 + 3} cores once CRC is split into its three slides, plus the "
               "20 Dulai blocks.", ""]
+    # patients: cores grouped by donor_patient where one is recorded, else one core = one patient
+    dn = pd.read_parquet(REPO / "data/donors.parquet")
+    dn = dn[dn.in_release].assign(patient=lambda d: d.donor_patient.fillna(d.donor_core))
+    pts = dn.groupby("condition").patient.nunique()
     L += [md_table(comp), "",
+          f"The {len(dn)} released cores come from **{dn.patient.nunique()} patients** "
+          f"({pts.get('normal', 0)} healthy, {pts.get('disease', 0)} IBD, {pts.get('cancer', 0)} cancer), "
+          f"counting cores that share `donor_patient` once, and carry {dn.donor_id.nunique()} donor ids "
+          "(one per patient: same-patient cores share the lowest of their per-core ids). "
+          "The three CRC slides are counted as three patients.", "",
           "Absent from the release, with reason:", "", md_table(absent), "",
           "Not in Table 1 but released: `PCa_9224` (PRCA prostate cancer, 3 acquisitions), "
           "shipped with null demographics.", ""]

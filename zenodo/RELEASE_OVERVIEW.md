@@ -14,7 +14,7 @@ Rerun the scripts before quoting them; don't edit by hand.
 | Platforms        | CosMx (RNA + protein), Xenium | CosMx WTx STAMP (18,935 RNA targets); Xenium 5K STAMP |
 | Acquisitions     | 126                          | CosMx: 36 spots on 3 flowcells; Xenium: 24 spots on 2 slides |
 | Cells            | 12,408,790                   | CosMx 3,220,395; Xenium total unverified |
-| Donors           | 115 measured cores (90 patients) | SAHA_D114–D122 (healthy-reference subset) |
+| Donors           | 115 measured cores (88 patients) | SAHA_D200–D208 (healthy-reference subset) |
 | Size             | 165.4 GB, 12 Zenodo records  | not packaged yet                |
 | Status           | Validator 17/17; packaging still to do | On hold until v1 ships; consent terms needed first |
 
@@ -107,7 +107,7 @@ into "slide1"/"slide2" halves, and 868,975 cells carry no spot). Its provenance 
 being checked with St Jude.
 
 Release labels are grouped so that individual donors cannot be singled out:
-donors are `SAHA_D114`–`SAHA_D122`, assigned in shuffled order; every released
+donors are `SAHA_D200`–`SAHA_D208`, assigned in shuffled order; every released
 draw has `timepoint_group = baseline`; no cohort or timepoint labels are
 released. The sample table is `zenodo/stamp/stamp_release_samples.csv` (not
 committed). The analysis key is in `private/`.

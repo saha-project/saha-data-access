@@ -65,6 +65,8 @@ Table 1 has **150 rows**, which are not all the same kind of thing: 98 are donor
 | stomach | 6 | 6 | 0 | 0 | 6 |
 | **total** | 120 | 114 | 6 | 1 | 115 |
 
+The 115 released cores come from **88 patients** (50 healthy, 20 IBD, 18 cancer), counting cores that share `donor_patient` once, and carry 88 donor ids (one per patient: same-patient cores share the lowest of their per-core ids). The three CRC slides are counted as three patients.
+
 Absent from the release, with reason:
 
 | table1_id | organ | why_absent |

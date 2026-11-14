@@ -57,8 +57,11 @@ TABLE_INTRO = {
         "microarray, not the slide.  Joins to `obs['donor_core']` in the "
         "released objects.\n\n"
         "`donor_patient` groups cores known to come from the same person "
-        "(the PDAC slide carries 28 cores from 14 KRAS-typed patients). "
-        "Cores are never collapsed: each is treated as an independent case.\n\n"
+        "(PDAC: 28 cores from 14 patients; normal pancreas: 12 cores from 6; "
+        "Cohort 1: two pre/post pairs; Northwestern: five ileal + rectal pairs). "
+        "Each core keeps its own row; same-patient cores share the patient's "
+        "lowest `donor_id` (the others are retired), so `donor_id` is one per "
+        "patient.\n\n"
         "Demographics come from Table 1 of the manuscript and are null for "
         "cores outside the published cohort."
     ),

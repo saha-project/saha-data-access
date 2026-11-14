@@ -2,12 +2,12 @@
 
 Data schemas, metadata infrastructure, and access documentation for the **Spatial Atlas of Human Anatomy (SAHA)** — hosted on the [AWS Open Data Program](https://registry.opendata.aws/).
 
-> **Status (October 2026):** the AWS bucket `s3://saha-open-data` is not live yet. S3 paths in these
-> docs show the planned layout. Until it opens, use the metadata tables in [`data/`](data/).
+> **Status (November 2026):** the AWS Open Data bucket `s3://saha-open-data` is not live yet. A copy
+> with the same layout is readable now at `s3://saha-public` (Wasabi, anonymous). See [docs/QUICK_START.md](docs/QUICK_START.md).
 
 ## About SAHA
 
-SAHA is a multimodal, subcellular-resolution spatial reference atlas of human tissues. This release holds 11.2M cells from 94 donor cores across 9 organs, in 71 acquisitions on the CosMx and Xenium platforms, with matched RNA (up to 19,000 genes) and protein (64-67 markers) on the same tissue. The atlas includes both healthy and disease tissues (colorectal cancer, pancreatic ductal adenocarcinoma, inflammatory bowel disease).
+SAHA is a multimodal, multi-platform spatial reference atlas of human tissues. The v1 release holds 12.4M cells from 126 acquisitions of 115 donor cores (88 patients) across 10 organs, measured on CosMx (1,000- and 6,000-plex RNA; 64-plex protein) and Xenium (377-plex, colon and 5K panels), with RNA, protein and a second platform on adjacent sections of the same blocks. The atlas includes both healthy and disease tissues (colorectal cancer, pancreatic ductal adenocarcinoma, inflammatory bowel disease).
 
 Most slides are **tissue microarrays** carrying 2-28 donor cores, so donor identity is a per-**cell** property held in `obs['donor_core']`, not a column on `samples.parquet`. See [docs/DATA_DICTIONARY.md](docs/DATA_DICTIONARY.md).
 
@@ -33,35 +33,25 @@ Current cohort and run counts, with breakdowns by organ, status, assay, panel, a
 
 ## Metadata Tables
 
-Four Parquet tables are provided in `data/` and mirrored at `s3://saha-open-data/metadata/`.
+Four Parquet tables are provided in `data/` and mirrored under `metadata/` at the data root.
 
 | Table | Rows | Description |
 |-------|------|-------------|
 | `samples.parquet` | 126 | One row per acquisition — organ, condition, platform, n_donors, n_cells, QC status, S3 paths |
-| `donors.parquet` | 121 | One row per donor **core** — slide, organ, condition (demographics are registered-tier; see [ACCESS_TIERS](docs/ACCESS_TIERS.md)) |
+| `donors.parquet` | 121 | One row per donor **core** — slide, organ, condition; `donor_id` is one per patient, so cores from the same patient share it (demographics are registered-tier; see [ACCESS_TIERS](docs/ACCESS_TIERS.md)) |
 | `runs.parquet` | 19 | One row per acquisition run — instrument, institution, date, panel, protocol fields |
 | `panels.parquet` | 8 | Panel configurations — platform, plex, gene/protein lists |
 
-## Data Organization on S3
+## Data Organization
 
 ```
-s3://saha-open-data/
-├── processed/
-│   ├── h5ad/
-│   │   ├── cosmx/RNA/        # Organ-level CosMx RNA AnnData (e.g. SAHA_COL_RNA.h5ad)
-│   │   ├── cosmx/PRT/        # Organ-level CosMx Protein AnnData
-│   │   └── xenium/           # Sample-level Xenium AnnData
-│   └── zarr/
-│       ├── xenium/           # Xenium SpatialData zarr objects
-│       └── cosmx/            # CosMx SpatialData zarr objects
-├── raw/
-│   ├── cosmx/{sample_id}/    # Raw CosMx flat files (controlled access)
-│   └── xenium/{sample_id}/   # Raw Xenium output (controlled access)
-├── metadata/                 # Parquet tables (samples, donors, runs, panels)
-└── docs/                     # Documentation
+<data root>/                 s3://saha-public (Wasabi, now) or s3://saha-open-data (AWS, once live)
+├── metadata/                samples, donors, runs, panels (Parquet) + measurements.csv
+└── processed/<record>/      one SpatialData (zarr) store per acquisition, e.g. processed/saha-v1-colon/SAHA_CR_COL_A1_TAP01.zarr
 ```
 
-CosMx processed data is aggregated to organ level (all samples from one organ in one h5ad). Xenium processed data is kept at sample level. Raw data requires registration — see [docs/ACCESS_TIERS.md](docs/ACCESS_TIERS.md).
+`samples.s3_processed_path` gives each store's path relative to the root. Raw instrument output is not
+in the public copy; see [docs/ACCESS_TIERS.md](docs/ACCESS_TIERS.md).
 
 ## Note on Cell Types
 
@@ -90,26 +80,8 @@ print(colon[["sample_id", "n_donors", "n_cells", "s3_processed_path"]])
 #   adata.obs.merge(donors, on="donor_core", how="left")
 ```
 
-**Load metadata from S3** (anonymous access):
-
-```python
-import pandas as pd
-
-samples = pd.read_parquet(
-    "s3://saha-open-data/metadata/samples.parquet",
-    storage_options={"anon": True},
-)
-```
-
-**Open a SpatialData object** (anonymous access):
-
-```python
-import spatialdata
-
-sdata = spatialdata.read_zarr(
-    "s3://saha-open-data/processed/saha-v1-colon/SAHA_CR_COL_A1_TAP01.zarr"
-)
-```
+**Load metadata and one cell table from the data root** (anonymous): see [docs/QUICK_START.md](docs/QUICK_START.md),
+which also shows how to open a full SpatialData object.
 
 **Query the metadata tables** (works today on the copies in `data/`):
 
@@ -137,6 +109,7 @@ See [tutorials/](tutorials/) for full worked examples.
 | `release_tally.py` | Generate `zenodo/release_breakdown.csv` and refresh the record split |
 | `ingest_runs.py` | Validate and convert run metadata → `runs.parquet` |
 | `ingest_panels.py` | Validate and convert panel definitions → `panels.parquet` |
+| `fill_processed_paths.py` | Fill `samples.s3_processed_path` (relative to the data root) from the uploaded stores |
 | `validate_release.py` | Cross-check parquet referential integrity and S3 object existence |
 | `test_athena.py` | Run validation queries against the Glue/Athena catalog |
 | `generate_data_dictionary.py` | Auto-generate `docs/DATA_DICTIONARY.md` from schemas |
@@ -153,7 +126,7 @@ SAHA datasets (open and registered tiers): [CC-BY 4.0](https://creativecommons.o
 
 ## Citation
 
-> Park J, et al. Spatial Atlas of Human Anatomy (SAHA). in revision. Preprint: bioRxiv 2025.06.16.658716v3.
+> Park J, et al. Spatial Atlas of Human Anatomy (SAHA). Preprint: bioRxiv 2025.06.16.658716v3.
 
 ## Contact
 

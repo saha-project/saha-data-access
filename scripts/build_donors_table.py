@@ -15,10 +15,13 @@ Demographics come from Table_1 of the manuscript, so the release and the paper
 describe the same cohort.
 
 `donor_id` is retained as the de-identified key required by the schema. Where
-two cores are known to be the same person it is shared: the PDAC slide carries
-28 cores from 14 patients (two each, KRAS G12R / G12D), recorded in
-ProjectConfig_PANC_Combined.yaml and independently in RNA_PDAC_scVI.h5ad.
-Elsewhere one core is treated as one donor.
+two cores are known to be the same person it is shared (the patient's lowest
+per-core id; the rest are retired, leaving gaps): the PDAC slide carries 28
+cores from 14 patients (two each, KRAS G12R / G12D), recorded in
+ProjectConfig_PANC_Combined.yaml and independently in RNA_PDAC_scVI.h5ad; the
+normal pancreas slide carries 12 cores from 6 patients; Cohort 1 (IBD_A1/A2)
+has two pre/post pairs; five Northwestern patients gave an ileal and a rectal
+block. See EXTRA_PATIENTS. Elsewhere one core is treated as one donor.
 
 Demographics are tiered (docs/ACCESS_TIERS.md). `--out` gets the OPEN table:
 identity, organ and condition only. The registered table (+ age group, sex,
@@ -110,6 +113,20 @@ NO_COHORT_ENTRY = {
     "CRC_C16": "cohort table carries a single pooled 'CRC' row for three slides",
     "CRC_C17": "cohort table carries a single pooled 'CRC' row for three slides",
     "CRC_C18": "cohort table carries a single pooled 'CRC' row for three slides",
+}
+
+
+# Core -> patient groupings with no config file behind them. PDAC comes from
+# CONFIG (Patient_maps); these are added here.
+#   PANC_A1: 12 normal cores from 6 patients, adjacent pairs (1/2 ... 11/12);
+#     Table 1 age, sex and ethnicity are identical within each pair.
+#   IBD_A1/A2 (Cohort 1): two pre/post anti-TNF pairs, IBD_A1_2 + IBD_A2_1 and
+#     IBD_A1_3 + IBD_A2_2 (IBD_Exploration responder_labels.csv); the other
+#     four cores are one patient each.
+EXTRA_PATIENTS = {
+    **{f"PANC_A1_{c}": f"PANC_A1_P{(c + 1) // 2}" for c in range(1, 13)},
+    "IBD_A1_2": "IBD_C1_P1", "IBD_A2_1": "IBD_C1_P1",
+    "IBD_A1_3": "IBD_C1_P2", "IBD_A2_2": "IBD_C1_P2",
 }
 
 
@@ -331,14 +348,20 @@ def main():
             print(f"    {c:14s} {NO_COHORT_ENTRY.get(c, 'no cohort-table entry')}")
         print()
 
-    # donor_id: one per core. Each core is an independent case -- PANC_A1 has
-    # 12 and PDAC 28 -- so cores are not collapsed even where two share a
-    # donor_patient grouping. donor_patient is kept alongside for anyone who
-    # wants the PDAC cores grouped by the patient they came from.
-    df["_person"] = df["donor_core"]
-    ids = {p: f"SAHA_D{i:03d}" for i, p in enumerate(sorted(df["_person"].unique()), 1)}
-    df["donor_id"] = df["_person"].map(ids)
-    df = df.drop(columns="_person")
+    # donor_id: numbered once per core in core order (the v1 numbering, kept
+    # stable), then cores from the same patient share the patient's LOWEST id;
+    # the others are retired and leave gaps. One id per patient across the
+    # release: every core with a donor_patient is merged on it (pancreas,
+    # PDAC, Cohort 1 pairs, and the five Northwestern ileal + rectal pairs).
+    for core, patient in EXTRA_PATIENTS.items():
+        df.loc[df.donor_core == core, "donor_patient"] = patient
+    core_id = {c: f"SAHA_D{i:03d}" for i, c in enumerate(sorted(df.donor_core), 1)}
+    df["donor_id"] = df.donor_core.map(core_id)
+    merge = df.donor_patient.notna()
+    df.loc[merge, "donor_id"] = (df[merge].groupby("donor_patient")
+                                 .donor_id.transform("min"))
+    retired = sorted(set(core_id.values()) - set(df.donor_id))
+    print(f"retired donor ids ({len(retired)}): {', '.join(retired)}\n")
     df = df[["donor_id", "donor_core", "donor_patient", "slide_id", "organ",
              "condition", "age", "age_group", "sex", "ethnicity",
              "in_release", "status_note"]]

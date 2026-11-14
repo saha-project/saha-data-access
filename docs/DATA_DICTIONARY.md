@@ -1,6 +1,6 @@
 # DATA_DICTIONARY.md
 
-> Auto-generated from `schemas/*.json` on 2026-10-10. Edit the JSON Schema
+> Auto-generated from `schemas/*.json` on 2026-11-14. Edit the JSON Schema
 > files to update this document, then re-run
 > `python scripts/generate_data_dictionary.py`.
 
@@ -60,7 +60,7 @@ adata.obs.merge(donors, on="donor_core", how="left")
 | `processing_date` | `string | null` |  | format: date | Instrument run start date (ISO 8601 YYYY-MM-DD). |
 | `slide_prepared_date` | `string | null` |  | format: date | Slide preparation date (ISO 8601 YYYY-MM-DD). |
 | `s3_raw_prefix` | `string | null` |  |  | S3 URI prefix for raw instrument output (e.g. s3://saha-open-data/cosmx/wcm/TAP01/SAHA_CR_COL_A1_TAP01/). |
-| `s3_processed_path` | `string | null` |  |  | S3 URI for the processed AnnData/Seurat object. |
+| `s3_processed_path` | `string | null` |  |  | Path of the SpatialData store relative to the data root, e.g. processed/saha-v1-colon/SAHA_CR_COL_A1_TAP01.zarr (data root: s3://saha-public on Wasabi for review; s3://saha-open-data once live). Filled by scripts/fill_processed_paths.py. |
 
 
 ---
@@ -69,16 +69,16 @@ adata.obs.merge(donors, on="donor_core", how="left")
 
 One row per donor **core** -- the unit of donor identity on a tissue microarray, not the slide.  Joins to `obs['donor_core']` in the released objects.
 
-`donor_patient` groups cores known to come from the same person (the PDAC slide carries 28 cores from 14 KRAS-typed patients). Cores are never collapsed: each is treated as an independent case.
+`donor_patient` groups cores known to come from the same person (PDAC: 28 cores from 14 patients; normal pancreas: 12 cores from 6; Cohort 1: two pre/post pairs; Northwestern: five ileal + rectal pairs). Each core keeps its own row; same-patient cores share the patient's lowest `donor_id` (the others are retired), so `donor_id` is one per patient.
 
 Demographics come from Table 1 of the manuscript and are null for cores outside the published cohort.
 
 
 | Column | Type | Required | Constraints | Description |
 |--------|------|:--------:|-------------|-------------|
-| `donor_id` | `string` | yes |  | Unique donor identifier (de-identified, e.g. SAHA_D001). |
+| `donor_id` | `string` | yes |  | De-identified donor identifier (e.g. SAHA_D001), one per patient: ids are numbered per core, then cores sharing a donor_patient take the lowest of their ids and the others are retired (gaps). |
 | `donor_core` | `string` | yes |  | Donor core label, `<SLIDE>_<CORE>` (e.g. COL_A1_5). Joins to obs `donor_core` in the released objects and to SampleID in Table 1 of the manuscript. snake_case throughout. |
-| `donor_patient` | `string | null` |  |  | Grouping key where two cores are known to be the same person. Populated for the PDAC slide only (28 cores from 14 KRAS-typed patients); cores are never collapsed. |
+| `donor_patient` | `string | null` |  |  | Grouping key where two or more cores are known to be the same person: the PDAC slide (28 cores, 14 KRAS-typed patients), the normal pancreas slide (12 cores, 6 patients), Cohort 1 pre/post pairs (IBD_A1/A2) and Northwestern patients with both an ileal and a rectal block. Cores keep their own rows and share donor_id. |
 | `slide_id` | `string | null` |  |  | Slide the core sits on (e.g. PANC_A1). |
 | `organ` | `string | null` |  |  | Organ of tissue origin for this core. |
 | `condition` | `string | null` |  | enum: `normal`, `cancer`, `disease` | Gross tissue condition for this core. |
