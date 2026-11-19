@@ -127,6 +127,7 @@ EXTRA_PATIENTS = {
     **{f"PANC_A1_{c}": f"PANC_A1_P{(c + 1) // 2}" for c in range(1, 13)},
     "IBD_A1_2": "IBD_C1_P1", "IBD_A2_1": "IBD_C1_P1",
     "IBD_A1_3": "IBD_C1_P2", "IBD_A2_2": "IBD_C1_P2",
+    **{f"CRC_C{c}": "CRC_P1" for c in (16, 17, 18)},   # three slides, one donor (lead, 2026-11-15)
 }
 
 

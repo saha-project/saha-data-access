@@ -7,7 +7,18 @@ Data schemas, metadata infrastructure, and access documentation for the **Spatia
 
 ## About SAHA
 
-SAHA is a multimodal, multi-platform spatial reference atlas of human tissues. The v1 release holds 12.4M cells from 126 acquisitions of 115 donor cores (88 patients) across 10 organs, measured on CosMx (1,000- and 6,000-plex RNA; 64-plex protein) and Xenium (377-plex, colon and 5K panels), with RNA, protein and a second platform on adjacent sections of the same blocks. The atlas includes both healthy and disease tissues (colorectal cancer, pancreatic ductal adenocarcinoma, inflammatory bowel disease).
+SAHA is a multimodal, multi-platform spatial reference atlas of human tissues. The v1 release holds 12.4M cells from 126 acquisitions of 115 donor cores (86 patients) across 10 organs, measured on CosMx (1,000- and 6,000-plex RNA; 64-plex protein) and Xenium (377-plex, colon and 5K panels), with RNA, protein and a second platform on adjacent sections of the same blocks. The atlas includes both healthy and disease tissues (colorectal cancer, pancreatic ductal adenocarcinoma, inflammatory bowel disease).
+
+### Releases
+
+| release | contents | acquisitions | cells | donors | access |
+|---|---|---:|---:|---:|---|
+| `v1` | breadth tier: 10 organs, CosMx RNA + protein and Xenium on shared blocks | 126 | 12,408,790 | 86 (115 donor cores) | open (CC-BY 4.0) |
+| `v2-preview` | prostate depth tier: CosMx WTx RNA + 64-plex protein on the same section, registered H&E, Xenium 5K on a serial section | 6 | 1,683,380 | 7 (69 cores) | reviewers and collaborators now; open at publication |
+| `pbmc-stamp` | healthy-donor PBMCs, CosMx WTx STAMP | 3 flow cells (36 spots) | 3,220,395 | 9 | open at publication |
+| **total** | | **135** | **17,312,565** | **102** | |
+
+Object ids and bucket prefixes keep their original names (`saha-v1-*`, `phase2/`, `saha-v2-*`).
 
 Most slides are **tissue microarrays** carrying 2-28 donor cores, so donor identity is a per-**cell** property held in `obs['donor_core']`, not a column on `samples.parquet`. See [docs/DATA_DICTIONARY.md](docs/DATA_DICTIONARY.md).
 

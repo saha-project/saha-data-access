@@ -661,12 +661,14 @@ def write_gallery(df, path, src_root=None, public=False):
     chips = "".join(f'<label class=chip style="--c:{c}"><input type=checkbox checked value={cid[k]} onchange="show()">'
                     f'{html.escape(k)} <span id=n{cid[k]}></span></label>' for k, c in color.items())
     rels = sorted(g.release.unique())
-    tabs = "".join(f'<button data-rel="{r}" onclick="rel=this.dataset.rel;show()">{r} '
+    label = {"v2": "v2-preview"}  # public release names: v1, v2-preview, pbmc-stamp
+    tabs = "".join(f'<button data-rel="{r}" onclick="rel=this.dataset.rel;show()">{label.get(r, r)} '
                    f'({(g.release == r).sum()} objects)</button>' for r in rels)
     n_bad = int((g.problems != "").sum())
     if public:
         title = "SAHA spatial omics — object gallery"
-        intro = (f"{len(g)} SpatialData objects · {int(g.n_obs.sum()):,} cells · {g.organ.nunique()} organs. "
+        intro = (f"{len(g)} SpatialData objects (v1 and v2-preview) · {int(g.n_obs.sum()):,} cells · {g.organ.nunique()} organs. "
+                 "pbmc-stamp (CosMx WTx STAMP, 3,220,395 cells) is not shown. All three releases together: 135 acquisitions, 17,312,565 cells, 102 donors. "
                  "Thumbnails colour cells by annotated cell type, or by Leiden cluster where no annotation "
                  "exists yet. Click a card for the morphology image, donor-core and label panels; cards marked "
                  "H&E also open the registered H&E stain.")

@@ -90,8 +90,8 @@ def main():
              Size=f"{s.aws_gb.sum():.1f} GB processed + {raw_in.bytes.sum() / 1e12:.2f} TB raw",
              Imagery="full resolution",
              Status="built, verified; AWS bucket pending"),
-        dict(Release="AWS v2 (queue)", Objects=len(v2_sizes), Cells=int(v2.n_cells.sum()),
-             Cores="31 (A2); A3 pending",  # from data/v2/STATUS.md -- v2 has no measurements.csv yet
+        dict(Release="v2-preview", Objects=len(v2_sizes), Cells=int(v2.n_cells.sum()),
+             Cores="69 (31 A2 + 38 A3)",  # data/v2/donors.parquet; A3 cores geometric
              Size=f"{v2_sizes.sum() / GB:.1f} GB processed",
              Imagery="full resolution", Status="built, verified; private until publication"),
     ])
@@ -104,7 +104,7 @@ def main():
           "zenodo/combined_manifest.csv, which predates the 2026-10-09/10 repackaging that added the "
           "H&E (the zips on Cayuga now total 199.0 GB, every record still under 50 GB); regenerate "
           "the manifest's sizes and MD5s before deposit. "
-          "v2 cores: 31 resolved on PROS_A2; PROS_A3 is not yet resolved.", ""]
+          "v2-preview cores: 31 on PROS_A2 (Core_ID) and 38 on PROS_A3 (geometric).", ""]
 
     # --- by organ x modality
     piv = s.pivot_table(index="organ", columns="modality", values="sample_id", aggfunc="count", fill_value=0)
@@ -156,14 +156,14 @@ def main():
           f"({pts.get('normal', 0)} healthy, {pts.get('disease', 0)} IBD, {pts.get('cancer', 0)} cancer), "
           f"counting cores that share `donor_patient` once, and carry {dn.donor_id.nunique()} donor ids "
           "(one per patient: same-patient cores share the lowest of their per-core ids). "
-          "The three CRC slides are counted as three patients.", "",
+          "The three CRC slides come from one patient.", "",
           "Absent from the release, with reason:", "", md_table(absent), "",
           "Not in Table 1 but released: `PCa_9224` (PRCA prostate cancer, 3 acquisitions), "
           "shipped with null demographics.", ""]
 
     # --- v2
     v2t = v2[["sample_id", "platform", "assay_type", "panel_name", "slide_id", "n_cells"]].copy()
-    L += ["## AWS v2 queue", "",
+    L += ["## v2-preview", "",
           "Six acquisitions on two prostate TMA slides, delivered as four objects: each slide's "
           "CosMx RNA + protein are merged into one object (two tables, both boundary sets, "
           "registered same-section H&E); each slide's Xenium is its own object with registered "

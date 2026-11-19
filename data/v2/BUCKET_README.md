@@ -1,4 +1,4 @@
-# SAHA phase 2 — prostate TMA (collaborator early access)
+# SAHA v2-preview — prostate depth tier (reviewer and collaborator access)
 
 Pre-publication SpatialData objects shared with collaborators. Please do not redistribute.
 Phase 2 is new data alongside phase 1 (`phase1/`, the Zenodo v1.0 records `saha-v1-*`), not a new version of it.
@@ -85,7 +85,7 @@ each object"): cell-to-cell on CosMx, tissue-level on Xenium. With `spatialdata-
 installed, `crop.pl.render_images("he_same_section").pl.render_shapes("rna_cell_boundaries").pl.show()`
 draws the H&E with the cell outlines on top.
 
-Access is by invitation; phase 2 is not public.
+Access is by invitation; v2-preview is not public until publication.
 
 ## Known gaps
 

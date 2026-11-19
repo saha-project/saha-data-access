@@ -294,7 +294,7 @@ CC-BY 4.0.
 decision from publishing the objects -- note that AWS Open Data egress support
 would need to cover it explicitly.
 
-**v2 (phase 2) is private.** It is pre-publication and is not in this bucket at
+**v2-preview (phase 2) is private until publication.** It is pre-publication and is not in this bucket at
 all; see `data/v2/STATUS.md`.
 
 Two further buckets are reserved for data whose consent does not permit open
