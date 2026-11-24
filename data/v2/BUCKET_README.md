@@ -19,6 +19,10 @@ s3://<SAHA AWS bucket>/phase2/          bucket location to be announced
     └── SAHA_XR_PROS_A3.zarr           Xenium 5K, slide PROS_A3
 ```
 
+The same-section prediction benchmark built on the CosMx objects (1K → WTx, RNA → protein, H&E → cell type/expression)
+is distributed with the code: cell table, fixed splits, baseline results and scripts in
+[saha-project/saha-2026-pub](https://github.com/saha-project/saha-2026-pub), folder `benchmark/`.
+
 Two prostate TMA slides (PROS_A2, PROS_A3), each measured by Xenium 5K and by CosMx
 (19K RNA and 64-plex protein, merged per slide in a shared frame); 1,683,380 cells. Every store is
 zarr v3 SpatialData.

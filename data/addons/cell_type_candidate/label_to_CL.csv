@@ -1,0 +1,386 @@
+label_set,label,CL_id,CL_name,mapping_level,lineage,cells,label_columns,records
+release v1,Absorptive epithelial,CL:0019033,enterocyte,exact,Epithelial,119245.0,cell_type_detailed,ileum;rectum
+release v1,Activated CD4 T,CL:0000896,"activated CD4-positive, alpha-beta T cell",exact,T/NK,11410.0,cell_type,appendix;colon;ileum
+release v1,Activated CD8 T,CL:0000906,"activated CD8-positive, alpha-beta T cell",exact,T/NK,916.0,cell_type,appendix;colon;ileum
+release v1,Activated.T,CL:0000084,T cell,parent,T/NK,15330.0,cell_type_detailed,appendix;colon;ileum
+release v1,Adult Glia,CL:0000125,glial cell,exact,Glia/Neural,2448.0,cell_type,appendix;colon;ileum
+release v1,Adult.Glia,CL:0000125,glial cell,exact,Glia/Neural,3862.0,cell_type_detailed,appendix;colon;ileum;stomach
+release v1,Antibody.secreting.B.cells,CL:0000786,plasma cell,exact,Plasma,812.0,cell_type,liver
+release v1,B,CL:0000236,B cell,exact,B,17577.0,cell_type,crc;ileum;rectum
+release v1,B-LN1,CL:0000236,B cell,parent,B,19806.0,cell_type_detailed,lymph-node
+release v1,B-LN10,CL:0000236,B cell,parent,B,25830.0,cell_type_detailed,lymph-node
+release v1,B-LN2,CL:0000236,B cell,parent,B,52175.0,cell_type_detailed,lymph-node
+release v1,B-LN3,CL:0000236,B cell,parent,B,70823.0,cell_type_detailed,lymph-node
+release v1,B-LN4,CL:0000236,B cell,parent,B,43054.0,cell_type_detailed,lymph-node
+release v1,B-LN5,CL:0000236,B cell,parent,B,30034.0,cell_type_detailed,lymph-node
+release v1,B-LN7,CL:0000236,B cell,parent,B,25906.0,cell_type_detailed,lymph-node
+release v1,B-LN8,CL:0000236,B cell,parent,B,24050.0,cell_type_detailed,lymph-node
+release v1,B.Activated-LN5,CL:0000236,B cell,parent,B,16.0,cell_type_detailed,lymph-node
+release v1,B.Naive-LN6,CL:0000788,naive B cell,exact,B,1782.0,cell_type_detailed,lymph-node
+release v1,B.Other-LN1,CL:0000236,B cell,parent,B,915.0,cell_type_detailed,lymph-node
+release v1,B.Other-LN10,CL:0000236,B cell,parent,B,612.0,cell_type_detailed,lymph-node
+release v1,B.Other-LN2,CL:0000236,B cell,parent,B,11175.0,cell_type_detailed,lymph-node
+release v1,B.Other-LN3,CL:0000236,B cell,parent,B,142.0,cell_type_detailed,lymph-node
+release v1,B.Other-LN4,CL:0000236,B cell,parent,B,4677.0,cell_type_detailed,lymph-node
+release v1,B.Other-LN5,CL:0000236,B cell,parent,B,213.0,cell_type_detailed,lymph-node
+release v1,B.Other-LN7,CL:0000236,B cell,parent,B,5726.0,cell_type_detailed,lymph-node
+release v1,B.Other.2-LN7,CL:0000236,B cell,parent,B,7187.0,cell_type_detailed,lymph-node
+release v1,B.Plasma-LN3,CL:0000786,plasma cell,parent,Plasma,5650.0,cell_type_detailed,lymph-node
+release v1,B.cell,CL:0000236,B cell,exact,B,41196.0,cell_type_detailed,lymph-node;pancreas-cosmx
+release v1,BEST2+ Goblet cell,CL:0000160,goblet cell,exact,Epithelial,3228.0,cell_type,appendix;colon;ileum
+release v1,BEST2+.Goblet.cell,CL:0000160,goblet cell,exact,Epithelial,2133.0,cell_type_detailed,appendix;colon;ileum
+release v1,BEST4+ epithelial,CL:4030026,BEST4+ enterocyte,exact,Epithelial,3733.0,cell_type,appendix;colon;ileum
+release v1,BEST4+.epithelial,CL:4030026,BEST4+ enterocyte,exact,Epithelial,2814.0,cell_type_detailed,appendix;colon;ileum;stomach
+release v1,Bcell,CL:0000236,B cell,exact,B,884.0,cell_type_detailed;cell_type_fine,crc
+release v1,CCL21+TP53+,CL:0001064,malignant cell,parent,Epithelial,212.0,cell_type_detailed;cell_type_fine,crc
+release v1,CD163+Macrophage,CL:0000235,macrophage,exact,Myeloid,134.0,cell_type_fine,crc
+release v1,CD3..alpha.beta.T.cells,CL:0000789,alpha-beta T cell,exact,T/NK,133.0,cell_type,liver
+release v1,CD4+ Effector,CL:0001044,"effector CD4-positive, alpha-beta T cell",exact,T/NK,7396.0,cell_type_detailed,ileum;rectum
+release v1,CD4+ T,CL:0000624,"CD4-positive, alpha-beta T cell",exact,T/NK,1744.0,cell_type_detailed,ileum;rectum
+release v1,CD4+Macrophage,CL:0000235,macrophage,exact,Myeloid,1687.0,cell_type_fine,crc
+release v1,CD8 Tmem,CL:0000909,"CD8-positive, alpha-beta memory T cell",exact,T/NK,2134.0,cell_type,appendix;colon;ileum
+release v1,CD8+ Effector,CL:0001050,"effector CD8-positive, alpha-beta T cell",exact,T/NK,4770.0,cell_type_detailed,ileum;rectum
+release v1,CD8+ T,CL:0000625,"CD8-positive, alpha-beta T cell",exact,T/NK,7861.0,cell_type_detailed,ileum;rectum
+release v1,CD8.Tmem,CL:0000909,"CD8-positive, alpha-beta memory T cell",exact,T/NK,2461.0,cell_type_detailed,appendix;colon;ileum
+release v1,CLC+.Mast.cell,CL:0000097,mast cell,exact,Mast,9.0,cell_type_detailed,appendix;ileum
+release v1,CLDN10+.cells,CL:0000066,epithelial cell,parent,Epithelial,108.0,cell_type_detailed,colon;stomach
+release v1,CLP,CL:0000051,common lymphoid progenitor,exact,HSPC,83083.0,cell_type_detailed,appendix;colon;ileum
+release v1,CX3CR1+.CD8.Tmem,CL:0000909,"CD8-positive, alpha-beta memory T cell",exact,T/NK,407.0,cell_type_detailed,appendix;ileum
+release v1,CXCL16+Macrophage,CL:0000235,macrophage,exact,Myeloid,26.0,cell_type_fine,crc
+release v1,Central.venous.LSECs,CL:1000398,endothelial cell of hepatic sinusoid,exact,Endothelial,1533.0,cell_type,liver
+release v1,Cholangiocytes,CL:1000488,cholangiocyte,exact,Epithelial,6530.0,cell_type,liver
+release v1,Clu+S100B+,CL:0000125,glial cell,exact,Glia/Neural,1420.0,cell_type_detailed;cell_type_fine,crc
+release v1,Colonocyte,CL:0019036,colonocyte,exact,Epithelial,4954.0,cell_type;cell_type_detailed,appendix;colon;ileum
+release v1,Contractile pericyte (PLN+),CL:0000669,pericyte,exact,Stromal,3844.0,cell_type,appendix;colon;ileum
+release v1,Cycling B,CL:0000236,B cell,exact,B,6691.0,cell_type_detailed,ileum;rectum
+release v1,Cycling T,CL:0000084,T cell,parent,T/NK,4865.0,cell_type_detailed,ileum;rectum
+release v1,Cycling.B.cell,CL:0000236,B cell,exact,B,6185.0,cell_type_detailed,appendix;colon;ileum
+release v1,Cycling.plasma.cell,CL:0000786,plasma cell,exact,Plasma,4409.0,cell_type_detailed,appendix;colon;ileum;stomach
+release v1,CytotoxicCD8,CL:0001050,"effector CD8-positive, alpha-beta T cell",exact,T/NK,162.0,cell_type_fine,crc
+release v1,DC,CL:0000451,dendritic cell,parent,Myeloid,14107.0,cell_type_detailed,ileum;rectum
+release v1,DC-LN1,CL:0000451,dendritic cell,parent,Myeloid,17.0,cell_type_detailed,lymph-node
+release v1,DC-LN10,CL:0000451,dendritic cell,parent,Myeloid,2008.0,cell_type_detailed,lymph-node
+release v1,DC-LN3,CL:0000451,dendritic cell,parent,Myeloid,736.0,cell_type_detailed,lymph-node
+release v1,DC-LN4,CL:0000451,dendritic cell,parent,Myeloid,2125.0,cell_type_detailed,lymph-node
+release v1,DC-LN5,CL:0000451,dendritic cell,parent,Myeloid,72.0,cell_type_detailed,lymph-node
+release v1,DZ.GC.cell,CL:0000844,germinal center B cell,parent,B,1696.0,cell_type_detailed,appendix;ileum
+release v1,Dendritic.cell,CL:0000451,dendritic cell,parent,Myeloid,775.0,cell_type_detailed,lymph-node
+release v1,Developmental mesenchymal,CL:0008019,mesenchymal cell,exact,Stromal,692.0,cell_type_detailed,ileum;rectum
+release v1,Differentiating.glia,CL:0000125,glial cell,exact,Glia/Neural,15.0,cell_type_detailed,appendix;colon
+release v1,Distal.progenitor,CL:0000066,epithelial cell,parent,Epithelial,8.0,cell_type_detailed,colon
+release v1,EECs,CL:0000164,enteroendocrine cell,exact,Endocrine,3772.0,cell_type_detailed,appendix;colon;ileum;stomach
+release v1,Endothelial,CL:0000115,endothelial cell,exact,Endothelial,647098.0,cell_type;cell_type_broad;cell_type_detailed;cell_type_fine,appendix;bone-marrow;colon;crc;ileum;liver;lymph-node;pancreas-cosmx;pancreas-xenium;prostate;rectum;stomach
+release v1,Endothelial-LN2,CL:0000115,endothelial cell,exact,Endothelial,4077.0,cell_type_detailed,lymph-node
+release v1,Endothelial-LN3,CL:0000115,endothelial cell,exact,Endothelial,2310.0,cell_type_detailed,lymph-node
+release v1,Enterocyte,CL:0019033,enterocyte,exact,Epithelial,886.0,cell_type_detailed,ileum;stomach
+release v1,Enteroendocrine,CL:0000164,enteroendocrine cell,exact,Endocrine,579.0,cell_type_detailed,ileum;rectum
+release v1,Epithelial,CL:0000066,epithelial cell,exact,Epithelial,5461577.0,cell_type;cell_type_broad,appendix;bone-marrow;colon;crc;ileum;liver;lymph-node;pancreas-cosmx;pancreas-xenium;prostate;rectum;stomach
+release v1,Erthyroid.cells,CL:0000764,erythroid lineage cell,exact,Erythroid,229.0,cell_type,liver
+release v1,Erythroid,CL:0000764,erythroid lineage cell,exact,Erythroid,15048.0,cell_type;cell_type_broad,appendix;colon;ileum;liver;pancreas-cosmx;pancreas-xenium;prostate;stomach
+release v1,FCRL4+.Memory.B,CL:0000787,memory B cell,exact,B,7901.0,cell_type_detailed,appendix;colon;ileum
+release v1,FDC,CL:0000442,follicular dendritic cell,exact,Stromal,2126.0,cell_type_detailed,appendix;colon;ileum;stomach
+release v1,Fetal.arterial.EC,CL:1000413,endothelial cell of artery,exact,Endothelial,2572.0,cell_type_detailed,appendix;colon;ileum
+release v1,Fetal.venous.EC,CL:0002543,vein endothelial cell,exact,Endothelial,1431.0,cell_type_detailed,appendix;ileum
+release v1,Fibroblast,CL:0000057,fibroblast,exact,Stromal,40905.0,cell_type_detailed;cell_type_fine,crc;ileum;lymph-node;rectum
+release v1,Fibroblast-LN2,CL:0000057,fibroblast,exact,Stromal,2320.0,cell_type_detailed,lymph-node
+release v1,FibroblasticReticular-LN3,CL:0009101,fibroblastic reticular cell,exact,Stromal,955.0,cell_type_detailed,lymph-node
+release v1,FibroblasticReticular-LN8,CL:0009101,fibroblastic reticular cell,exact,Stromal,749.0,cell_type_detailed,lymph-node
+release v1,GC B,CL:0000844,germinal center B cell,exact,B,3527.0,cell_type_detailed,ileum;rectum
+release v1,GC.B.cell,CL:0000844,germinal center B cell,exact,B,5837.0,cell_type_detailed,appendix;ileum
+release v1,Gamma delta T,CL:0000798,gamma-delta T cell,exact,T/NK,3515.0,cell_type_detailed,ileum;rectum
+release v1,Glia,CL:0000125,glial cell,exact,Glia/Neural,9927.0,cell_type_detailed,ileum;rectum
+release v1,Goblet,CL:0000160,goblet cell,exact,Epithelial,50751.0,cell_type_detailed,ileum;rectum
+release v1,Goblet cell,CL:0000160,goblet cell,exact,Epithelial,4474.0,cell_type,appendix;colon;ileum
+release v1,Goblet.cell,CL:0000160,goblet cell,exact,Epithelial,9299.0,cell_type_detailed,appendix;colon;ileum
+release v1,Hep.1,CL:0000182,hepatocyte,parent,Hepatocyte,2.0,cell_type,liver
+release v1,Hep.2,CL:0000182,hepatocyte,parent,Hepatocyte,4.0,cell_type,liver
+release v1,Hep.3,CL:0000182,hepatocyte,parent,Hepatocyte,366.0,cell_type,liver
+release v1,Hep.4,CL:0000182,hepatocyte,parent,Hepatocyte,23481.0,cell_type,liver
+release v1,Hep.5,CL:0000182,hepatocyte,parent,Hepatocyte,11041.0,cell_type,liver
+release v1,Hep.6,CL:0000182,hepatocyte,parent,Hepatocyte,4.0,cell_type,liver
+release v1,ICC,CL:0002088,interstitial cell of Cajal,exact,Stromal,1609.0,cell_type_detailed,appendix;colon;ileum;stomach
+release v1,IEL T,CL:0002496,intraepithelial lymphocyte,exact,T/NK,917.0,cell_type_detailed,ileum;rectum
+release v1,IGFBP7+Macrophage,CL:0000235,macrophage,exact,Myeloid,51.0,cell_type_fine,crc
+release v1,IL18+FKBP11+Crypt,CL:0000066,epithelial cell,parent,Epithelial,11582.0,cell_type_detailed;cell_type_fine,crc
+release v1,ILC T,CL:0001065,innate lymphoid cell,parent,T/NK,935.0,cell_type_detailed,ileum;rectum
+release v1,ILC2,CL:0001069,group 2 innate lymphoid cell,exact,T/NK,37.0,cell_type_detailed,appendix;ileum
+release v1,ILC3,CL:0001071,group 3 innate lymphoid cell,exact,T/NK,3621.0,cell_type;cell_type_detailed,appendix;colon;ileum
+release v1,ILCP,CL:0001065,innate lymphoid cell,parent,T/NK,12355.0,cell_type_detailed,appendix;ileum
+release v1,IgA plasma cell,CL:0000987,IgA plasma cell,exact,Plasma,15093.0,cell_type,appendix;colon;ileum
+release v1,IgA.plasma.cell,CL:0000987,IgA plasma cell,exact,Plasma,32128.0,cell_type_detailed,appendix;colon;ileum;stomach
+release v1,IgG plasma cell,CL:0000985,IgG plasma cell,exact,Plasma,4076.0,cell_type,appendix;colon;ileum
+release v1,IgG.plasma.cell,CL:0000985,IgG plasma cell,exact,Plasma,4361.0,cell_type_detailed,appendix;colon;ileum;stomach
+release v1,IgM.plasma.cell,CL:0000986,IgM plasma cell,exact,Plasma,2025.0,cell_type_detailed,appendix;colon;ileum;stomach
+release v1,Immature.B,CL:0000816,immature B cell,exact,B,1257.0,cell_type_detailed,appendix;colon;ileum
+release v1,Immature.pericyte,CL:0000669,pericyte,exact,Stromal,5345.0,cell_type_detailed,appendix;colon;ileum
+release v1,Immune interacting fibroblast,CL:0000057,fibroblast,exact,Stromal,9856.0,cell_type_detailed,ileum;rectum
+release v1,Immune_Epithelial,,,none,Unresolved,4483.0,cell_type_fine,crc
+release v1,Immune_Fibroblast,CL:0000057,fibroblast,exact,Stromal,3532.0,cell_type_fine,crc
+release v1,Inflammatory fibroblast,CL:0000057,fibroblast,exact,Stromal,35068.0,cell_type_detailed,ileum;rectum
+release v1,Inflammatory.macrophages,CL:0000235,macrophage,parent,Myeloid,1278.0,cell_type,liver
+release v1,KRT1+Crypt,CL:0000066,epithelial cell,parent,Epithelial,19084.0,cell_type_detailed;cell_type_fine,crc
+release v1,L cells (PYY+),CL:0002279,type L enteroendocrine cell,exact,Endocrine,566.0,cell_type,appendix;colon;ileum
+release v1,LEC1 (ACKR4+),CL:0002138,endothelial cell of lymphatic vessel,exact,Endothelial,75.0,cell_type,appendix;colon;ileum
+release v1,LEC6 (ADAMTS4+),CL:0002138,endothelial cell of lymphatic vessel,exact,Endothelial,1405.0,cell_type,appendix;colon;ileum
+release v1,LTi.like.NCR+.ILC3,CL:0001071,group 3 innate lymphoid cell,exact,T/NK,21.0,cell_type_detailed,appendix;ileum
+release v1,LTi.like.NCR-.ILC3,CL:0001071,group 3 innate lymphoid cell,exact,T/NK,14441.0,cell_type_detailed,appendix;colon;ileum
+release v1,LYVE1+ Macrophage,CL:0000235,macrophage,exact,Myeloid,2017.0,cell_type,appendix;colon;ileum
+release v1,LYVE1+.Macrophage,CL:0000235,macrophage,exact,Myeloid,3343.0,cell_type_detailed,appendix;colon;ileum;stomach
+release v1,LYZ+CD164+Tumor,CL:0001064,malignant cell,parent,Epithelial,250.0,cell_type_detailed;cell_type_fine,crc
+release v1,LZ.GC.cell,CL:0000844,germinal center B cell,parent,B,1939.0,cell_type_detailed,appendix;ileum
+release v1,Lymphoid-B,CL:0000236,B cell,exact,B,1648657.0,cell_type;cell_type_broad,appendix;bone-marrow;colon;crc;ileum;liver;lymph-node;pancreas-cosmx;pancreas-xenium;prostate;stomach
+release v1,Lymphoid-DC,CL:0000451,dendritic cell,parent,Myeloid,224551.0,cell_type;cell_type_broad,appendix;bone-marrow;colon;crc;ileum;lymph-node;pancreas-cosmx;pancreas-xenium;prostate;stomach
+release v1,Lymphoid-Other,,,none,Unresolved,519356.0,cell_type;cell_type_broad,appendix;bone-marrow;colon;crc;ileum;liver;lymph-node;pancreas-cosmx;pancreas-xenium;prostate;stomach
+release v1,Lymphoid-Plasma,CL:0000786,plasma cell,exact,Plasma,328712.0,cell_type;cell_type_broad,appendix;colon;crc;ileum;liver;lymph-node;pancreas-cosmx;pancreas-xenium;prostate;stomach
+release v1,Lymphoid-T,CL:0000084,T cell,parent,T/NK,956639.0,cell_type;cell_type_broad,appendix;bone-marrow;colon;crc;ileum;liver;lymph-node;pancreas-cosmx;pancreas-xenium;prostate;stomach
+release v1,Lymphoid.DC,CL:0000451,dendritic cell,parent,Myeloid,1080.0,cell_type_detailed,appendix;colon;ileum;stomach
+release v1,MAIT.cell,CL:0000940,mucosal-associated invariant T cell,exact,T/NK,41.0,cell_type_detailed,appendix
+release v1,MDSC,CL:0000889,myeloid suppressor cell,exact,Myeloid,216.0,cell_type_fine,crc
+release v1,MMP9+.Inflammatory.macrophage,CL:0000235,macrophage,parent,Myeloid,1935.0,cell_type_detailed,appendix;colon;ileum;stomach
+release v1,MPO+.mono.neutrophil,CL:0000775,neutrophil,exact,Granulocyte,136.0,cell_type_detailed,appendix;colon;ileum;stomach
+release v1,Macrophage,CL:0000235,macrophage,exact,Myeloid,66084.0,cell_type_detailed,ileum;lymph-node;rectum
+release v1,Macrophage-DC-LN3,CL:0000235,macrophage,exact,Myeloid,1452.0,cell_type_detailed,lymph-node
+release v1,Macrophage-LN2,CL:0000235,macrophage,exact,Myeloid,357.0,cell_type_detailed,lymph-node
+release v1,Macrophage-LN3,CL:0000235,macrophage,exact,Myeloid,1273.0,cell_type_detailed,lymph-node
+release v1,Macrophage-LN7,CL:0000235,macrophage,exact,Myeloid,8.0,cell_type_detailed,lymph-node
+release v1,Macrophages,CL:0000235,macrophage,exact,Myeloid,6528.0,cell_type;cell_type_detailed,appendix;colon;ileum;stomach
+release v1,Mast,CL:0000097,mast cell,exact,Mast,14168.0,cell_type_detailed;cell_type_fine,crc;ileum;rectum
+release v1,Mast cell,CL:0000097,mast cell,exact,Mast,2414.0,cell_type,appendix;colon;ileum
+release v1,Mast.cell,CL:0000097,mast cell,exact,Mast,2676.0,cell_type_detailed,appendix;ileum;lymph-node
+release v1,Mature arterial EC,CL:1000413,endothelial cell of artery,exact,Endothelial,444.0,cell_type,appendix;colon;ileum
+release v1,Mature venous EC,CL:0002543,vein endothelial cell,exact,Endothelial,2281.0,cell_type,appendix;colon;ileum
+release v1,Mature.B.cells,CL:0000236,B cell,exact,B,47.0,cell_type,liver
+release v1,Mature.arterial.EC,CL:1000413,endothelial cell of artery,exact,Endothelial,2203.0,cell_type_detailed,appendix;colon;ileum;stomach
+release v1,Mature.venous.EC,CL:0002543,vein endothelial cell,exact,Endothelial,6175.0,cell_type_detailed,appendix;colon;ileum;stomach
+release v1,Megakaryocyte,CL:0000556,megakaryocyte,exact,Megakaryocyte,82.0,cell_type_detailed,appendix;colon;ileum
+release v1,Memory B,CL:0000787,memory B cell,exact,B,30801.0,cell_type,appendix;colon;ileum
+release v1,Memory.B,CL:0000787,memory B cell,exact,B,4976.0,cell_type_detailed,appendix;colon;ileum
+release v1,Mesenchymal,CL:0008019,mesenchymal cell,exact,Stromal,189141.0,cell_type,ileum;rectum
+release v1,Mesenchymal-Stromal,CL:0000499,stromal cell,parent,Stromal,2218463.0,cell_type;cell_type_broad,appendix;bone-marrow;colon;crc;ileum;liver;lymph-node;pancreas-cosmx;pancreas-xenium;prostate;stomach
+release v1,Mesenchymal.cell,CL:0008019,mesenchymal cell,exact,Stromal,15238.0,cell_type_detailed,pancreas-cosmx
+release v1,Mesothelium,CL:0000077,mesothelial cell,exact,Stromal,1966.0,cell_type_detailed,appendix;colon;ileum
+release v1,Microfold,CL:0000682,M cell of gut,exact,Epithelial,1370.0,cell_type_detailed,ileum;rectum
+release v1,Microfold cell,CL:0000682,M cell of gut,exact,Epithelial,3118.0,cell_type,appendix;colon;ileum
+release v1,Microfold.cell,CL:0000682,M cell of gut,exact,Epithelial,1784.0,cell_type_detailed,appendix;colon;ileum;stomach
+release v1,MixedT,,,none,Unresolved,2157.0,cell_type_fine,crc
+release v1,Monocyte,CL:0000576,monocyte,exact,Myeloid,10723.0,cell_type_detailed,ileum;lymph-node;pancreas-cosmx;rectum
+release v1,Monocyte-LN8,CL:0000576,monocyte,exact,Myeloid,907.0,cell_type_detailed,lymph-node
+release v1,Monocytes,CL:0000576,monocyte,exact,Myeloid,5638.0,cell_type;cell_type_detailed,appendix;colon;ileum
+release v1,Myeloid,CL:0000738,leukocyte,parent,Unresolved,514249.0,cell_type;cell_type_broad;cell_type_detailed,appendix;bone-marrow;colon;crc;ileum;liver;lymph-node;pancreas-cosmx;pancreas-xenium;prostate;rectum;stomach
+release v1,Myofibroblast,CL:0000186,myofibroblast cell,exact,Stromal,32080.0,cell_type_detailed,ileum;rectum
+release v1,NK,CL:0000623,natural killer cell,exact,T/NK,1616.0,cell_type;cell_type_detailed,crc;ileum;rectum
+release v1,NK T,CL:0000814,mature NK T cell,exact,T/NK,73.0,cell_type_detailed,ileum;rectum
+release v1,NK cell,CL:0000623,natural killer cell,exact,T/NK,1065.0,cell_type,appendix;colon;ileum
+release v1,NK-LN7,CL:0000623,natural killer cell,parent,T/NK,140.0,cell_type_detailed,lymph-node
+release v1,NK.T.cell,CL:0000814,mature NK T cell,exact,T/NK,7.0,cell_type_detailed,appendix
+release v1,NK.cell,CL:0000623,natural killer cell,exact,T/NK,8534.0,cell_type_detailed,appendix;ileum;lymph-node
+release v1,NK.like.cells,CL:0000623,natural killer cell,exact,T/NK,53.0,cell_type,liver
+release v1,Naive B,CL:0000788,naive B cell,exact,B,15340.0,cell_type,appendix;colon;ileum
+release v1,Naive.B,CL:0000788,naive B cell,exact,B,2488.0,cell_type_detailed,appendix;ileum
+release v1,Naive/Memory B,CL:0000236,B cell,parent,B,5734.0,cell_type_detailed,ileum;rectum
+release v1,Naive/Memory T,CL:0000084,T cell,parent,T/NK,16384.0,cell_type_detailed,ileum;rectum
+release v1,NaiveCD4,CL:0000895,"naive thymus-derived CD4-positive, alpha-beta T cell",exact,T/NK,209.0,cell_type_fine,crc
+release v1,NaiveCD8,CL:0000900,"naive thymus-derived CD8-positive, alpha-beta T cell",exact,T/NK,407.0,cell_type_fine,crc
+release v1,Neuron,CL:0000540,neuron,exact,Glia/Neural,9927.0,cell_type,ileum;rectum
+release v1,Neuronal-Glial,CL:0000125,glial cell,exact,Glia/Neural,19208.0,cell_type;cell_type_broad,appendix;colon;crc;ileum;pancreas-cosmx;pancreas-xenium;prostate;stomach
+release v1,Neutrophil,CL:0000775,neutrophil,exact,Granulocyte,1438.0,cell_type_detailed;cell_type_fine,crc;lymph-node
+release v1,Non.inflammatory.macrophages,CL:0000235,macrophage,exact,Myeloid,1132.0,cell_type,liver
+release v1,Other-LN1,,,none,Unresolved,4.0,cell_type_detailed,lymph-node
+release v1,Other-LN2,,,none,Unresolved,1910.0,cell_type_detailed,lymph-node
+release v1,Other-LN7,,,none,Unresolved,11.0,cell_type_detailed,lymph-node
+release v1,Pancreatic.A.cell,CL:0000171,pancreatic A cell,exact,Endocrine,1057.0,cell_type_detailed,pancreas-cosmx
+release v1,Pancreatic.D.cell,CL:0000173,pancreatic D cell,exact,Endocrine,142.0,cell_type_detailed,pancreas-cosmx
+release v1,Paneth,CL:0000510,paneth cell,exact,Epithelial,84686.0,cell_type_detailed,appendix;colon;ileum;rectum;stomach
+release v1,Pericyte,CL:0000669,pericyte,exact,Stromal,26573.0,cell_type_detailed,appendix;colon;ileum;rectum;stomach
+release v1,Periportal.LSECs,CL:1000398,endothelial cell of hepatic sinusoid,exact,Endothelial,1796.0,cell_type,liver
+release v1,Plasma,CL:0000786,plasma cell,exact,Plasma,151964.0,cell_type;cell_type_detailed,ileum;lymph-node;rectum
+release v1,Plasma-LN10,CL:0000786,plasma cell,parent,Plasma,3197.0,cell_type_detailed,lymph-node
+release v1,Plasma-LN2,CL:0000786,plasma cell,parent,Plasma,2848.0,cell_type_detailed,lymph-node
+release v1,Plasma-LN3,CL:0000786,plasma cell,parent,Plasma,494.0,cell_type_detailed,lymph-node
+release v1,Plasma-LN4,CL:0000786,plasma cell,parent,Plasma,282.0,cell_type_detailed,lymph-node
+release v1,Plasma-LN5,CL:0000786,plasma cell,parent,Plasma,2351.0,cell_type_detailed,lymph-node
+release v1,Plasma-LN7,CL:0000786,plasma cell,parent,Plasma,41.0,cell_type_detailed,lymph-node
+release v1,Plasmablast,CL:0000980,plasmablast,exact,Plasma,5990.0,cell_type_detailed;cell_type_fine,crc;lymph-node
+release v1,Plasmablast-LN10,CL:0000980,plasmablast,exact,Plasma,412.0,cell_type_detailed,lymph-node
+release v1,Plasmablast-LN4,CL:0000980,plasmablast,exact,Plasma,512.0,cell_type_detailed,lymph-node
+release v1,Plasmablasts,CL:0000980,plasmablast,exact,Plasma,15545.0,cell_type_detailed,crc
+release v1,Plasmacytoid.dendritic.cell,CL:0000784,plasmacytoid dendritic cell,exact,Myeloid,1649.0,cell_type_detailed,lymph-node
+release v1,Portal.endothelial.cells,CL:0002543,vein endothelial cell,exact,Endothelial,338.0,cell_type,liver
+release v1,Pre.B,CL:0000817,precursor B cell,exact,B,2880.0,cell_type_detailed,appendix;colon;ileum;stomach
+release v1,Pro.B,CL:0000826,pro-B cell,exact,B,1819.0,cell_type_detailed,appendix;colon;ileum
+release v1,RBC,CL:0000232,erythrocyte,exact,Erythroid,4050.0,cell_type_detailed,appendix;colon;ileum;stomach
+release v1,RSPO3+ fibroblast,CL:0000057,fibroblast,exact,Stromal,117.0,cell_type_detailed,ileum;rectum
+release v1,Resident memory T,CL:0000813,memory T cell,parent,T/NK,1007.0,cell_type_detailed,ileum;rectum
+release v1,SELL+ CD4 T,CL:0000895,"naive thymus-derived CD4-positive, alpha-beta T cell",exact,T/NK,7016.0,cell_type,appendix;colon;ileum
+release v1,SELL+.CD4.T,CL:0000895,"naive thymus-derived CD4-positive, alpha-beta T cell",exact,T/NK,3828.0,cell_type_detailed,appendix;colon;ileum
+release v1,SELL+.CD8.T,CL:0000900,"naive thymus-derived CD8-positive, alpha-beta T cell",exact,T/NK,2446.0,cell_type_detailed,appendix;ileum
+release v1,SPP1+Macrophage,CL:0000235,macrophage,exact,Myeloid,15.0,cell_type_fine,crc
+release v1,STAT1+.Naive.B,CL:0000788,naive B cell,exact,B,3678.0,cell_type_detailed,appendix;ileum
+release v1,Smooth_Muscle,CL:0000192,smooth muscle cell,exact,Stromal,4094.0,cell_type_detailed;cell_type_fine,crc
+release v1,Stellate.cells,CL:0000632,hepatic stellate cell,exact,Stromal,8281.0,cell_type,liver
+release v1,Stem,CL:0002250,intestinal crypt stem cell,exact,Epithelial,89208.0,cell_type;cell_type_broad,appendix;colon;ileum;pancreas-cosmx;pancreas-xenium;prostate
+release v1,Stem cell,CL:0002250,intestinal crypt stem cell,exact,Epithelial,452.0,cell_type_detailed,ileum;rectum
+release v1,Stem cells,CL:0002250,intestinal crypt stem cell,exact,Epithelial,2137.0,cell_type,appendix;colon;ileum
+release v1,Stem.cells,CL:0002250,intestinal crypt stem cell,exact,Epithelial,2510.0,cell_type_detailed,appendix;colon;ileum
+release v1,Stromal 1 (ADAMDEC1+),CL:0000499,stromal cell,parent,Stromal,7674.0,cell_type,appendix;colon;ileum
+release v1,Stromal 1 (CCL11+),CL:0000499,stromal cell,parent,Stromal,1202.0,cell_type,appendix;colon;ileum
+release v1,Stromal 2 (NPY+),CL:0000499,stromal cell,parent,Stromal,8270.0,cell_type,appendix;colon;ileum
+release v1,Stromal 3 (C7+),CL:0000499,stromal cell,parent,Stromal,3792.0,cell_type,appendix;colon;ileum
+release v1,Stromal-LN8,CL:0000499,stromal cell,parent,Stromal,877.0,cell_type_detailed,lymph-node
+release v1,T follicular helper,CL:0002038,T follicular helper cell,exact,T/NK,2436.0,cell_type_detailed,ileum;rectum
+release v1,T reticular,CL:0009101,fibroblastic reticular cell,parent,Stromal,7354.0,cell_type,appendix;colon;ileum
+release v1,T-LN1,CL:0000084,T cell,parent,T/NK,137.0,cell_type_detailed,lymph-node
+release v1,T-LN2,CL:0000084,T cell,parent,T/NK,355.0,cell_type_detailed,lymph-node
+release v1,T.cell.CD4,CL:0000624,"CD4-positive, alpha-beta T cell",exact,T/NK,2285.0,cell_type_detailed,lymph-node
+release v1,T.cell.CD8,CL:0000625,"CD8-positive, alpha-beta T cell",exact,T/NK,905.0,cell_type_detailed,lymph-node
+release v1,T.cell.regulatory,CL:0000815,regulatory T cell,exact,T/NK,947.0,cell_type_detailed,lymph-node
+release v1,T.reticular,CL:0009101,fibroblastic reticular cell,parent,Stromal,5473.0,cell_type_detailed,appendix;colon;ileum;stomach
+release v1,T/NK,CL:0000084,T cell,parent,T/NK,60867.0,cell_type,ileum;rectum
+release v1,TA,CL:0009010,transit amplifying cell,exact,Epithelial,10292.0,cell_type;cell_type_detailed,appendix;colon;ileum
+release v1,TP53+TUBB+Tumor,CL:0001064,malignant cell,parent,Epithelial,132.0,cell_type_detailed;cell_type_fine,crc
+release v1,TRDV2.TRGV9.gdT,CL:0000798,gamma-delta T cell,exact,T/NK,1441.0,cell_type_detailed,appendix;ileum
+release v1,TRGV2 gdT,CL:0000798,gamma-delta T cell,exact,T/NK,3817.0,cell_type,appendix;colon;ileum
+release v1,TRGV2.gdT,CL:0000798,gamma-delta T cell,exact,T/NK,525.0,cell_type_detailed,appendix;colon;ileum
+release v1,TRGV4 gdT,CL:0000798,gamma-delta T cell,exact,T/NK,5.0,cell_type,colon
+release v1,TRGV5/7 gdT,CL:0000798,gamma-delta T cell,exact,T/NK,147.0,cell_type,appendix;colon;ileum
+release v1,T_CD4_memory,CL:0000897,"CD4-positive, alpha-beta memory T cell",exact,T/NK,2866.0,cell_type,crc
+release v1,T_CD4_naive,CL:0000895,"naive thymus-derived CD4-positive, alpha-beta T cell",exact,T/NK,358.0,cell_type,crc
+release v1,T_CD8_memory,CL:0000909,"CD8-positive, alpha-beta memory T cell",exact,T/NK,3236.0,cell_type,crc
+release v1,T_CD8_naive,CL:0000900,"naive thymus-derived CD8-positive, alpha-beta T cell",exact,T/NK,998.0,cell_type,crc
+release v1,Tcells,CL:0000084,T cell,parent,T/NK,2305.0,cell_type_detailed,crc
+release v1,Tfh,CL:0002038,T follicular helper cell,exact,T/NK,2549.0,cell_type_detailed,appendix;colon;ileum
+release v1,Th1,CL:0000545,T-helper 1 cell,exact,T/NK,5458.0,cell_type_detailed,appendix;colon;ileum;rectum
+release v1,Th17,CL:0000899,T-helper 17 cell,exact,T/NK,1921.0,cell_type_detailed,appendix;ileum;rectum
+release v1,Transient amplifying,CL:0009010,transit amplifying cell,exact,Epithelial,150039.0,cell_type_detailed,ileum;rectum
+release v1,Transitional Stromal 3 (C3+),CL:0000499,stromal cell,parent,Stromal,1481.0,cell_type,appendix;colon;ileum
+release v1,Treg,CL:0000815,regulatory T cell,exact,T/NK,17928.0,cell_type;cell_type_detailed;cell_type_fine,appendix;colon;crc;ileum;rectum
+release v1,Tuft,CL:0002204,tuft cell,exact,Epithelial,22117.0,cell_type;cell_type_detailed,appendix;colon;ileum;rectum;stomach
+release v1,Type.B.pancreatic.cell,CL:0000169,type B pancreatic cell,exact,Endocrine,876.0,cell_type_detailed,pancreas-cosmx
+release v1,Unknown,,,none,Unresolved,314531.0,cell_type;cell_type_detailed,appendix;bone-marrow;colon;ileum;lymph-node;pancreas-cosmx;stomach
+release v1,WNT2B+ fibroblast,CL:0000057,fibroblast,exact,Stromal,34663.0,cell_type_detailed,ileum;rectum
+release v1,WNT5B+ fibroblast,CL:0000057,fibroblast,exact,Stromal,20438.0,cell_type_detailed,ileum;rectum
+release v1,acinar-pancreas,CL:0002064,pancreatic acinar cell,exact,Epithelial,309431.0,cell_type_detailed,pancreas-cosmx
+release v1,adipose,CL:0000136,adipocyte,exact,Stromal,105502.0,cell_type;cell_type_detailed,appendix;bone-marrow;colon;ileum;lymph-node;pancreas-cosmx;stomach
+release v1,angiogenic.pericyte,CL:0000669,pericyte,exact,Stromal,44599.0,cell_type_detailed,appendix;colon;ileum;stomach
+release v1,arterial capillary,CL:0002144,capillary endothelial cell,exact,Endothelial,4094.0,cell_type,appendix;colon;ileum
+release v1,arterial.capillary,CL:0002144,capillary endothelial cell,exact,Endothelial,3993.0,cell_type_detailed,appendix;colon;ileum;stomach
+release v1,bcell,CL:0000236,B cell,exact,B,229950.0,cell_type;cell_type_detailed,appendix;bone-marrow;colon;ileum;lymph-node;pancreas-cosmx;stomach
+release v1,cDC,CL:0000990,conventional dendritic cell,exact,Myeloid,253.0,cell_type_fine,crc
+release v1,cDC1,CL:0002394,CD141-positive myeloid dendritic cell,exact,Myeloid,2754.0,cell_type;cell_type_detailed,appendix;colon;ileum;stomach
+release v1,cDC2,CL:0002399,CD1c-positive myeloid dendritic cell,exact,Myeloid,15587.0,cell_type;cell_type_detailed,appendix;colon;ileum;stomach
+release v1,cd4_tcell,CL:0000624,"CD4-positive, alpha-beta T cell",exact,T/NK,95821.0,cell_type;cell_type_detailed,appendix;bone-marrow;colon;ileum;lymph-node;pancreas-cosmx;stomach
+release v1,cd8_tcell,CL:0000625,"CD8-positive, alpha-beta T cell",exact,T/NK,89777.0,cell_type;cell_type_detailed,appendix;bone-marrow;colon;ileum;lymph-node;pancreas-cosmx;stomach
+release v1,cycling.EC,CL:0000115,endothelial cell,exact,Endothelial,818.0,cell_type_detailed,appendix;colon;ileum
+release v1,cycling.neuroblast,CL:0000540,neuron,exact,Glia/Neural,18.0,cell_type_detailed,appendix;colon
+release v1,cycling.stromal,CL:0000499,stromal cell,parent,Stromal,2126.0,cell_type_detailed,appendix;colon;ileum
+release v1,dendritic,CL:0000451,dendritic cell,parent,Myeloid,51858.0,cell_type;cell_type_detailed,appendix;bone-marrow;colon;ileum;lymph-node;pancreas-cosmx;stomach
+release v1,ductal-pancreas,CL:0002079,pancreatic ductal cell,exact,Epithelial,77.0,cell_type_detailed,pancreas-cosmx
+release v1,endothelial,CL:0000115,endothelial cell,exact,Endothelial,62241.0,cell_type;cell_type_detailed,appendix;bone-marrow;colon;crc;ileum;lymph-node;pancreas-cosmx;stomach
+release v1,endothelial-appendix,CL:0000115,endothelial cell,exact,Endothelial,14142.0,cell_type_detailed,appendix
+release v1,epithelial,CL:0000066,epithelial cell,exact,Epithelial,555667.0,cell_type;cell_type_detailed,appendix;bone-marrow;colon;ileum;lymph-node;pancreas-cosmx;stomach
+release v1,epithelial-appendix-01,CL:0000066,epithelial cell,parent,Epithelial,2257.0,cell_type_detailed,appendix
+release v1,epithelial-appendix-02,CL:0000066,epithelial cell,parent,Epithelial,2899.0,cell_type_detailed,appendix
+release v1,epithelial-appendix-04,CL:0000066,epithelial cell,parent,Epithelial,10601.0,cell_type_detailed,appendix
+release v1,epithelial-colon-01,CL:0000066,epithelial cell,parent,Epithelial,12491.0,cell_type_detailed,colon
+release v1,epithelial-colon-02,CL:0000066,epithelial cell,parent,Epithelial,55457.0,cell_type_detailed,colon
+release v1,epithelial-colon-03,CL:0000066,epithelial cell,parent,Epithelial,5771.0,cell_type_detailed,colon
+release v1,epithelial-colon-04,CL:0000066,epithelial cell,parent,Epithelial,618.0,cell_type_detailed,colon
+release v1,epithelial-ileum-01,CL:0000066,epithelial cell,parent,Epithelial,8171.0,cell_type_detailed,ileum
+release v1,epithelial-ileum-02,CL:0000066,epithelial cell,parent,Epithelial,6173.0,cell_type_detailed,ileum
+release v1,epithelial-pancreas,CL:0000066,epithelial cell,parent,Epithelial,578824.0,cell_type_detailed,pancreas-cosmx
+release v1,epithelial-stomach-01,CL:0000066,epithelial cell,parent,Epithelial,5154.0,cell_type_detailed,stomach
+release v1,epithelial-stomach-02,CL:0000066,epithelial cell,parent,Epithelial,209.0,cell_type_detailed,stomach
+release v1,epithelial-stomach-03,CL:0000066,epithelial cell,parent,Epithelial,139033.0,cell_type_detailed,stomach
+release v1,epithelial-stomach-04,CL:0000066,epithelial cell,parent,Epithelial,9.0,cell_type_detailed,stomach
+release v1,epithelial-stomach-05,CL:0000066,epithelial cell,parent,Epithelial,1432.0,cell_type_detailed,stomach
+release v1,epithelial-stomach-06,CL:0000066,epithelial cell,parent,Epithelial,4460.0,cell_type_detailed,stomach
+release v1,epithelial-stomach-07,CL:0000066,epithelial cell,parent,Epithelial,9160.0,cell_type_detailed,stomach
+release v1,epithelial-stomach-08,CL:0000066,epithelial cell,parent,Epithelial,733.0,cell_type_detailed,stomach
+release v1,epithelial2-pancreas,CL:0000066,epithelial cell,parent,Epithelial,25589.0,cell_type_detailed,pancreas-cosmx
+release v1,fibroblast,CL:0000057,fibroblast,exact,Stromal,292338.0,cell_type;cell_type_detailed,appendix;bone-marrow;colon;crc;ileum;lymph-node;pancreas-cosmx;stomach
+release v1,gamma.delta.T.cells.1,CL:0000798,gamma-delta T cell,exact,T/NK,42.0,cell_type,liver
+release v1,gamma.delta.T.cells.2,CL:0000798,gamma-delta T cell,exact,T/NK,154.0,cell_type,liver
+release v1,gdT,CL:0000798,gamma-delta T cell,exact,T/NK,1446.0,cell_type;cell_type_detailed,appendix;colon;ileum
+release v1,immune,CL:0000738,leukocyte,parent,Unresolved,232658.0,cell_type;cell_type_detailed,appendix;bone-marrow;colon;ileum;lymph-node;pancreas-cosmx;stomach
+release v1,immune-appendix,CL:0000738,leukocyte,parent,Unresolved,8917.0,cell_type_detailed,appendix
+release v1,immune-colon,CL:0000738,leukocyte,parent,Unresolved,49796.0,cell_type_detailed,colon
+release v1,immune-ileum,CL:0000738,leukocyte,parent,Unresolved,39115.0,cell_type_detailed,ileum
+release v1,immune-stomach,CL:0000738,leukocyte,parent,Unresolved,23686.0,cell_type_detailed,stomach
+release v1,mDC,CL:0000990,conventional dendritic cell,exact,Myeloid,282.0,cell_type,crc
+release v1,mLN Stroma (FMO2+),CL:0000499,stromal cell,parent,Stromal,601.0,cell_type,appendix;colon;ileum
+release v1,mLTo,CL:0000499,stromal cell,parent,Stromal,12048.0,cell_type_detailed,appendix;colon;ileum;stomach
+release v1,macrophage,CL:0000235,macrophage,exact,Myeloid,6166.0,cell_type,crc
+release v1,macrophage_monocyte,CL:0000235,macrophage,exact,Myeloid,33834.0,cell_type;cell_type_detailed,appendix;bone-marrow;colon;ileum;lymph-node;pancreas-cosmx;stomach
+release v1,mast,CL:0000097,mast cell,exact,Mast,2214.0,cell_type,crc
+release v1,mixedimmune-pancreas,,,none,Unresolved,238.0,cell_type_detailed,pancreas-cosmx
+release v1,moDC,CL:0011031,monocyte-derived dendritic cell,exact,Myeloid,67.0,cell_type_fine,crc
+release v1,moDC-LN2,CL:0011031,monocyte-derived dendritic cell,exact,Myeloid,59.0,cell_type_detailed,lymph-node
+release v1,monocyte,CL:0000576,monocyte,exact,Myeloid,472.0,cell_type,crc
+release v1,myofibroblast,CL:0000186,myofibroblast cell,exact,Stromal,11121.0,cell_type;cell_type_detailed,appendix;colon;ileum;stomach
+release v1,myofibroblast (RSPO2+),CL:0000186,myofibroblast cell,exact,Stromal,14005.0,cell_type,appendix;colon;ileum
+release v1,neutrophil,CL:0000775,neutrophil,exact,Granulocyte,32837.0,cell_type;cell_type_detailed,appendix;bone-marrow;colon;crc;ileum;lymph-node;pancreas-cosmx;stomach
+release v1,nk,CL:0000623,natural killer cell,exact,T/NK,12999.0,cell_type;cell_type_detailed,appendix;bone-marrow;colon;ileum;lymph-node;pancreas-cosmx;stomach
+release v1,pDC,CL:0000784,plasmacytoid dendritic cell,exact,Myeloid,2612.0,cell_type;cell_type_detailed,appendix;colon;crc;ileum;stomach
+release v1,pericyte-ileum-01,CL:0000669,pericyte,exact,Stromal,10874.0,cell_type_detailed,ileum
+release v1,pericyte-ileum-02,CL:0000669,pericyte,exact,Stromal,2923.0,cell_type_detailed,ileum
+release v1,plasma-appendix,CL:0000786,plasma cell,parent,Plasma,6480.0,cell_type_detailed,appendix
+release v1,plasma-ileum,CL:0000786,plasma cell,parent,Plasma,8346.0,cell_type_detailed,ileum
+release v1,plasma-pancreas,CL:0000786,plasma cell,parent,Plasma,439.0,cell_type_detailed,pancreas-cosmx
+release v1,plasma-stomach,CL:0000786,plasma cell,parent,Plasma,5438.0,cell_type_detailed,stomach
+release v1,plasmablast,CL:0000980,plasmablast,exact,Plasma,5541.0,cell_type,crc
+release v1,stem-appendix,CL:0002250,intestinal crypt stem cell,exact,Epithelial,2179.0,cell_type_detailed,appendix
+release v1,stroma,CL:0000499,stromal cell,parent,Stromal,144031.0,cell_type,crc
+release v1,tcell,CL:0000084,T cell,parent,T/NK,2757.0,cell_type;cell_type_detailed,appendix;bone-marrow;colon;ileum;lymph-node;pancreas-cosmx;stomach
+release v1,vascular_smooth_muscle,CL:0000359,vascular associated smooth muscle cell,exact,Stromal,410963.0,cell_type;cell_type_detailed,appendix;bone-marrow;colon;ileum;lymph-node;pancreas-cosmx;stomach
+release v1,venous.capillary,CL:0002144,capillary endothelial cell,exact,Endothelial,98.0,cell_type_detailed,appendix;ileum
+M_reannot fine (Tabula Sapiens),B cell,CL:0000236,B cell,exact (CELLxGENE curated),B,,,bone_marrow;liver;lymph_node;pancreas
+M_reannot fine (Tabula Sapiens),"CD4-positive, alpha-beta T cell",CL:0000624,"CD4-positive, alpha-beta T cell",exact (CELLxGENE curated),T/NK,,,bone_marrow;liver;lymph_node;pancreas
+M_reannot fine (Tabula Sapiens),"CD8-positive, alpha-beta T cell",CL:0000625,"CD8-positive, alpha-beta T cell",exact (CELLxGENE curated),T/NK,,,bone_marrow;liver;lymph_node;pancreas
+M_reannot fine (Tabula Sapiens),T cell,CL:0000084,T cell,exact (CELLxGENE curated),T/NK,,,bone_marrow;liver;lymph_node
+M_reannot fine (Tabula Sapiens),basophil,CL:0000767,basophil,exact (CELLxGENE curated),Granulocyte,,,bone_marrow
+M_reannot fine (Tabula Sapiens),classical monocyte,CL:0000860,classical monocyte,exact (CELLxGENE curated),Myeloid,,,bone_marrow;liver;lymph_node;pancreas
+M_reannot fine (Tabula Sapiens),common myeloid progenitor,CL:0000049,common myeloid progenitor,exact (CELLxGENE curated),HSPC,,,bone_marrow
+M_reannot fine (Tabula Sapiens),endothelial cell,CL:0000115,endothelial cell,exact (CELLxGENE curated),Endothelial,,,bone_marrow;liver;lymph_node;pancreas
+M_reannot fine (Tabula Sapiens),erythrocyte,CL:0000232,erythrocyte,exact (CELLxGENE curated),Erythroid,,,bone_marrow;liver;lymph_node
+M_reannot fine (Tabula Sapiens),erythroid progenitor cell,CL:0000038,erythroid progenitor cell,exact (CELLxGENE curated),Erythroid,,,bone_marrow
+M_reannot fine (Tabula Sapiens),fibroblast,CL:0000057,fibroblast,exact (CELLxGENE curated),Stromal,,,liver;pancreas
+M_reannot fine (Tabula Sapiens),granulocyte,CL:0000094,granulocyte,exact (CELLxGENE curated),Granulocyte,,,bone_marrow
+M_reannot fine (Tabula Sapiens),hematopoietic precursor cell,CL:0008001,hematopoietic precursor cell,exact (CELLxGENE curated),HSPC,,,bone_marrow;liver
+M_reannot fine (Tabula Sapiens),hematopoietic stem cell,CL:0000037,hematopoietic stem cell,exact (CELLxGENE curated),HSPC,,,bone_marrow
+M_reannot fine (Tabula Sapiens),hepatic stellate cell,CL:0000632,hepatic stellate cell,exact (CELLxGENE curated),Stromal,,,liver
+M_reannot fine (Tabula Sapiens),hepatocyte,CL:0000182,hepatocyte,exact (CELLxGENE curated),Hepatocyte,,,liver
+M_reannot fine (Tabula Sapiens),intermediate monocyte,CL:0002393,intermediate monocyte,exact (CELLxGENE curated),Myeloid,,,bone_marrow;liver;lymph_node;pancreas
+M_reannot fine (Tabula Sapiens),intrahepatic cholangiocyte,CL:0002538,intrahepatic cholangiocyte,exact (CELLxGENE curated),Epithelial,,,liver
+M_reannot fine (Tabula Sapiens),macrophage,CL:0000235,macrophage,exact (CELLxGENE curated),Myeloid,,,bone_marrow;liver;lymph_node;pancreas
+M_reannot fine (Tabula Sapiens),mast cell,CL:0000097,mast cell,exact (CELLxGENE curated),Mast,,,liver;lymph_node
+M_reannot fine (Tabula Sapiens),mature NK T cell,CL:0000814,mature NK T cell,exact (CELLxGENE curated),T/NK,,,bone_marrow;liver;lymph_node
+M_reannot fine (Tabula Sapiens),monocyte,CL:0000576,monocyte,exact (CELLxGENE curated),Myeloid,,,bone_marrow;liver;lymph_node
+M_reannot fine (Tabula Sapiens),myeloid dendritic cell,CL:0000782,myeloid dendritic cell,exact (CELLxGENE curated),Myeloid,,,bone_marrow;liver;lymph_node
+M_reannot fine (Tabula Sapiens),"naive thymus-derived CD4-positive, alpha-beta T cell",CL:0000895,"naive thymus-derived CD4-positive, alpha-beta T cell",exact (CELLxGENE curated),T/NK,,,lymph_node
+M_reannot fine (Tabula Sapiens),natural killer cell,CL:0000623,natural killer cell,exact (CELLxGENE curated),T/NK,,,bone_marrow;liver;lymph_node;pancreas
+M_reannot fine (Tabula Sapiens),neutrophil,CL:0000775,neutrophil,exact (CELLxGENE curated),Granulocyte,,,bone_marrow;liver;lymph_node
+M_reannot fine (Tabula Sapiens),non-classical monocyte,CL:0000875,non-classical monocyte,exact (CELLxGENE curated),Myeloid,,,bone_marrow;liver;lymph_node
+M_reannot fine (Tabula Sapiens),pancreatic A cell,CL:0000171,pancreatic A cell,exact (CELLxGENE curated),Endocrine,,,pancreas
+M_reannot fine (Tabula Sapiens),pancreatic acinar cell,CL:0002064,pancreatic acinar cell,exact (CELLxGENE curated),Epithelial,,,pancreas
+M_reannot fine (Tabula Sapiens),pancreatic ductal cell,CL:0002079,pancreatic ductal cell,exact (CELLxGENE curated),Epithelial,,,pancreas
+M_reannot fine (Tabula Sapiens),pancreatic stellate cell,CL:0002410,pancreatic stellate cell,exact (CELLxGENE curated),Stromal,,,pancreas
+M_reannot fine (Tabula Sapiens),plasma cell,CL:0000786,plasma cell,exact (CELLxGENE curated),Plasma,,,bone_marrow;liver;lymph_node
+M_reannot fine (Tabula Sapiens),regulatory T cell,CL:0000815,regulatory T cell,exact (CELLxGENE curated),T/NK,,,lymph_node
+M_reannot fine (Tabula Sapiens),stromal cell,CL:0000499,stromal cell,exact (CELLxGENE curated),Stromal,,,bone_marrow;lymph_node
+M_reannot fine (Tabula Sapiens),type B pancreatic cell,CL:0000169,type B pancreatic cell,exact (CELLxGENE curated),Endocrine,,,pancreas
+M_reannot broad lineage,Epithelial,CL:0000066,epithelial cell,exact,Epithelial,,,
+M_reannot broad lineage,Hepatocyte,CL:0000182,hepatocyte,exact,Hepatocyte,,,
+M_reannot broad lineage,Endocrine,CL:0000163,endocrine cell,exact,Endocrine,,,
+M_reannot broad lineage,Endothelial,CL:0000115,endothelial cell,exact,Endothelial,,,
+M_reannot broad lineage,Stromal,CL:0000499,stromal cell,exact,Stromal,,,
+M_reannot broad lineage,T/NK,CL:0000084|CL:0000623,T cell|natural killer cell,union of two CL terms,T/NK,,,
+M_reannot broad lineage,B,CL:0000236,B cell,exact,B,,,
+M_reannot broad lineage,Plasma,CL:0000786,plasma cell,exact,Plasma,,,
+M_reannot broad lineage,Myeloid,CL:0000766,myeloid leukocyte,exact,Myeloid,,,
+M_reannot broad lineage,Mast,CL:0000097,mast cell,exact,Mast,,,
+M_reannot broad lineage,Granulocyte,CL:0000094,granulocyte,exact,Granulocyte,,,
+M_reannot broad lineage,Erythroid,CL:0000764,erythroid lineage cell,exact,Erythroid,,,
+M_reannot broad lineage,Megakaryocyte,CL:0000556,megakaryocyte,exact,Megakaryocyte,,,
+M_reannot broad lineage,HSPC,CL:0008001,hematopoietic precursor cell,exact,HSPC,,,
+M_reannot broad lineage,Glia/Neural,CL:0002319,neural cell,exact,Glia/Neural,,,
+M_reannot broad lineage,Unresolved,,,none,Unresolved,,,
