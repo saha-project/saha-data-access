@@ -60,7 +60,7 @@ adata.obs.merge(donors, on="donor_core", how="left")
 | `processing_date` | `string | null` |  | format: date | Instrument run start date (ISO 8601 YYYY-MM-DD). |
 | `slide_prepared_date` | `string | null` |  | format: date | Slide preparation date (ISO 8601 YYYY-MM-DD). |
 | `s3_raw_prefix` | `string | null` |  |  | S3 URI prefix for raw instrument output (e.g. s3://saha-open-data/cosmx/wcm/TAP01/SAHA_CR_COL_A1_TAP01/). |
-| `s3_processed_path` | `string | null` |  |  | Path of the SpatialData store relative to the data root, e.g. processed/saha-v1-colon/SAHA_CR_COL_A1_TAP01.zarr (data root: s3://saha-public on Wasabi for review; s3://saha-open-data once live). Filled by scripts/fill_processed_paths.py. |
+| `s3_processed_path` | `string | null` |  |  | Path of the SpatialData store relative to the data root, e.g. processed/saha-v1-colon/SAHA_CR_COL_A1_TAP01.zarr (data root: s3://saha-open-data once live, or the reviewer copy). Filled by scripts/fill_processed_paths.py. |
 
 
 ---

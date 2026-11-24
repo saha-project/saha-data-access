@@ -2,8 +2,8 @@
 
 Data schemas, metadata infrastructure, and access documentation for the **Spatial Atlas of Human Anatomy (SAHA)** — hosted on the [AWS Open Data Program](https://registry.opendata.aws/).
 
-> **Status (November 2026):** the AWS Open Data bucket `s3://saha-open-data` is not live yet. A copy
-> with the same layout is readable now at `s3://saha-public` (Wasabi, anonymous). See [docs/QUICK_START.md](docs/QUICK_START.md).
+> **Status (November 2026):** the AWS Open Data bucket `s3://saha-open-data` is not live yet. Until then, release v1
+> is available on request and all data are available to reviewers ([saha-project.org](https://saha-project.org/#data)). See [docs/QUICK_START.md](docs/QUICK_START.md).
 
 ## About SAHA
 
@@ -56,7 +56,7 @@ Four Parquet tables are provided in `data/` and mirrored under `metadata/` at th
 ## Data Organization
 
 ```
-<data root>/                 s3://saha-public (Wasabi, now) or s3://saha-open-data (AWS, once live)
+<data root>/                 s3://saha-open-data (AWS, once live) or the reviewer copy
 ├── metadata/                samples, donors, runs, panels (Parquet) + measurements.csv
 └── processed/<record>/      one SpatialData (zarr) store per acquisition, e.g. processed/saha-v1-colon/SAHA_CR_COL_A1_TAP01.zarr
 ```

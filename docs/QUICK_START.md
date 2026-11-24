@@ -3,7 +3,8 @@
 How to find and load SAHA spatial omics data. Open-access data need no account.
 
 > **Status (November 2026):** the AWS Open Data bucket `s3://saha-open-data` is not live yet.
-> A copy with the same layout is readable now at `s3://saha-public` (Wasabi; anonymous read).
+> Until then, release v1 is available on request and all data to reviewers; the access instructions give a data
+> root with the same layout (set `SAHA_DATA_ROOT` and `SAHA_S3_ENDPOINT`).
 > Every example below takes one data root, so switching later changes a single line.
 
 ```bash
@@ -15,9 +16,10 @@ pip install pandas pyarrow s3fs fsspec zarr anndata scanpy
 ```python
 import os
 
-DATA_ROOT = os.environ.get("SAHA_DATA_ROOT", "s3://saha-public")
-if DATA_ROOT.startswith("s3://saha-public"):
-    S3_OPTS = {"anon": True, "client_kwargs": {"endpoint_url": "https://s3.wasabisys.com"}}
+DATA_ROOT = os.environ.get("SAHA_DATA_ROOT", "s3://saha-open-data")
+ENDPOINT = os.environ.get("SAHA_S3_ENDPOINT")  # reviewer copy only; sent with access instructions
+if ENDPOINT:
+    S3_OPTS = {"anon": True, "client_kwargs": {"endpoint_url": ENDPOINT}}
 elif DATA_ROOT.startswith("s3://"):
     S3_OPTS = {"anon": True}          # s3://saha-open-data, once live
 else:
@@ -70,8 +72,8 @@ print(adata)
 `spatialdata.read_zarr` does not open remote stores, so copy the store first:
 
 ```bash
-aws s3 sync s3://saha-public/processed/saha-v1-colon/SAHA_CR_COL_A1_TAP01.zarr ./SAHA_CR_COL_A1_TAP01.zarr \
-    --no-sign-request --endpoint-url https://s3.wasabisys.com
+aws s3 sync "${SAHA_DATA_ROOT:-s3://saha-open-data}"/processed/saha-v1-colon/SAHA_CR_COL_A1_TAP01.zarr ./SAHA_CR_COL_A1_TAP01.zarr \
+    --no-sign-request ${SAHA_S3_ENDPOINT:+--endpoint-url "$SAHA_S3_ENDPOINT"}
 ```
 
 ```python

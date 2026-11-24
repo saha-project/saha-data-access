@@ -98,7 +98,7 @@
     },
     "s3_processed_path": {
       "type": ["string", "null"],
-      "description": "Path of the SpatialData store relative to the data root, e.g. processed/saha-v1-colon/SAHA_CR_COL_A1_TAP01.zarr (data root: s3://saha-public on Wasabi for review; s3://saha-open-data once live). Filled by scripts/fill_processed_paths.py."
+      "description": "Path of the SpatialData store relative to the data root, e.g. processed/saha-v1-colon/SAHA_CR_COL_A1_TAP01.zarr (data root: s3://saha-open-data once live, or the reviewer copy). Filled by scripts/fill_processed_paths.py."
     }
   }
 }

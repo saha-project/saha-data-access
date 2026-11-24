@@ -4,20 +4,22 @@ fill_processed_paths.py
 Fill samples.s3_processed_path from the uploaded stores.
 
 Paths are written relative to the data root ("processed/<record>/<store>.zarr"),
-so the same table works for the reviewer copy (s3://saha-public on Wasabi) and the
+so the same table works for the reviewer copy and the
 AWS Open Data bucket (s3://saha-open-data) once it is live.
 
-    python scripts/fill_processed_paths.py [DATA_ROOT]   # default: Wasabi reviewer copy
+    python scripts/fill_processed_paths.py [DATA_ROOT]   # default: s3://saha-open-data; set SAHA_S3_ENDPOINT for the reviewer copy
 """
+import os
 import sys
 from pathlib import Path
 import fsspec
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent
-root = sys.argv[1] if len(sys.argv) > 1 else "s3://saha-public"
-opts = {"anon": True, "client_kwargs": {"endpoint_url": "https://s3.wasabisys.com"}} \
-    if root.startswith("s3://saha-public") else ({"anon": True} if root.startswith("s3://") else {})
+root = sys.argv[1] if len(sys.argv) > 1 else "s3://saha-open-data"
+endpoint = os.environ.get("SAHA_S3_ENDPOINT")  # reviewer copy only
+opts = ({"anon": True, **({"client_kwargs": {"endpoint_url": endpoint}} if endpoint else {})}
+        if root.startswith("s3://") else {})
 fs, base = fsspec.core.url_to_fs(root, **opts)
 
 stores = {}
